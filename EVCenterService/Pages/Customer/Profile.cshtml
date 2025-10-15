@@ -1,0 +1,58 @@
+﻿@page
+
+<h2 class="mb-4">Profile Information</h2>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                Account Information
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    <div class="mb-3">
+                        <label class="form-label">Email (cannot be changed)</label>
+                        <input class="form-control" disabled value="customer@example.com" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="FullName" class="form-label">Full Name</label>
+                        <input id="FullName" name="FullName" class="form-control" value="John Doe" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="PhoneNumber" class="form-label">Phone Number</label>
+                        <input id="PhoneNumber" name="PhoneNumber" class="form-control" value="0912345678" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="Address" class="form-label">Address</label>
+                        <input id="Address" name="Address" class="form-control" value="123 Example St, HCMC" />
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update Information</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                Change Password
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    <div class="form-floating mb-3">
+                        <input type="password" name="OldPassword" class="form-control" placeholder="Old Password" />
+                        <label>Old Password</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="password" name="NewPassword" class="form-control" placeholder="New Password" />
+                        <label>New Password</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="password" name="ConfirmPassword" class="form-control" placeholder="Confirm New Password" />
+                        <label>Confirm New Password</label>
+                    </div>
+                    <button type="submit" class="btn btn-secondary">Change Password</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

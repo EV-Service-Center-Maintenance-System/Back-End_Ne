@@ -1,0 +1,32 @@
+﻿@page
+@model Technician.Jobs.DetailsModel
+@{
+    ViewData["Title"] = "Chi tiết Công việc";
+}
+
+<h2 class="mb-4">Chi Tiết Công Việc #APM-00123</h2>
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card text-center">
+            <div class="card-header">
+                Xe: VinFast VF8 - 51K-123.45
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">Dịch vụ: Bảo dưỡng pin định kỳ</h5>
+                <p class="card-text text-muted"><strong>Ghi chú từ Staff:</strong> Khách hàng yêu cầu kiểm tra kỹ hệ thống làm mát pin.</p>
+                <p><strong>Trạng thái hiện tại:</strong> <span class="badge bg-info fs-6">Đang tiến hành</span></p>
+
+                <form method="post">
+                    <input type="hidden" name="jobId" value="123" />
+                    <button type="submit" asp-page-handler="Complete" class="btn btn-lg btn-primary">
+                        <i class="bi bi-flag-fill me-2"></i>Đánh Dấu Hoàn Thành
+                    </button>
+                </form>
+            </div>
+            <div class="card-footer text-muted">
+                Bắt đầu lúc: 14:30 15/10/2025
+            </div>
+        </div>
+    </div>
+</div>

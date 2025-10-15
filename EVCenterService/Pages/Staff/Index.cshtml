@@ -1,0 +1,51 @@
+﻿@page
+@model Staff.IndexModel
+@{
+    ViewData["Title"] = "Quản lý Lịch hẹn";
+}
+
+<h2 class="mb-4">@ViewData["Title"]</h2>
+
+<ul class="nav nav-tabs mb-3">
+    <li class="nav-item">
+        <a class="nav-link active" aria-current="page" href="#">Chờ Xác Nhận <span class="badge bg-danger ms-1">5</span></a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#">Đã Xác Nhận</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#">Đang Tiến Hành</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#">Đã Hoàn Thành</a>
+    </li>
+</ul>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th>Khách hàng</th>
+                        <th>Xe</th>
+                        <th>Dịch vụ Yêu cầu</th>
+                        <th>Thời gian hẹn</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Lê Thị D</td>
+                        <td>VF8 - 51K12345</td>
+                        <td>Bảo dưỡng pin định kỳ</td>
+                        <td>14:00 15/10/2025</td>
+                        <td class="text-end">
+                            <a asp-page="/Staff/Appointments/Details" asp-route-id="123" class="btn btn-sm btn-primary">Xử Lý</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

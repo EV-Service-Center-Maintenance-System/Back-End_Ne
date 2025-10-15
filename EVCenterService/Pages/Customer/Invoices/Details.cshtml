@@ -1,0 +1,72 @@
+﻿@page
+@model Test.Pages.Customer.Invoices.DetailsModel
+@{
+    ViewData["Title"] = "Hóa Đơn Dịch Vụ";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header text-center bg-white py-4">
+                <h2 class="mb-0">HÓA ĐƠN DỊCH VỤ</h2>
+                <p class="text-muted mb-0">Mã hóa đơn: #HD-00123</p>
+            </div>
+            <div class="card-body p-5">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <strong>Khách hàng:</strong> Lê Thị D<br>
+                        <strong>Xe:</strong> VinFast VF8 - 51K-123.45<br>
+                        <strong>Ngày hoàn thành:</strong> 15/10/2025
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <span class="badge bg-danger fs-6">CHƯA THANH TOÁN</span>
+                    </div>
+                </div>
+
+                <div class="table-responsive mb-4">
+                    <table class="table table-bordered">
+                        <thead class="table-light">
+                            <tr>
+                                <th>#</th>
+                                <th>Nội dung</th>
+                                <th class="text-end">Thành tiền</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>
+                                    <strong>Dịch vụ:</strong> Bảo dưỡng pin định kỳ
+                                </td>
+                                <td class="text-end">2.000.000đ</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>
+                                    <strong>Phụ tùng:</strong> Dầu làm mát động cơ (SL: 1)
+                                </td>
+                                <td class="text-end">800.000đ</td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="2" class="text-end fw-bold">Tổng cộng</td>
+                                <td class="text-end fw-bold fs-5">2.800.000đ</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <div class="text-center">
+                    <h5 class="mb-3">Thanh toán ngay</h5>
+                    <p>Quét mã VietQR dưới đây để thanh toán nhanh chóng</p>
+
+                    <p class="mt-2 text-muted">Nội dung chuyển khoản: <strong class="text-dark">HD00123 Le Thi D</strong></p>
+                </div>
+            </div>
+            <div class="card-footer text-center">
+                <button class="btn btn-secondary"><i class="bi bi-printer me-2"></i>In Hóa Đơn</button>
+            </div>
+        </div>
+    </div>
+</div>

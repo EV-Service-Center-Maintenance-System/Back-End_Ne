@@ -1,10 +1,29 @@
 ﻿@page
-@model IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    Layout = "_Layout"; // Sử dụng layout công khai
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container col-xxl-8 px-4 py-5">
+    <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
+        <div class="col-10 col-sm-8 col-lg-6">
+            <img src="https://images.unsplash.com/photo-1617704548623-340376564e68?q=80&w=2670&auto=format&fit=crop" class="d-block mx-lg-auto img-fluid rounded shadow-lg" alt="Modern EV in a workshop" loading="lazy">
+        </div>
+        <div class="col-lg-6">
+            <h1 class="display-4 fw-bold lh-1 mb-3">Expert Care for Your Electric Vehicle</h1>
+            <p class="lead">At Evolve Auto, we combine advanced technology with certified expertise to provide top-tier maintenance and repair services. Keep your EV running smoothly, efficiently, and safely.</p>
+            <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                <a href="/Customer/Appointments/Create" class="btn btn-primary btn-lg px-4 me-md-2">Book a Service Now</a>
+                <a href="#services" class="btn btn-outline-secondary btn-lg px-4">Explore Services</a>
+            </div>
+        </div>
+    </div>
 </div>
+
+<div id="services" class="container px-4 py-5 bg-white rounded shadow-sm">
+    <h2 class="pb-2 text-center border-bottom mb-5">Our Core Services</h2>
+    <div class="row g-4 row-cols-1 row-cols-lg-3">
+        <div class="col d-flex align-items-start">
+            <div class="p-3 bg-light rounded-circle me-3">
+                <i class="bi bi-battery-charging fs-4 text-success"></i>
+            </div>
+            <div>
