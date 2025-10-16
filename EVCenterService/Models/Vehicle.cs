@@ -2,23 +2,31 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace EVCenterService.Models;
 
 public partial class Vehicle
 {
+    [Key]
     public int VehicleId { get; set; }
 
     public Guid? UserId { get; set; }
 
+    [Required]
+    [StringLength(100, ErrorMessage = "Vin cannot exceed 100 characters.")]
     public string Vin { get; set; }
 
+    [StringLength(200, ErrorMessage = "Model cannot exceed 200 characters.")]
     public string Model { get; set; }
 
+    [Range(0, double.MaxValue)]
     public decimal? BatteryCapacity { get; set; }
 
+    [Range(0, double.MaxValue)]
     public decimal? Mileage { get; set; }
 
+    [DataType(DataType.Date)]
     public DateOnly? LastMaintenanceDate { get; set; }
 
     public virtual ICollection<OrderService> OrderServices { get; set; } = new List<OrderService>();

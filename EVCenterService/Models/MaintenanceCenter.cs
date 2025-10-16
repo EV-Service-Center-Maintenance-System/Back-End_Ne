@@ -2,19 +2,28 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace EVCenterService.Models;
 
 public partial class MaintenanceCenter
 {
+    [Key]
     public int CenterId { get; set; }
 
+    [Required]
+    [StringLength(200, ErrorMessage ="Name of center cannot exceed 200 characters.")]
     public string Name { get; set; }
 
+    [StringLength(500, ErrorMessage ="Address cannot exceed 500 characters.")]
     public string Address { get; set; }
 
+    [Phone]
+    [StringLength(10, ErrorMessage ="Phone cannot exceed 10 characters")]
     public string Phone { get; set; }
 
+    [EmailAddress]
+    [StringLength(200, ErrorMessage ="Email cannot exceed 200 characters.")]
     public string Email { get; set; }
 
     public TimeOnly? OpenTime { get; set; }

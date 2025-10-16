@@ -2,19 +2,23 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace EVCenterService.Models;
 
 public partial class OrderDetail
 {
+    [Key]
     public int OrderDetailId { get; set; }
 
     public int? OrderId { get; set; }
 
     public int? ServiceId { get; set; }
 
+    [Range(1, int.MaxValue)]
     public int? Quantity { get; set; }
 
+    [DataType(DataType.Currency)]
     public decimal? UnitPrice { get; set; }
 
     public virtual OrderService Order { get; set; }
