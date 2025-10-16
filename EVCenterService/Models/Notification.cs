@@ -2,19 +2,25 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace EVCenterService.Models;
 
 public partial class Notification
 {
+    [Key]
     public int NotificationId { get; set; }
 
     public Guid? ReceiverId { get; set; }
 
+    [Required(ErrorMessage = "content is required.")]
+    [StringLength(1000, ErrorMessage = "Content cannot exceed 1000 characters.")]
     public string Content { get; set; }
 
+    [StringLength(100)]
     public string Type { get; set; }
 
+    [DataType(DataType.DateTime)]
     public DateTime? TriggerDate { get; set; }
 
     public bool? IsRead { get; set; }

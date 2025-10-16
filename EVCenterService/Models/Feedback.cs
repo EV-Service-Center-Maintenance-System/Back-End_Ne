@@ -2,21 +2,26 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace EVCenterService.Models;
 
 public partial class Feedback
 {
+    [Key]
     public int FeedbackId { get; set; }
 
     public int? OrderId { get; set; }
 
     public Guid? UserId { get; set; }
 
+    [Range (1, 5)]
     public int? Rating { get; set; }
 
+    [StringLength(1000, ErrorMessage = "Comment cannot exceed 1000 characters.")]
     public string Comment { get; set; }
 
+    [DataType(DataType.DateTime)]
     public DateTime? CreatedAt { get; set; }
 
     public virtual OrderService Order { get; set; }

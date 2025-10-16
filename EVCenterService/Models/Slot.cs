@@ -2,11 +2,13 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace EVCenterService.Models;
 
 public partial class Slot
 {
+    [Key]
     public int SlotId { get; set; }
 
     public int? CenterId { get; set; }
@@ -15,8 +17,10 @@ public partial class Slot
 
     public int? OrderId { get; set; }
 
+    [DataType(DataType.DateTime)]
     public DateTime? StartTime { get; set; }
 
+    [DataType(DataType.DateTime)]
     public DateTime? EndTime { get; set; }
 
     public virtual MaintenanceCenter Center { get; set; }

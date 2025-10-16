@@ -2,23 +2,30 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace EVCenterService.Models;
 
 public partial class OrderService
 {
+    [Key]
     public int OrderId { get; set; }
 
     public int? VehicleId { get; set; }
 
     public Guid? UserId { get; set; }
 
+    [Required]
+    [DataType(DataType.DateTime)]
     public DateTime AppointmentDate { get; set; }
 
+    [StringLength(50, ErrorMessage = "Status cannot exceed 50 characters.")]
     public string Status { get; set; }
 
+    [StringLength(1000, ErrorMessage = "Checklist Note cannot exceed 1000 characters.")]
     public string ChecklistNote { get; set; }
 
+    [DataType(DataType.Currency)]
     public decimal? TotalCost { get; set; }
 
     public virtual ICollection<Feedback> Feedbacks { get; set; } = new List<Feedback>();

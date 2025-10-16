@@ -2,25 +2,33 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace EVCenterService.Models;
 
 public partial class Subscription
 {
+    [Key]
     public Guid SubscriptionId { get; set; }
 
     public Guid? UserId { get; set; }
 
     public Guid? PlanId { get; set; }
 
+    [Required]
+    [DataType(DataType.DateTime)]
     public DateTime StartDate { get; set; }
 
+    [Required]
+    [DataType(DataType.DateTime)]
     public DateTime EndDate { get; set; }
 
     public bool? AutoRenew { get; set; }
 
+    [StringLength(50, ErrorMessage = "Status cannot exceed 50 characters.")]
     public string Status { get; set; }
 
+    [DataType(DataType.DateTime)]
     public DateTime? CreatedAt { get; set; }
 
     public virtual ICollection<Invoice> Invoices { get; set; } = new List<Invoice>();
