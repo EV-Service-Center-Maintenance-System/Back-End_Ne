@@ -7,14 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-    <Folder Include="Data\" />
-    <Folder Include="Dtos\" />
     <Folder Include="Interfaces\" />
     <Folder Include="Mappers\" />
     <Folder Include="Models\Enum\" />
     <Folder Include="Repository\" />
-    <Folder Include="Service\" />
     <Folder Include="token.json\" />
   </ItemGroup>
 
