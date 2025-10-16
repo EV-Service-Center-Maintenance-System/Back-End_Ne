@@ -1,4 +1,5 @@
 ﻿@page
+@model Test.Pages.Account.LoginModel
 @{
     Layout = null;
 }
@@ -16,20 +17,34 @@
                 <img src="~/images/evolve-auto-logo.png" alt="Evolve Auto Logo" style="height: 60px;" class="mb-3">
                 <h3 class="fw-light">Welcome Back</h3>
             </div>
-            <form>
+
+            <form method="post">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
                 <div class="form-floating mb-3">
-                    <input type="email" class="form-control" id="email" placeholder="name@example.com">
-                    <label for="email">Email address</label>
+                    <input asp-for="Input.Email" class="form-control" placeholder="name@example.com">
+                    <label asp-for="Input.Email">Email address</label>
+                    <span asp-validation-for="Input.Email" class="text-danger small"></span>
                 </div>
                 <div class="form-floating mb-4">
-                    <input type="password" class="form-control" id="password" placeholder="Password">
-                    <label for="password">Password</label>
+                    <input asp-for="Input.Password" class="form-control" placeholder="Password">
+                    <label asp-for="Input.Password">Password</label>
+                    <span asp-validation-for="Input.Password" class="text-danger small"></span>
                 </div>
                 <div class="d-grid">
                     <button type="submit" class="btn btn-primary btn-lg">Sign In</button>
                 </div>
+
+                <p class="text-center small text-muted mt-4">
+                    Don't have an account?
+                    <a href="/Account/Register" class="fw-bold text-primary">Register Now</a>
+                </p>
             </form>
         </div>
     </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
 </body>
 </html>
