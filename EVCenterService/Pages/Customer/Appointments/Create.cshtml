@@ -1,0 +1,47 @@
+﻿@page
+@{
+    Layout = "_AdminLayout";
+}
+
+<h1 class="h2 mb-4">Book a Service Appointment</h1>
+<p class="text-muted mb-4">Fill out the form below to schedule your visit.</p>
+
+<div class="card">
+    <div class="card-body p-4">
+        <form method="post">
+            <div class="row g-3">
+                <div class="col-md-12">
+                    <label class="form-label">1. Select Your Vehicle</label>
+                    <select class="form-select form-select-lg">
+                        <option selected>-- Choose your registered vehicle --</option>
+                        <option value="1">VinFast VF8 - 51K-123.45</option>
+                    </select>
+                </div>
+                <div class="col-md-12">
+                    <label class="form-label">2. Select Services</label>
+                    <div class="p-3 border rounded">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="service1">
+                            <label class="form-check-label" for="service1">Battery Health Check</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="service2">
+                            <label class="form-check-label" for="service2">Tire Rotation & Alignment</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <label class="form-label">3. Choose a Date & Time</label>
+                    <input type="datetime-local" class="form-control form-control-lg">
+                </div>
+                <div class="col-md-12">
+                    <label class="form-label">4. Additional Notes (Optional)</label>
+                    <textarea class="form-control" rows="4" placeholder="e.g., I'm hearing a strange noise from the front right wheel..."></textarea>
+                </div>
+                <div class="col-12 text-end">
+                    <button type="submit" class="btn btn-primary btn-lg">Submit Request</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,17 @@
+﻿@page
+@model EVCenterService.Pages.AccessDeniedModel
+@{
+    ViewData["Title"] = "Access Denied";
+    Layout = "_Layout"; // Sử dụng layout công khai
+}
+
+<div class="container text-center py-5">
+    <div class="py-5">
+        <h1 class="display-1 text-danger">403</h1>
+        <h2 class="fw-light">Access Denied</h2>
+        <p class="lead text-muted">
+            Sorry, you do not have permission to view this page.
+        </p>
+        <a asp-page="/Index" class="btn btn-primary mt-4">Return to Homepage</a>
+    </div>
+</div>

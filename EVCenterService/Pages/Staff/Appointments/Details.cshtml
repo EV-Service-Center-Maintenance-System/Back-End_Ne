@@ -1,0 +1,52 @@
+﻿@page
+@{
+    Layout = "_AdminLayout";
+}
+
+<h1 class="h2 mb-4">Appointment Details #APM-1234</h1>
+
+<div class="row g-4">
+    <div class="col-lg-7">
+        <div class="card h-100">
+            <div class="card-header">
+                <h5 class="mb-0">Appointment Information</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Customer:</strong> Johnathan Doe</p>
+                <p><strong>Vehicle:</strong> Tesla Model Y - ABC-1234</p>
+                <p><strong>Requested Services:</strong> Battery Health Check, General Inspection</p>
+                <p><strong>Customer Notes:</strong> "Please check the tire pressure as well."</p>
+                <p><strong>Requested Time:</strong> 2025-10-16 10:00 AM</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <div class="card h-100">
+            <div class="card-header">
+                <h5 class="mb-0">Actions</h5>
+            </div>
+            <div class="card-body">
+                <form>
+                    <div class="mb-3">
+                        <label class="form-label">Assign Technician</label>
+                        <select class="form-select">
+                            <option>Trần Văn C (Available)</option>
+                            <option>Lê Thị B (Busy)</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Service Bay</label>
+                        <select class="form-select">
+                            <option>Bay 1</option>
+                            <option>Bay 2 (EV Specialized)</option>
+                        </select>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-success"><i class="bi bi-check-circle me-2"></i>Confirm Appointment</button>
+                        <button class="btn btn-danger"><i class="bi bi-x-circle me-2"></i>Decline Appointment</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

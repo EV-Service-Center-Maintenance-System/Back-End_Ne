@@ -1,0 +1,45 @@
+﻿@page
+@{
+    Layout = "_AdminLayout";
+}
+
+<h1 class="h2 mb-4">My Assigned Jobs</h1>
+
+<div class="card">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Job ID</th>
+                    <th>Vehicle</th>
+                    <th>Primary Service</th>
+                    <th>Bay</th>
+                    <th>Status</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>JOB-556</td>
+                    <td>Tesla Model Y</td>
+                    <td>Battery Health Check</td>
+                    <td>Bay 2</td>
+                    <td><span class="badge fw-semibold bg-warning">Not Started</span></td>
+                    <td class="text-end">
+                        <button class="btn btn-sm btn-primary">Start Job</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>JOB-552</td>
+                    <td>Ford Mustang Mach-E</td>
+                    <td>Tire Rotation</td>
+                    <td>Bay 1</td>
+                    <td><span class="badge fw-semibold bg-info">In Progress</span></td>
+                    <td class="text-end">
+                        <a href="#" class="btn btn-sm btn-light border">Update Progress</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

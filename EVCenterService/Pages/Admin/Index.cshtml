@@ -1,0 +1,70 @@
+﻿@page
+@{
+    Layout = "_AdminLayout";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h2">Dashboard</h1>
+        <p class="text-muted">Welcome back, Admin! Here's what's happening today.</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0 me-3">
+                        <div class="p-3 bg-light rounded-circle">
+                            <i class="bi bi-calendar-check fs-4 text-success"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1">
+                        <h6 class="text-muted">New Appointments</h6>
+                        <h3 class="fw-bold mb-0">12</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mt-4">
+    <div class="card-header d-flex justify-content-between">
+        <h5 class="mb-0">Upcoming Appointments</h5>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Customer</th>
+                    <th>Vehicle</th>
+                    <th>Status</th>
+                    <th>Scheduled For</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Johnathan Doe</td>
+                    <td>Tesla Model Y</td>
+                    <td><span class="badge fw-semibold bg-warning">Pending</span></td>
+                    <td>2025-10-16 10:00 AM</td>
+                    <td class="text-end">
+                        <button class="btn btn-sm btn-light border">Details</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Jane Smith</td>
+                    <td>Ford Mustang Mach-E</td>
+                    <td><span class="badge fw-semibold bg-success">Confirmed</span></td>
+                    <td>2025-10-16 02:00 PM</td>
+                    <td class="text-end">
+                        <button class="btn btn-sm btn-light border">Details</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
