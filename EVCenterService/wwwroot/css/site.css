@@ -1,152 +1,97 @@
-/* Import Font */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
-
-/* --- Root Variables for a Clean, Green & White Theme --- */
-:root {
-    --primary-green: #1EAE98; /* A professional, vibrant green */
-    --primary-green-hover: #178f7a;
-    --background-light-gray: #f8f9fa;
-    --background-white: #ffffff;
-    --text-dark: #212529;
-    --text-muted: #6c757d;
-    --border-color: #dee2e6;
-    --shadow-sm: 0 .125rem .25rem rgba(0,0,0,.075);
-    --shadow-md: 0 .5rem 1rem rgba(0,0,0,.15);
+/* General Body & Font Styling */
+body, .bg-light {
+    background-color: #f8f9fa !important;
 }
 
-/* --- General Style --- */
-body {
-    font-family: 'Poppins', sans-serif;
-    background-color: var(--background-light-gray);
-    color: var(--text-dark);
-}
-
-/* --- Layout & Sidebar (Light Theme) --- */
-.wrapper {
-    display: flex;
-    min-height: 100vh;
-}
-
-.sidebar {
-    width: 260px;
-    background-color: var(--background-white);
-    border-right: 1px solid var(--border-color);
-    padding: 1.5rem 1rem;
-    transition: width 0.3s ease;
-}
-
-.sidebar-header {
-    padding: 0 0.5rem 1.5rem 0.5rem;
-    margin-bottom: 1.5rem;
-    border-bottom: 1px solid var(--border-color);
-}
-
-.sidebar-logo {
-    width: 100%;
-    max-width: 180px;
-    height: auto;
-}
-
-.sidebar-nav .nav-link {
-    color: var(--text-muted);
-    font-weight: 500;
-    padding: 0.75rem 1rem;
-    margin-bottom: 0.25rem;
-    border-radius: 0.5rem;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-}
-
-    .sidebar-nav .nav-link:hover {
-        background-color: var(--background-light-gray);
-        color: var(--text-dark);
+    body.bg-white {
+        background-color: #fff !important;
     }
 
-    .sidebar-nav .nav-link.active {
-        background-color: var(--primary-green);
-        color: var(--background-white);
-        font-weight: 600;
-    }
-
-.main-content {
-    flex-grow: 1;
-    padding: 2.5rem;
-    overflow-y: auto;
+/* Header & Navbar Customization */
+.navbar-brand span {
+    color: #1a1a1a;
+}
+/* THAY ??I T?I ?ÂY: Bo cong góc cho logo */
+.header-logo, .footer-logo {
+    height: 40px;
+    width: 40px;
+    border-radius: 12px; /* ??t giá tr? bo góc, ví d? 12px */
+    margin-right: 12px;
 }
 
-/* --- Components (Light Theme) --- */
-.card {
-    background-color: var(--background-white);
-    border: 1px solid var(--border-color);
-    border-radius: 0.75rem;
-    box-shadow: var(--shadow-sm);
-    transition: box-shadow 0.2s ease-in-out;
-}
-
-    .card:hover {
-        box-shadow: var(--shadow-md);
-    }
-
-.card-header {
-    background-color: var(--background-white);
-    border-bottom: 1px solid var(--border-color);
-    font-weight: 600;
-    padding: 1rem 1.5rem;
-}
-
+/* Custom Button Styles */
 .btn {
     border-radius: 0.5rem;
     font-weight: 500;
     padding: 0.75rem 1.5rem;
-    transition: all 0.2s ease;
+    transition: all 0.2s ease-in-out;
 }
 
+.btn-dark {
+    background-color: #1a1a1a;
+    border-color: #1a1a1a;
+}
+
+    .btn-dark:hover {
+        background-color: #333;
+        border-color: #333;
+    }
+
 .btn-primary {
-    background-color: var(--primary-green);
-    border-color: var(--primary-green);
+    background-color: #6366F1;
+    border-color: #6366F1;
 }
 
     .btn-primary:hover {
-        background-color: var(--primary-green-hover);
-        border-color: var(--primary-green-hover);
-        transform: translateY(-2px);
+        background-color: #4f46e5;
+        border-color: #4f46e5;
     }
 
-.form-control, .form-select {
-    border-radius: 0.5rem;
-    border: 1px solid var(--border-color);
-    padding: 0.75rem 1rem;
+.btn-outline-secondary {
+    border-color: #e5e7eb;
+    color: #1a1a1a;
+    background-color: #fff;
 }
 
-    .form-control:focus, .form-select:focus {
-        border-color: var(--primary-green);
-        box-shadow: 0 0 0 3px rgba(30, 174, 152, 0.25);
+    .btn-outline-secondary:hover {
+        background-color: #f9fafb;
     }
 
-.table {
-    border-color: var(--border-color);
+/* Style cho hình ?nh n?i dung ??ng ??u */
+.content-image {
+    width: 100%;
+    height: 450px;
+    object-fit: cover;
 }
 
-    .table thead th {
-        background-color: var(--background-light-gray);
-        font-weight: 600;
-        text-transform: uppercase;
-        font-size: 0.8rem;
-        letter-spacing: 0.5px;
-    }
-
-.badge.bg-success {
-    background-color: #d1fae5 !important;
-    color: #065f46 !important;
+/* Custom Sections */
+.text-primary {
+    color: #6366F1 !important;
 }
 
-.badge.bg-warning {
-    background-color: #fef3c7 !important;
-    color: #92400e !important;
+.feature-icon-primary {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 0.75rem;
+    background-color: #e0e7ff;
+    color: #6366F1;
 }
 
-.badge.bg-info {
-    background-color: #dbeafe !important;
-    color: #1e40af !important;
+.bg-primary.rounded-3 {
+    background: linear-gradient(90deg, rgba(79,70,229,1) 0%, rgba(99,102,241,1) 100%) !important;
+}
+
+/* Footer Styling */
+footer h6 {
+    margin-bottom: 1rem;
+    color: #1a1a1a;
+}
+
+footer .list-unstyled li {
+    margin-bottom: 0.5rem;
+}
+
+footer a:hover {
+    color: #000 !important;
+    text-decoration: underline !important;
 }

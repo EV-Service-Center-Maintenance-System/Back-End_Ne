@@ -1,4 +1,3 @@
-//using EVCenterService.Data; // Ho?c namespace c?a Context c?a b?n
 using EVCenterService.Data;
 using EVCenterService.Service;
 using Microsoft.AspNetCore.Authentication.Cookies;

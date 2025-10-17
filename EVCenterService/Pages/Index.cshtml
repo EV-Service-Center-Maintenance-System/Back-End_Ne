@@ -1,29 +1,72 @@
 ﻿@page
 @{
-    Layout = "_Layout"; // Sử dụng layout công khai
+    ViewData["Title"] = "Trang chủ";
 }
 
-<div class="container col-xxl-8 px-4 py-5">
+<div class="container col-xxl-10 px-4 py-5">
     <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
-        <div class="col-10 col-sm-8 col-lg-6">
-            <img src="https://images.unsplash.com/photo-1617704548623-340376564e68?q=80&w=2670&auto=format&fit=crop" class="d-block mx-lg-auto img-fluid rounded shadow-lg" alt="Modern EV in a workshop" loading="lazy">
+        <div class="col-12 col-lg-7">
+            <img src="~/images/hero-image.jpg" class="d-block mx-lg-auto img-fluid rounded-3 shadow-lg content-image" alt="EV Charging" loading="lazy">
         </div>
-        <div class="col-lg-6">
-            <h1 class="display-4 fw-bold lh-1 mb-3">Expert Care for Your Electric Vehicle</h1>
-            <p class="lead">At Evolve Auto, we combine advanced technology with certified expertise to provide top-tier maintenance and repair services. Keep your EV running smoothly, efficiently, and safely.</p>
-            <div class="d-grid gap-2 d-md-flex justify-content-md-start">
-                <a href="/Customer/Appointments/Create" class="btn btn-primary btn-lg px-4 me-md-2">Book a Service Now</a>
-                <a href="#services" class="btn btn-outline-secondary btn-lg px-4">Explore Services</a>
+        <div class="col-lg-5">
+            <p class="text-primary fw-semibold mb-2">⚡ Dẫn đầu dịch vụ xe điện tại Việt Nam</p>
+            <h1 class="display-4 fw-bold lh-1 mb-3">Trung tâm dịch vụ xe <span class="text-primary">điện</span> hiện đại nhất</h1>
+            <p class="lead text-muted">Chúng tôi cung cấp dịch vụ bảo dưỡng, sửa chữa chuyên nghiệp cho mọi dòng xe điện. Đặt lịch online, theo dõi tiến độ real-time, thanh toán tiện lợi.</p>
+            <div class="d-grid gap-2 d-md-flex justify-content-md-start mt-4">
+                <button type="button" class="btn btn-primary btn-lg px-4 me-md-2">Đặt lịch ngay <i class="bi bi-arrow-right"></i></button>
+                <button type="button" class="btn btn-outline-secondary btn-lg px-4">Tìm hiểu thêm</button>
             </div>
         </div>
     </div>
 </div>
 
-<div id="services" class="container px-4 py-5 bg-white rounded shadow-sm">
-    <h2 class="pb-2 text-center border-bottom mb-5">Our Core Services</h2>
-    <div class="row g-4 row-cols-1 row-cols-lg-3">
-        <div class="col d-flex align-items-start">
-            <div class="p-3 bg-light rounded-circle me-3">
-                <i class="bi bi-battery-charging fs-4 text-success"></i>
-            </div>
-            <div>
+<div class="container px-4 py-5">
+    <div class="row text-center g-4">
+        <div class="col-md-3 col-sm-6"><h2 class="display-5 fw-bold">5,000+</h2><p class="text-muted">Khách hàng tin dùng</p></div>
+        <div class="col-md-3 col-sm-6"><h2 class="display-5 fw-bold">10+</h2><p class="text-muted">Năm kinh nghiệm</p></div>
+        <div class="col-md-3 col-sm-6"><h2 class="display-5 fw-bold">98%</h2><p class="text-muted">Khách hàng hài lòng</p></div>
+        <div class="col-md-3 col-sm-6"><h2 class="display-5 fw-bold">24/7</h2><p class="text-muted">Hỗ trợ khách hàng</p></div>
+    </div>
+</div>
+
+<div class="bg-light">
+    <div class="container px-4 py-5" id="featured-3">
+        <h2 class="pb-2 border-bottom text-center fw-bold">Dịch vụ của chúng tôi</h2>
+        <p class="text-center text-muted mb-5">Chúng tôi cung cấp đầy đủ các dịch vụ chuyên nghiệp cho xe điện của bạn.</p>
+        <div class="row g-4 py-5 row-cols-1 row-cols-lg-4">
+            <div class="feature col text-center"><div class="feature-icon-primary d-inline-flex align-items-center justify-content-center fs-2 mb-3"><i class="bi bi-battery-charging"></i></div><h3 class="fs-4 fw-semibold">Bảo dưỡng pin</h3><p>Kiểm tra và bảo dưỡng định kỳ hệ thống pin xe điện.</p></div>
+            <div class="feature col text-center"><div class="feature-icon-primary d-inline-flex align-items-center justify-content-center fs-2 mb-3"><i class="bi bi-lightning-charge-fill"></i></div><h3 class="fs-4 fw-semibold">Sạc nhanh</h3><p>Hệ thống sạc nhanh công suất cao, an toàn và tiện lợi.</p></div>
+            <div class="feature col text-center"><div class="feature-icon-primary d-inline-flex align-items-center justify-content-center fs-2 mb-3"><i class="bi bi-search"></i></div><h3 class="fs-4 fw-semibold">Kiểm tra tổng quát</h3><p>Kiểm tra toàn diện hệ thống điện và an toàn của xe.</p></div>
+            <div class="feature col text-center"><div class="feature-icon-primary d-inline-flex align-items-center justify-content-center fs-2 mb-3"><i class="bi bi-shield-check"></i></div><h3 class="fs-4 fw-semibold">Bảo hành uy tín</h3><p>Cam kết bảo hành chính hãng và dịch vụ tốt nhất.</p></div>
+        </div>
+    </div>
+</div>
+
+<div class="container col-xxl-10 px-4 py-5">
+    <div class="row align-items-center g-5 py-5">
+        <div class="col-12 col-lg-7">
+            <img src="~/images/feature-image.jpg" class="img-fluid rounded-3 shadow-lg content-image" alt="EV Mechanic">
+        </div>
+        <div class="col-lg-5">
+            <h2 class="fw-bold">Tại sao chọn chúng tôi?</h2>
+            <p class="text-muted">Trải nghiệm dịch vụ hoàn toàn mới với công nghệ hiện đại và đội ngũ chuyên nghiệp.</p>
+            <ul class="list-unstyled mt-4">
+                <li class="d-flex align-items-center mb-3"><i class="bi bi-check-circle-fill text-success me-3 fs-5"></i>Đặt lịch hẹn trực tuyến dễ dàng</li>
+                <li class="d-flex align-items-center mb-3"><i class="bi bi-check-circle-fill text-success me-3 fs-5"></i>Theo dõi tiến độ sửa chữa real-time</li>
+                <li class="d-flex align-items-center mb-3"><i class="bi bi-check-circle-fill text-success me-3 fs-5"></i>Lịch sử bảo dưỡng chi tiết</li>
+                <li class="d-flex align-items-center mb-3"><i class="bi bi-check-circle-fill text-success me-3 fs-5"></i>Thanh toán online tiện lợi</li>
+                <li class="d-flex align-items-center mb-3"><i class="bi bi-check-circle-fill text-success me-3 fs-5"></i>Kỹ thuật viên chuyên nghiệp</li>
+                <li class="d-flex align-items-center"><i class="bi bi-check-circle-fill text-success me-3 fs-5"></i>Phụ tùng chính hãng</li>
+            </ul>
+            <button class="btn btn-primary mt-4">Bắt đầu ngay <i class="bi bi-arrow-right"></i></button>
+        </div>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="p-5 text-center bg-primary rounded-3 text-white">
+        <h2 class="fw-bold">Sẵn sàng trải nghiệm dịch vụ tốt nhất?</h2>
+        <p class="lead mt-3">Đăng ký tài khoản ngay hôm nay để nhận ưu đãi đặc biệt cho lần đầu sử dụng dịch vụ.</p>
+        <a href="/Account/Register" class="btn btn-light btn-lg mt-3">Đăng ký miễn phí <i class="bi bi-arrow-right"></i></a>
+    </div>
+</div>
