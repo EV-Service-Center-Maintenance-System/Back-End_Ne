@@ -1,4 +1,5 @@
-using EVCenterService.Data; // Ho?c namespace c?a Context c?a b?n
+//using EVCenterService.Data; // Ho?c namespace c?a Context c?a b?n
+using EVCenterService.Data;
 using EVCenterService.Service;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
@@ -11,17 +12,16 @@ builder.Services.AddRazorPages();
 // ??ng ký PasswordHasher và JwtService (n?u b?n v?n c?n JwtService cho m?c ?ích khác)
 builder.Services.AddScoped<PasswordHasherService>();
 
-// DI for migration
+// DI for migrationcd EVCenterService
 builder.Services.AddDbContext<EVServiceCenterContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// *** THAY TH? C?U HÌNH JWT B?NG COOKIE AUTHENTICATION ***
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
-        options.LoginPath = "/Account/Login";      // Trang chuy?n ??n khi ch?a ??ng nh?p
-        options.LogoutPath = "/Account/Logout";     // ???ng d?n ?? ??ng xu?t
-        options.AccessDeniedPath = "/AccessDenied"; // Trang báo l?i khi không có quy?n
+        options.LoginPath = "/Account/Login";     
+        options.LogoutPath = "/Account/Logout";   
+        options.AccessDeniedPath = "/AccessDenied";
         options.ExpireTimeSpan = TimeSpan.FromDays(30);
         options.SlidingExpiration = true;
     });
