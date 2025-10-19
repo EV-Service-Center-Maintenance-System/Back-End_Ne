@@ -1,6 +1,8 @@
 using EVCenterService.Data;
+using EVCenterService.Models;
 using EVCenterService.Service;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,10 +10,11 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 
-// ??ng ký PasswordHasher và JwtService (n?u b?n v?n c?n JwtService cho m?c ?ích khác)
 builder.Services.AddScoped<PasswordHasherService>();
 
-// DI for migrationcd EVCenterService
+builder.Services.AddScoped<IPasswordHasher<Account>, PasswordHasher<Account>>();
+
+// migration EVCenterService
 builder.Services.AddDbContext<EVServiceCenterContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -38,12 +41,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
-// B?t Authentication và Authorization
 app.UseAuthentication();
 app.UseAuthorization();
-
-// Xóa MapControllers() n?u b?n không dùng API Controller
-// app.MapControllers(); 
 
 app.MapRazorPages();
 

@@ -7,15 +7,18 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using AccountEntity = EVCenterService.Models.Account;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace Test.Pages.Account
 {
     public class LoginModel : PageModel
     {
         private readonly EVServiceCenterContext _context;
-        private readonly PasswordHasherService _passwordHasher;
+        private readonly IPasswordHasher<AccountEntity> _passwordHasher;
 
-        public LoginModel(EVServiceCenterContext context, PasswordHasherService passwordHasher)
+        public LoginModel(EVServiceCenterContext context, IPasswordHasher<AccountEntity> passwordHasher)
         {
             _context = context;
             _passwordHasher = passwordHasher;
@@ -38,9 +41,9 @@ namespace Test.Pages.Account
 
             var account = await _context.Accounts.FirstOrDefaultAsync(a => a.Email == Input.Email);
 
-            if (account == null || !_passwordHasher.Verify(Input.Password, account.Password))
+            if (account == null || _passwordHasher.VerifyHashedPassword(account, account.Password, Input.Password) == PasswordVerificationResult.Failed)
             {
-                ModelState.AddModelError(string.Empty, "Invalid email or password.");
+                ModelState.AddModelError(string.Empty, "Email ho?c m?t kh?u không h?p l?.");
                 return Page();
             }
 
@@ -52,8 +55,10 @@ namespace Test.Pages.Account
                 new Claim(ClaimTypes.Role, account.Role)
             };
 
+            // S?A L?I T?I ?ÂY: Dùng ?úng tên ?ã ??ng ký
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
+            var authProperties = new AuthenticationProperties();
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
 
             switch (account.Role)
             {

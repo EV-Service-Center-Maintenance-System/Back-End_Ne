@@ -4,6 +4,7 @@ using EVCenterService.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EVCenterService.Migrations
 {
     [DbContext(typeof(EVServiceCenterContext))]
-    partial class EVServiceCenterContextModelSnapshot : ModelSnapshot
+    [Migration("20251019135917_UpdateAccountAndCleanSeedData")]
+    partial class UpdateAccountAndCleanSeedData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -84,62 +87,62 @@ namespace EVCenterService.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = new Guid("6610800c-aead-4970-b0ea-926cc58776a9"),
+                            UserId = new Guid("8a46d62f-b68c-4b28-9ac3-ce30cb1c367e"),
                             Email = "admin@gmail.com",
                             FullName = "Admin",
-                            Password = "AQAAAAIAAYagAAAAEN9zKU98dBy3r85eJODQgI6iqlI4qAFJT9Bp2YQqv4XXs2JJ5sJtjSMLoQZZM3V2UA==",
+                            Password = "hashed_password_placeholder",
                             Phone = "0901000001",
                             Role = "Admin",
                             Status = "Active"
                         },
                         new
                         {
-                            UserId = new Guid("b3a43285-8bf8-42d5-a336-b95bb787f569"),
+                            UserId = new Guid("65ca8a9a-515e-4d15-a5f8-d51a4d9bcc96"),
                             Certification = "EV Maintenance Level 1",
                             Email = "tech1@gmail.com",
                             FullName = "Tran Van B",
-                            Password = "AQAAAAIAAYagAAAAEJ3p13Lq6gpNs02ZSY1gl3YkyofTVlpYLR01PRxj9Etk1N5gpVT+5JgBm8ayCFXGFw==",
+                            Password = "hashed_password_placeholder",
                             Phone = "0902000002",
                             Role = "Technician",
                             Status = "Active"
                         },
                         new
                         {
-                            UserId = new Guid("8f944328-a6d8-4fba-a7cb-9075be9eff4e"),
+                            UserId = new Guid("a97493ff-192d-4ba1-9c37-4d909fbc0cee"),
                             Certification = "EV Battery Specialist",
                             Email = "tech2@gmail.com",
                             FullName = "Le Thi C",
-                            Password = "AQAAAAIAAYagAAAAELJ/w0DU7mENqF2DG/QXxzRgPvUSCp6SuXF2tVxFXcMFIQO1nh/SxWJcALkFLEqudg==",
+                            Password = "hashed_password_placeholder",
                             Phone = "0903000003",
                             Role = "Technician",
                             Status = "Active"
                         },
                         new
                         {
-                            UserId = new Guid("f2b76daa-988f-4f93-ab69-f1e8ba18ce64"),
+                            UserId = new Guid("1a34911e-98d4-45f1-a2f9-a6074134b16c"),
                             Email = "staff@gmail.com",
                             FullName = "Phan Anh C",
-                            Password = "AQAAAAIAAYagAAAAEH8DBId+fa1M7g/AOepV/P3QXR3Rvdo7h+CDGBd7FbyWCBYHl+vto48OBuusBaJFzA==",
+                            Password = "hashed_password_placeholder",
                             Phone = "0906000006",
                             Role = "Staff",
                             Status = "Active"
                         },
                         new
                         {
-                            UserId = new Guid("48a51c51-1554-4b95-bb59-065d6f4b7986"),
+                            UserId = new Guid("ddc47ff3-e23e-4e23-b064-d7803ae67014"),
                             Email = "user1@gmail.com",
                             FullName = "Pham Van D",
-                            Password = "AQAAAAIAAYagAAAAEDbkAoEE55WBH4eLFVkXSAWK+22/g6EUCj+vSnhVDboaq4YZW+ccdWp5vKPeoXBIxQ==",
+                            Password = "hashed_password_placeholder",
                             Phone = "0904000004",
                             Role = "Customer",
                             Status = "Active"
                         },
                         new
                         {
-                            UserId = new Guid("ea4d369a-fdb2-40b9-8631-bd569fbfec89"),
+                            UserId = new Guid("4efbf8b8-8679-405f-904e-d5f24545accb"),
                             Email = "user2@gmail.com",
                             FullName = "Do Thi E",
-                            Password = "AQAAAAIAAYagAAAAEPtnb6s+cKwTZMr+GAeAmVw06IemRxHuQpS2PYejht/32IdtoqqRsiab0RB3ASLtsQ==",
+                            Password = "hashed_password_placeholder",
                             Phone = "0905000005",
                             Role = "Customer",
                             Status = "Active"
@@ -696,7 +699,7 @@ namespace EVCenterService.Migrations
                     b.HasData(
                         new
                         {
-                            PlanId = new Guid("6c0abe88-8d97-42b5-b4ce-14edb10dd4ad"),
+                            PlanId = new Guid("5f797d50-4dca-4d58-abd6-d6ace23c923a"),
                             Benefits = "1 free inspection/month",
                             Code = "BASIC",
                             DurationDays = 30,
@@ -706,7 +709,7 @@ namespace EVCenterService.Migrations
                         },
                         new
                         {
-                            PlanId = new Guid("17a8716d-f043-4c35-9443-19751173872a"),
+                            PlanId = new Guid("62fc25c4-c7c8-4561-a6a5-4bceaa309cd6"),
                             Benefits = "Priority booking, 3 free inspections",
                             Code = "PREMIUM",
                             DurationDays = 90,
