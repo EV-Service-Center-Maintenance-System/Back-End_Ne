@@ -1,4 +1,7 @@
 using EVCenterService.Data;
+using EVCenterService.Repository.Interfaces;
+using EVCenterService.Repository.Repositories;
+using EVCenterService.Service.Interfaces;
 using EVCenterService.Service.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +13,9 @@ builder.Services.AddRazorPages();
 
 // ??ng ký PasswordHasher và JwtService (n?u b?n v?n c?n JwtService cho m?c ?ích khác)
 builder.Services.AddScoped<PasswordHasherService>();
+
+builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
+builder.Services.AddScoped<IVehicleService, VehicleService>();
 
 // DI for migrationcd EVCenterService
 builder.Services.AddDbContext<EVServiceCenterContext>(options =>

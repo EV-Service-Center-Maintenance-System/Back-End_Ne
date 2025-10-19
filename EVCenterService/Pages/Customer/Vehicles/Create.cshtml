@@ -1,0 +1,41 @@
+﻿@page
+@model EVCenterService.Pages.Customer.Vehicles.CreateModel
+@{
+	ViewData["Title"] = "Create Car";
+}
+<h2 class="mb-4">➕ Create Car</h2>
+
+<form method="post">
+    <div class="mb-3">
+        <label asp-for="Vehicle.Model" class="form-label"></label>
+        <input asp-for="Vehicle.Model" class="form-control" />
+        <span asp-validation-for="Vehicle.Model" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Vehicle.Vin" class="form-label"></label>
+        <input asp-for="Vehicle.Vin" class="form-control" />
+        <span asp-validation-for="Vehicle.Vin" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Vehicle.BatteryCapacity" class="form-label"></label>
+        <input asp-for="Vehicle.BatteryCapacity" class="form-control" />
+        <span asp-validation-for="Vehicle.BatteryCapacity" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Vehicle.Mileage" class="form-label"></label>
+        <input asp-for="Vehicle.Mileage" class="form-control" />
+        <span asp-validation-for="Vehicle.Mileage" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Vehicle.LastMaintenanceDate" class="form-label"></label>
+        <input asp-for="Vehicle.LastMaintenanceDate" type="date" class="form-control" />
+        <span asp-validation-for="Vehicle.LastMaintenanceDate" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-success">Lưu</button>
+    <a asp-page="Index" class="btn btn-secondary">Hủy</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
