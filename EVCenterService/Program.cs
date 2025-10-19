@@ -1,5 +1,5 @@
 using EVCenterService.Data;
-using EVCenterService.Service;
+using EVCenterService.Service.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 

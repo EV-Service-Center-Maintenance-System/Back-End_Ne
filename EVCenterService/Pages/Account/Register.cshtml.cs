@@ -1,7 +1,6 @@
 using EVCenterService.Data;
 using System.Security.Claims;
-using EVCenterService.Models; 
-using EVCenterService.Service; 
+using EVCenterService.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
@@ -10,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using EVCenterService.Service.Services;
 
 
 namespace Test.Pages.Account
