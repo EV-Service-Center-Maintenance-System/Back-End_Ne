@@ -11,11 +11,11 @@ body, .bg-light {
 .navbar-brand span {
     color: #1a1a1a;
 }
-/* THAY ??I T?I ?ÂY: Bo cong góc cho logo */
+
 .header-logo, .footer-logo {
     height: 40px;
     width: 40px;
-    border-radius: 12px; /* ??t giá tr? bo góc, ví d? 12px */
+    border-radius: 12px;
     margin-right: 12px;
 }
 
@@ -57,7 +57,7 @@ body, .bg-light {
         background-color: #f9fafb;
     }
 
-/* Style cho hình ?nh n?i dung ??ng ??u */
+/* Style cho hình ?nh n?i dung hàng ??u */
 .content-image {
     width: 100%;
     height: 450px;
@@ -98,7 +98,7 @@ footer a:hover {
 
 
 /* ============================================= */
-/* == B? SUNG CSS CHO LAYOUT ADMIN B?T ??U T? ?ÂY == */
+/* == CSS CHO LAYOUT ADMIN/CUSTOMER B?T ??U T? ?ÂY == */
 /* ============================================= */
 
 /* Main layout wrapper using Flexbox */

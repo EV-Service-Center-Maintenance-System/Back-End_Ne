@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Test.Pages.Technician
+namespace EVCenterService.Pages.Technician
 {
     public class IndexModel : PageModel
     {

@@ -1,0 +1,17 @@
+﻿@page
+@model EVCenterService.Pages.Customer.Vehicles.DeleteModel
+@{
+	ViewData["Title"] = "Delete Car";
+}
+<h3>Bạn có chắc muốn xóa xe này?</h3>
+
+<div class="card mt-3 p-3">
+    <p><strong>Model:</strong> @Model.Vehicle.Model</p>
+    <p><strong>VIN:</strong> @Model.Vehicle.Vin</p>
+    <p><strong>Dung lượng pin:</strong> @Model.Vehicle.BatteryCapacity</p>
+</div>
+
+<form method="post">
+    <button type="submit" class="btn btn-danger">Xác nhận xóa</button>
+    <a asp-page="Index" class="btn btn-secondary">Hủy</a>
+</form>

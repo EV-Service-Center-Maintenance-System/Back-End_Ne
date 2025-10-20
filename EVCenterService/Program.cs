@@ -1,6 +1,10 @@
 using EVCenterService.Data;
 using EVCenterService.Models;
 using EVCenterService.Service;
+using EVCenterService.Repository.Interfaces;
+using EVCenterService.Repository.Repositories;
+using EVCenterService.Service.Interfaces;
+using EVCenterService.Service.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -14,7 +18,10 @@ builder.Services.AddScoped<PasswordHasherService>();
 
 builder.Services.AddScoped<IPasswordHasher<Account>, PasswordHasher<Account>>();
 
-// migration EVCenterService
+builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
+builder.Services.AddScoped<IVehicleService, VehicleService>();
+
+// DI for migrationcd EVCenterService
 builder.Services.AddDbContext<EVServiceCenterContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -27,6 +34,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.ExpireTimeSpan = TimeSpan.FromDays(30);
         options.SlidingExpiration = true;
     });
+
 
 var app = builder.Build();
 

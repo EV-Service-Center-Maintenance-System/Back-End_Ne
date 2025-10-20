@@ -1,6 +1,6 @@
 ﻿using System.Security.Cryptography;
 
-namespace EVCenterService.Service
+namespace EVCenterService.Service.Services
 {
     public class PasswordHasherService
     {

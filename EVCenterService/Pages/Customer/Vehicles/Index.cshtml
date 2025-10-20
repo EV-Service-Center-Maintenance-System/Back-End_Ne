@@ -1,0 +1,48 @@
+﻿@page
+@model EVCenterService.Pages.Customer.Vehicles.IndexModel
+@{
+	ViewData["Title"] = "Manage Car";
+}
+<h2 class="mb-4">🚗 Manage Car</h2>
+
+<p>
+    <a asp-page="Create" class="btn btn-primary">+ Thêm xe mới</a>
+</p>
+
+@if (Model.VehicleList == null || !Model.VehicleList.Any())
+{
+    <div class="alert alert-info">Bạn chưa có xe nào được đăng ký.</div>
+}
+else
+{
+    <table class="table table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>Model</th>
+                <th>VIN</th>
+                <th>Dung lượng pin (kWh)</th>
+                <th>Số km</th>
+                <th>Ngày bảo trì gần nhất</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.VehicleList)
+            {
+                <tr>
+                    <td>@item.Model</td>
+                    <td>@item.Vin</td>
+                    <td>@item.BatteryCapacity?.ToString("0.##")</td>
+                    <td>@item.Mileage?.ToString("0.##")</td>
+                    <td>@(item.LastMaintenanceDate?.ToString("dd/MM/yyyy") ?? "-")</td>
+                    <td>
+                        <a asp-page="Edit" asp-route-id="@item.VehicleId" class="btn btn-sm btn-warning">Sửa</a>
+                        <form method="post" asp-page-handler="Delete" asp-route-id="@item.VehicleId" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Xóa xe này?');">Xóa</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

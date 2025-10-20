@@ -13,7 +13,7 @@ using AccountEntity = EVCenterService.Models.Account;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
 
-namespace Test.Pages.Account
+namespace EVCenterService.Pages.Account
 {
     public class RegisterModel : PageModel
     {

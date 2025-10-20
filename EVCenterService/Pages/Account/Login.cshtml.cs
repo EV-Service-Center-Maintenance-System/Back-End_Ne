@@ -1,5 +1,4 @@
 using EVCenterService.Data;
-using EVCenterService.Service;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using AccountEntity = EVCenterService.Models.Account;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
-namespace Test.Pages.Account
+namespace EVCenterService.Pages.Account
 {
     public class LoginModel : PageModel
     {
@@ -65,7 +64,7 @@ namespace Test.Pages.Account
                 case "Admin": return RedirectToPage("/Admin/Index");
                 case "Staff": return RedirectToPage("/Staff/Index");
                 case "Technician": return RedirectToPage("/Technician/Index");
-                default: return RedirectToPage("/Customer/Appointments/Index");
+                default: return RedirectToPage("/Customer/Index");
             }
         }
     }

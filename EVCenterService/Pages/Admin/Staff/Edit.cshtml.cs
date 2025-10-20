@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using AccountEntity = EVCenterService.Models.Account;
 
-namespace Test.Pages.Admin.Staff
+namespace EVCenterService.Pages.Admin.Staff
 {
     [Authorize(Roles = "Admin")]
     public class EditModel : PageModel
