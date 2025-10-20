@@ -1,69 +1,86 @@
 ﻿@page
 @model EVCenterService.Pages.Admin.Staff.IndexModel
 @{
-    Layout = "_AppLayout";
     ViewData["Title"] = "Quản lý nhân sự";
+    Layout = "_AppLayout";
 }
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="h2 text-primary fw-bold">@ViewData["Title"]</h1>
-    <a asp-page="Create" class="btn btn-primary">
-        <i class="bi bi-plus-circle me-2"></i>Thêm Mới
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h1>@ViewData["Title"]</h1>
+        <p class="lead mb-0 text-muted">Thêm, sửa, khóa và phân quyền cho nhân viên.</p>
+    </div>
+    <a asp-page="Create" class="btn btn-add-new">
+        <i class="bi bi-plus-lg me-2"></i>Thêm nhân viên mới
     </a>
 </div>
 
-@if (TempData["StatusMessage"] is not null)
-{
-    <div class="alert alert-success">@TempData["StatusMessage"]</div>
-}
+<div class="card data-card border-0">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h5 class="card-title mb-0">Danh sách nhân viên</h5>
+                <p class="text-muted small mb-0">Tổng số: @Model.StaffList.Count nhân viên</p>
+            </div>
+            <div class="search-bar px-3 py-1 d-flex align-items-center">
+                <i class="bi bi-search me-2 text-muted"></i>
+                <input type="text" class="form-control" placeholder="Tìm theo tên hoặc email...">
+            </div>
+        </div>
 
-<div class="card">
-    <div class="table-responsive">
-        <table class="table align-middle">
-            <thead>
-                <tr>
-                    <th>Tên nhân viên</th>
-                    <th>Vai trò</th>
-                    <th>Liên hệ</th>
-                    <th>Trạng thái</th>
-                    <th class="text-end">Hành động</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var user in Model.StaffList)
-                {
+        <div class="table-responsive">
+            <table class="table table-borderless table-custom">
+                <thead>
                     <tr>
-                        <td>
-                            <div class="fw-bold">@user.FullName</div>
-                            <div class="text-secondary small">@user.Email</div>
-                        </td>
-                        <td>
-                            @if (user.Role == "Technican")
-                            {
-                                <span class="badge rounded-pill" style="background-color: #95a5a6;">@user.Role</span>
-                            }
-                            else
-                            {
-                                <span class="badge rounded-pill" style="background-color: #3498db;">@user.Role</span>
-                            }
-                        </td>
-                        <td>@user.Phone</td>
-                        <td>
-                            <span class="badge rounded-pill @(user.Status == "Active" ? "bg-success" : "bg-danger")">@user.Status</span>
-                        </td>
-                        <td class="text-end">
-                            <div class="btn-group">
-                                <a asp-page="./Edit" asp-route-id="@user.UserId" class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i> Sửa</a>
+                        <th>Tên nhân viên</th>
+                        <th>Email</th>
+                        <th>Số điện thoại</th>
+                        <th>Vai trò</th>
+                        <th>Trạng thái</th>
+                        <th class="text-end">Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model.StaffList)
+                    {
+                        <tr>
+                            <td><span class="fw-bold">@user.FullName</span></td>
+                            <td class="text-muted">@user.Email</td>
+                            <td class="text-muted">@user.Phone</td>
+                            <td>
+                                @if (user.Role == "Technician")
+                                {
+                                    <span class="badge" style="background-color: #374151; color: #d1d5db;">@user.Role</span>
+                                }
+                                else
+                                {
+                                    <span class="badge" style="background-color: rgba(99, 102, 241, 0.2); color: #c7d2fe;">@user.Role</span>
+                                }
+                            </td>
+                            <td>
+                                <span class="badge-custom @(user.Status == "Active" ? "badge-active" : "badge-locked")">
+                                    @(user.Status == "Active" ? "Hoạt động" : "Bị khóa")
+                                </span>
+                            </td>
+                            <td class="text-end">
+                                <a asp-page="./Edit" asp-route-id="@user.UserId" class="btn action-btn me-1"><i class="bi bi-pencil-square"></i></a>
                                 <form method="post" asp-page-handler="ToggleStatus" asp-route-id="@user.UserId" class="d-inline">
-                                    <button type="submit" class="btn btn-sm btn-outline-danger">
-                                        <i class="bi bi-lock"></i> @(user.Status == "Active" ? "Khóa" : "Mở khóa")
+                                    <button type="submit" class="btn action-btn">
+                                        @if (user.Status == "Active")
+                                        {
+                                            <i class="bi bi-lock-fill text-danger"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="bi bi-unlock-fill text-success"></i>
+                                        }
                                     </button>
                                 </form>
-                            </div>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>

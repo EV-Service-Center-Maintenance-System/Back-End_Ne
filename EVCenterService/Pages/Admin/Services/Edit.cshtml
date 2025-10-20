@@ -1,0 +1,51 @@
+﻿@page "{id:int}"
+@model EVCenterService.Pages.Admin.Services.EditModel
+@{
+    ViewData["Title"] = "Chỉnh Sửa Dịch Vụ";
+    Layout = "_AppLayout";
+}
+
+<h2 class="mb-4 text-white">@ViewData["Title"]: @Model.Service.Name</h2>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-body">
+                <form method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                    <input type="hidden" asp-for="Service.ServiceId" />
+
+                    <div class="mb-3">
+                        <label asp-for="Service.Name" class="form-label">Tên Dịch Vụ</label>
+                        <input asp-for="Service.Name" class="form-control" />
+                        <span asp-validation-for="Service.Name" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Service.Description" class="form-label">Mô Tả</label>
+                        <textarea asp-for="Service.Description" class="form-control" rows="3"></textarea>
+                        <span asp-validation-for="Service.Description" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Service.BasePrice" class="form-label">Giá Cơ Bản (VNĐ)</label>
+                        <input asp-for="Service.BasePrice" class="form-control" type="number" />
+                        <span asp-validation-for="Service.BasePrice" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Service.DurationMinutes" class="form-label">Thời Gian Thực Hiện (phút)</label>
+                        <input asp-for="Service.DurationMinutes" class="form-control" type="number" />
+                        <span asp-validation-for="Service.DurationMinutes" class="text-danger"></span>
+                    </div>
+                    <hr class="my-4" />
+                    <button type="submit" class="btn btn-primary">Lưu Thay Đổi</button>
+                    <a asp-page="./Index" class="btn btn-secondary">Hủy</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

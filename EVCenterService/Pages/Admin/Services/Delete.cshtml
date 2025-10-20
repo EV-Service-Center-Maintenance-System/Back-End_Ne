@@ -1,0 +1,37 @@
+﻿@page "{id:int}"
+@model EVCenterService.Pages.Admin.Services.DeleteModel
+@{
+    ViewData["Title"] = "Xóa Dịch Vụ";
+    Layout = "_AppLayout";
+}
+
+<h2 class="mb-4 text-danger">Xác nhận Xóa Dịch Vụ</h2>
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-danger">@Model.ErrorMessage</div>
+    <a asp-page="./Index" class="btn btn-primary">Quay lại Danh sách</a>
+}
+else
+{
+    <h3>Bạn có chắc chắn muốn xóa dịch vụ "@Model.Service.Name" không?</h3>
+    <p>Hành động này không thể hoàn tác.</p>
+    <hr />
+
+    <div class="card">
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">Mô tả:</dt>
+                <dd class="col-sm-9">@Model.Service.Description</dd>
+                <dt class="col-sm-3">Giá cơ bản:</dt>
+                <dd class="col-sm-9">@Model.Service.BasePrice?.ToString("N0") đ</dd>
+            </dl>
+        </div>
+    </div>
+    <br />
+    <form method="post">
+        <input type="hidden" asp-for="Service.ServiceId" />
+        <button type="submit" class="btn btn-danger">Xác nhận Xóa</button>
+        <a asp-page="./Index" class="btn btn-secondary">Hủy</a>
+    </form>
+}

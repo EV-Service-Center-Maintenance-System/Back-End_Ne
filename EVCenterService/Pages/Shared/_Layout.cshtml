@@ -3,22 +3,54 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>EV Service Center</title>
+    <title>@ViewData["Title"] - EV Service Center</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
-<body class="bg-white">
-    <header class="bg-white shadow-sm sticky-top py-2">
+<body class="@(ViewData["Title"] == "Trang chủ" ? "dark-theme-body" : "")">
+    <header class="public-header">
         <nav class="navbar navbar-expand-lg">
             <div class="container">
-                <a class="navbar-brand d-flex align-items-center" href="/">
+                <a class="navbar-brand d-flex align-items-center" asp-area="" asp-page="/Index">
                     <img src="~/images/evolve-auto-logo.jpg" alt="EV Service Center Logo" class="header-logo">
                     <span class="fw-bold fs-5">EV Service Center</span>
                 </a>
-                <div class="ms-auto">
-                    <a class="btn btn-link text-dark text-decoration-none me-2" href="/Account/Login">Đăng nhập</a>
-                    <a class="btn btn-dark" href="/Account/Register">Đăng ký ngay</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-lg-inline-flex justify-content-end">
+                    <ul class="navbar-nav">
+                        @if (User.Identity != null && User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Chào, @User.FindFirst(System.Security.Claims.ClaimTypes.GivenName)?.Value
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    @if (User.IsInRole("Admin"))
+                                    {
+                                        <li><a class="dropdown-item" asp-page="/Admin/Index">Trang quản trị</a></li>
+                                    }
+                                    else
+                                    {
+                                        <li><a class="dropdown-item" asp-page="/Customer/Index">Trang cá nhân</a></li>
+                                    }
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" asp-page="/Account/Logout">Đăng xuất</a></li>
+                                </ul>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="btn btn-secondary me-2" asp-page="/Account/Login">Đăng nhập</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="btn btn-primary" asp-page="/Account/Register">Đăng ký</a>
+                            </li>
+                        }
+                    </ul>
                 </div>
             </div>
         </nav>
@@ -28,7 +60,7 @@
         @RenderBody()
     </main>
 
-    <footer class="bg-white border-top pt-5 pb-4 mt-5">
+    <footer class="pt-5 pb-4 mt-5">
         <div class="container">
             <div class="row gy-4">
                 <div class="col-lg-4 col-md-6">
@@ -36,36 +68,33 @@
                         <img src="~/images/evolve-auto-logo.jpg" alt="EV Service Center Logo" class="footer-logo">
                         <span class="fw-bold fs-5">EV Service Center</span>
                     </div>
-                    <p class="text-muted">Trung tâm dịch vụ xe điện hàng đầu Việt Nam.</p>
+                    <p>Trung tâm dịch vụ xe điện hàng đầu Việt Nam.</p>
                 </div>
-                <div class="col-lg-2 col-md-6">
+                <div class="col-lg-2 offset-lg-1 col-md-6">
                     <h6 class="fw-bold">Dịch vụ</h6>
                     <ul class="list-unstyled">
-                        <li><a href="#" class="text-muted text-decoration-none">Bảo dưỡng định kỳ</a></li>
-                        <li><a href="#" class="text-muted text-decoration-none">Sửa chữa</a></li>
-                        <li><a href="#" class="text-muted text-decoration-none">Thay thế phụ tùng</a></li>
-                        <li><a href="#" class="text-muted text-decoration-none">Tư vấn kỹ thuật</a></li>
+                        <li><a href="#" class="text-decoration-none">Bảo dưỡng định kỳ</a></li>
+                        <li><a href="#" class="text-decoration-none">Sửa chữa</a></li>
+                        <li><a href="#" class="text-decoration-none">Thay thế phụ tùng</a></li>
                     </ul>
                 </div>
-                <div class="col-lg-3 col-md-6">
+                <div class="col-lg-2 col-md-6">
                     <h6 class="fw-bold">Liên hệ</h6>
-                    <ul class="list-unstyled text-muted">
+                    <ul class="list-unstyled">
                         <li>Hotline: 1900-xxxx</li>
                         <li>Email: support@ev.com</li>
-                        <li>Giờ làm việc: 8:00 - 20:00</li>
                     </ul>
                 </div>
-                <div class="col-lg-3 col-md-6">
+                <div class="col-lg-2 col-md-6">
                     <h6 class="fw-bold">Theo dõi</h6>
                     <ul class="list-unstyled">
-                        <li><a href="#" class="text-muted text-decoration-none">Facebook</a></li>
-                        <li><a href="#" class="text-muted text-decoration-none">Instagram</a></li>
-                        <li><a href="#" class="text-muted text-decoration-none">YouTube</a></li>
+                        <li><a href="#" class="text-decoration-none">Facebook</a></li>
+                        <li><a href="#" class="text-decoration-none">Instagram</a></li>
                     </ul>
                 </div>
             </div>
             <hr class="my-4">
-            <div class="text-center text-muted small">
+            <div class="text-center small">
                 &copy; 2025 - EV Service Center. All rights reserved.
             </div>
         </div>

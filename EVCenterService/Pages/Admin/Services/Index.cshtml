@@ -1,0 +1,58 @@
+﻿@page
+@model EVCenterService.Pages.Admin.Services.IndexModel
+@{
+    ViewData["Title"] = "Quản lý dịch vụ";
+    Layout = "_AppLayout";
+}
+
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h1>@ViewData["Title"]</h1>
+        <p class="lead mb-0">Thêm, sửa và quản lý các gói dịch vụ.</p>
+    </div>
+    <a asp-page="Create" class="btn btn-add-new">
+        <i class="bi bi-plus-lg me-2"></i>Thêm dịch vụ mới
+    </a>
+</div>
+
+<div class="card data-card">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h5 class="card-title mb-0">Danh sách dịch vụ</h5>
+                <p class="text-muted small mb-0">Tổng số: @Model.ServiceList.Count dịch vụ</p>
+            </div>
+            <div class="search-bar px-3 py-1 d-flex align-items-center">
+                <i class="bi bi-search me-2 text-muted"></i>
+                <input type="text" class="form-control" placeholder="Tìm kiếm dịch vụ...">
+            </div>
+        </div>
+
+        <table class="table table-custom">
+            <thead>
+                <tr>
+                    <th>Tên dịch vụ</th>
+                    <th>Mô tả</th>
+                    <th>Thời gian</th>
+                    <th>Giá</th>
+                    <th class="text-end">Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.ServiceList)
+                {
+                    <tr>
+                        <td><span class="fw-bold">@item.Name</span></td>
+                        <td>@item.Description</td>
+                        <td>@item.DurationMinutes phút</td>
+                        <td>@item.BasePrice?.ToString("N0") đ</td>
+                        <td class="text-end">
+                            <a asp-page="./Edit" asp-route-id="@item.ServiceId" class="btn action-btn me-1"><i class="bi bi-pencil-square"></i></a>
+                            <a asp-page="./Delete" asp-route-id="@item.ServiceId" class="btn action-btn"><i class="bi bi-trash-fill"></i></a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
