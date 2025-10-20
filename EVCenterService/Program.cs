@@ -1,9 +1,12 @@
 using EVCenterService.Data;
+using EVCenterService.Models;
+using EVCenterService.Service;
 using EVCenterService.Repository.Interfaces;
 using EVCenterService.Repository.Repositories;
 using EVCenterService.Service.Interfaces;
 using EVCenterService.Service.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,8 +14,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 
-// ??ng ký PasswordHasher và JwtService (n?u b?n v?n c?n JwtService cho m?c ?ích khác)
 builder.Services.AddScoped<PasswordHasherService>();
+
+builder.Services.AddScoped<IPasswordHasher<Account>, PasswordHasher<Account>>();
 
 builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
 builder.Services.AddScoped<IVehicleService, VehicleService>();
@@ -31,6 +35,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.SlidingExpiration = true;
     });
 
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -44,12 +49,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
-// B?t Authentication và Authorization
 app.UseAuthentication();
 app.UseAuthorization();
-
-// Xóa MapControllers() n?u b?n không dùng API Controller
-// app.MapControllers(); 
 
 app.MapRazorPages();
 

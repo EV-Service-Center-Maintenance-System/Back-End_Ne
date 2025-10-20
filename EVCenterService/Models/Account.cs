@@ -39,6 +39,10 @@ public partial class Account
     [Unicode(false)]
     public string? Certification { get; set; }
 
+    [StringLength(50)]
+    [Unicode(false)]
+    public string Status { get; set; } = "Active";
+
     [InverseProperty("User")]
     public virtual ICollection<Feedback> Feedbacks { get; set; } = new List<Feedback>();
 

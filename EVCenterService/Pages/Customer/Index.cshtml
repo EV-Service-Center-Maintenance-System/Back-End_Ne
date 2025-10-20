@@ -1,0 +1,30 @@
+﻿@page
+@model EVCenterService.Pages.Customer.IndexModel
+@{
+    ViewData["Title"] = "Customer Dashboard";
+}
+
+<div class="container">
+    <h1 class="my-4">Chào mừng trở lại, @User.Identity.Name!</h1>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Quản lý Xe</h5>
+                    <p class="card-text">Thêm, sửa, hoặc xóa thông tin các xe của bạn.</p>
+                    <a asp-page="/Customer/Vehicles/Index" class="btn btn-primary">Đi đến quản lý xe</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Lịch hẹn & Lịch sử</h5>
+                    <p class="card-text">Xem trạng thái các cuộc hẹn và lịch sử dịch vụ.</p>
+                    <a asp-page="/Customer/Appointments/Index" class="btn btn-primary">Xem lịch hẹn</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

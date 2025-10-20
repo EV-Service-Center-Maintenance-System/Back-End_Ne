@@ -1,7 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using EVCenterService.Models;
+﻿using EVCenterService.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
 
 namespace EVCenterService.Data;
 
@@ -218,13 +219,72 @@ public partial class EVServiceCenterContext : DbContext
         // --- BẢNG: Account ---
         // LƯU Ý: Trong thực tế, bạn PHẢI HASH mật khẩu này.
         // Ví dụ: Password = new PasswordHasherService().HashPassword("123456")
+        var passwordHasher = new PasswordHasher<Account>();
+
+        // Sử dụng đối tượng trên để mã hóa mật khẩu cho từng tài khoản
         modelBuilder.Entity<Account>().HasData(
-            new Account { UserId = adminId, FullName = "Admin", Email = "admin@gmail.com", Phone = "0901000001", Password = "hashed_password_placeholder", Role = "Admin" },
-            new Account { UserId = tech1Id, FullName = "Tran Van B", Email = "tech1@gmail.com", Phone = "0902000002", Password = "hashed_password_placeholder", Role = "Technician", Certification = "EV Maintenance Level 1" },
-            new Account { UserId = tech2Id, FullName = "Le Thi C", Email = "tech2@gmail.com", Phone = "0903000003", Password = "hashed_password_placeholder", Role = "Technician", Certification = "EV Battery Specialist" },
-            new Account { UserId = staffId, FullName = "Phan Anh C", Email = "staff@gmail.com", Phone = "0906000006", Password = "hashed_password_placeholder", Role = "Staff" },
-            new Account { UserId = customer1Id, FullName = "Pham Van D", Email = "user1@gmail.com", Phone = "0904000004", Password = "hashed_password_placeholder", Role = "Customer" },
-            new Account { UserId = customer2Id, FullName = "Do Thi E", Email = "user2@gmail.com", Phone = "0905000005", Password = "hashed_password_placeholder", Role = "Customer" }
+            new Account
+            {
+                UserId = adminId,
+                FullName = "Admin",
+                Email = "admin@gmail.com",
+                Phone = "0901000001",
+                Role = "Admin",
+                Status = "Active",
+                Password = passwordHasher.HashPassword(null, "123456")
+            },
+            new Account
+            {
+                UserId = tech1Id,
+                FullName = "Tran Van B",
+                Email = "tech1@gmail.com",
+                Phone = "0902000002",
+                Role = "Technician",
+                Certification = "EV Maintenance Level 1",
+                Status = "Active",
+                Password = passwordHasher.HashPassword(null, "123456")
+            },
+            new Account
+            {
+                UserId = tech2Id,
+                FullName = "Le Thi C",
+                Email = "tech2@gmail.com",
+                Phone = "0903000003",
+                Role = "Technician",
+                Certification = "EV Battery Specialist",
+                Status = "Active",
+                Password = passwordHasher.HashPassword(null, "123456")
+            },
+            new Account
+            {
+                UserId = staffId,
+                FullName = "Phan Anh C",
+                Email = "staff@gmail.com",
+                Phone = "0906000006",
+                Role = "Staff",
+                Status = "Active",
+                Password = passwordHasher.HashPassword(null, "123456")
+            },
+            new Account
+            {
+                UserId = customer1Id,
+                FullName = "Pham Van D",
+                Email = "user1@gmail.com",
+                Phone = "0904000004",
+                Role = "Customer",
+                Status = "Active",
+                Password = passwordHasher.HashPassword(null, "123456")
+            },
+            new Account
+            {
+                UserId = customer2Id,
+                FullName = "Do Thi E",
+                Email = "user2@gmail.com",
+                Phone = "0905000005",
+                Role = "Customer",
+                Status = "Active",
+                Password = passwordHasher.HashPassword(null, "123456")
+            }
         );
 
         // --- BẢNG: MaintenanceCenter ---
@@ -241,13 +301,13 @@ public partial class EVServiceCenterContext : DbContext
             new Part { PartId = 4, Name = "Coolant Fluid", Type = "Chemical", Brand = "Shell", UnitPrice = 500000m }
         );
 
-        // --- BẢNG: Storage ---
-        modelBuilder.Entity<Storage>().HasData(
-            new Storage { StorageId = 1, CenterId = 1, PartId = 1, Quantity = 10, MinThreshold = 3 },
-            new Storage { StorageId = 2, CenterId = 1, PartId = 2, Quantity = 5, MinThreshold = 2 },
-            new Storage { StorageId = 3, CenterId = 2, PartId = 3, Quantity = 8, MinThreshold = 3 },
-            new Storage { StorageId = 4, CenterId = 2, PartId = 4, Quantity = 15, MinThreshold = 5 }
-        );
+        //// --- BẢNG: Storage ---
+        //modelBuilder.Entity<Storage>().HasData(
+        //    new Storage { StorageId = 1, CenterId = 1, PartId = 1, Quantity = 10, MinThreshold = 3 },
+        //    new Storage { StorageId = 2, CenterId = 1, PartId = 2, Quantity = 5, MinThreshold = 2 },
+        //    new Storage { StorageId = 3, CenterId = 2, PartId = 3, Quantity = 8, MinThreshold = 3 },
+        //    new Storage { StorageId = 4, CenterId = 2, PartId = 4, Quantity = 15, MinThreshold = 5 }
+        //);
 
         // --- BẢNG: ServiceCatalog ---
         modelBuilder.Entity<ServiceCatalog>().HasData(
@@ -257,40 +317,40 @@ public partial class EVServiceCenterContext : DbContext
             new ServiceCatalog { ServiceId = 4, Name = "General Inspection", Description = "Full vehicle health check", BasePrice = 1000000m, DurationMinutes = 90 }
         );
 
-        // --- BẢNG: Vehicle ---
-        modelBuilder.Entity<Vehicle>().HasData(
-            new Vehicle { VehicleId = 1, UserId = customer1Id, Vin = "VN123456789ABCDEFG", Model = "VinFast VF8", BatteryCapacity = 82.0m, Mileage = 15000m, LastMaintenanceDate = new DateOnly(2025, 8, 15) },
-            new Vehicle { VehicleId = 2, UserId = customer2Id, Vin = "VN999999999ABCDEFG", Model = "Tesla Model Y", BatteryCapacity = 75.5m, Mileage = 22000m, LastMaintenanceDate = new DateOnly(2025, 9, 20) }
-        );
+        //// --- BẢNG: Vehicle ---
+        //modelBuilder.Entity<Vehicle>().HasData(
+        //    new Vehicle { VehicleId = 1, UserId = customer1Id, Vin = "VN123456789ABCDEFG", Model = "VinFast VF8", BatteryCapacity = 82.0m, Mileage = 15000m, LastMaintenanceDate = new DateOnly(2025, 8, 15) },
+        //    new Vehicle { VehicleId = 2, UserId = customer2Id, Vin = "VN999999999ABCDEFG", Model = "Tesla Model Y", BatteryCapacity = 75.5m, Mileage = 22000m, LastMaintenanceDate = new DateOnly(2025, 9, 20) }
+        //);
 
-        // --- BẢNG: OrderService ---
-        modelBuilder.Entity<OrderService>().HasData(
-            new OrderService { OrderId = 1, VehicleId = 1, UserId = customer1Id, AppointmentDate = new DateTime(2025, 10, 5), Status = "Completed", ChecklistNote = "Replaced brake pads, coolant check", TotalCost = 2500000m },
-            new OrderService { OrderId = 2, VehicleId = 2, UserId = customer2Id, AppointmentDate = new DateTime(2025, 10, 7), Status = "Pending", ChecklistNote = "General checkup", TotalCost = 1000000m }
-        );
+        //// --- BẢNG: OrderService ---
+        //modelBuilder.Entity<OrderService>().HasData(
+        //    new OrderService { OrderId = 1, VehicleId = 1, UserId = customer1Id, AppointmentDate = new DateTime(2025, 10, 5), Status = "Completed", ChecklistNote = "Replaced brake pads, coolant check", TotalCost = 2500000m },
+        //    new OrderService { OrderId = 2, VehicleId = 2, UserId = customer2Id, AppointmentDate = new DateTime(2025, 10, 7), Status = "Pending", ChecklistNote = "General checkup", TotalCost = 1000000m }
+        //);
 
-        // --- BẢNG: OrderDetail ---
-        modelBuilder.Entity<OrderDetail>().HasData(
-            new OrderDetail { OrderDetailId = 1, OrderId = 1, ServiceId = 2, Quantity = 1, UnitPrice = 1500000m },
-            new OrderDetail { OrderDetailId = 2, OrderId = 1, ServiceId = 3, Quantity = 1, UnitPrice = 1000000m },
-            new OrderDetail { OrderDetailId = 3, OrderId = 2, ServiceId = 4, Quantity = 1, UnitPrice = 1000000m }
-        );
+        //// --- BẢNG: OrderDetail ---
+        //modelBuilder.Entity<OrderDetail>().HasData(
+        //    new OrderDetail { OrderDetailId = 1, OrderId = 1, ServiceId = 2, Quantity = 1, UnitPrice = 1500000m },
+        //    new OrderDetail { OrderDetailId = 2, OrderId = 1, ServiceId = 3, Quantity = 1, UnitPrice = 1000000m },
+        //    new OrderDetail { OrderDetailId = 3, OrderId = 2, ServiceId = 4, Quantity = 1, UnitPrice = 1000000m }
+        //);
 
-        // --- BẢNG: PartsUsed ---
-        modelBuilder.Entity<PartsUsed>().HasData(
-            new PartsUsed { UsageId = 1, OrderId = 1, PartId = 3, Quantity = 4, Note = "Brake pads replaced" },
-            new PartsUsed { UsageId = 2, OrderId = 1, PartId = 4, Quantity = 1, Note = "Coolant refilled" }
-        );
+        //// --- BẢNG: PartsUsed ---
+        //modelBuilder.Entity<PartsUsed>().HasData(
+        //    new PartsUsed { UsageId = 1, OrderId = 1, PartId = 3, Quantity = 4, Note = "Brake pads replaced" },
+        //    new PartsUsed { UsageId = 2, OrderId = 1, PartId = 4, Quantity = 1, Note = "Coolant refilled" }
+        //);
 
         // --- BẢNG: Slot ---
         // Lưu ý: EF Core không hỗ trợ seeding với kiểu dữ liệu TIME,
         // nên chúng ta sẽ dùng DateTime và bỏ qua phần ngày.
         // Hoặc tốt hơn là đổi kiểu dữ liệu cột trong Model thành DateTime.
         // Giả định bạn đã đổi cột StartTime/EndTime thành DateTime trong Model.
-        modelBuilder.Entity<Slot>().HasData(
-            new Slot { SlotId = 1, CenterId = 1, TechnicianId = tech1Id, OrderId = 1, StartTime = new DateTime(2025, 10, 5, 8, 0, 0), EndTime = new DateTime(2025, 10, 5, 12, 0, 0) },
-            new Slot { SlotId = 2, CenterId = 2, TechnicianId = tech2Id, OrderId = null, StartTime = new DateTime(2025, 10, 9, 13, 0, 0), EndTime = new DateTime(2025, 10, 9, 17, 0, 0) }
-        );
+        //modelBuilder.Entity<Slot>().HasData(
+        //    new Slot { SlotId = 1, CenterId = 1, TechnicianId = tech1Id, OrderId = 1, StartTime = new DateTime(2025, 10, 5, 8, 0, 0), EndTime = new DateTime(2025, 10, 5, 12, 0, 0) },
+        //    new Slot { SlotId = 2, CenterId = 2, TechnicianId = tech2Id, OrderId = null, StartTime = new DateTime(2025, 10, 9, 13, 0, 0), EndTime = new DateTime(2025, 10, 9, 17, 0, 0) }
+        //);
 
         // --- BẢNG: SubscriptionPlan ---
         modelBuilder.Entity<SubscriptionPlan>().HasData(
@@ -298,26 +358,26 @@ public partial class EVServiceCenterContext : DbContext
             new SubscriptionPlan { PlanId = planPremiumId, Code = "PREMIUM", Name = "Premium Care", PriceVnd = 999000m, DurationDays = 90, Benefits = "Priority booking, 3 free inspections", IsActive = true }
         );
 
-        // --- BẢNG: Subscription ---
-        modelBuilder.Entity<Subscription>().HasData(
-            new Subscription { SubscriptionId = subscription1Id, UserId = customer1Id, PlanId = planPremiumId, StartDate = new DateTime(2025, 9, 1), EndDate = new DateTime(2025, 12, 1), AutoRenew = true, Status = "active", CreatedAt = DateTime.Now }
-        );
+        //// --- BẢNG: Subscription ---
+        //modelBuilder.Entity<Subscription>().HasData(
+        //    new Subscription { SubscriptionId = subscription1Id, UserId = customer1Id, PlanId = planPremiumId, StartDate = new DateTime(2025, 9, 1), EndDate = new DateTime(2025, 12, 1), AutoRenew = true, Status = "active", CreatedAt = DateTime.Now }
+        //);
 
-        // --- BẢNG: Invoice ---
-        modelBuilder.Entity<Invoice>().HasData(
-            new Invoice { InvoiceId = 1, SubscriptionId = subscription1Id, Amount = 999000m, Status = "Paid", IssueDate = new DateTime(2025, 9, 1), DueDate = new DateTime(2025, 9, 7) }
-        );
+        //// --- BẢNG: Invoice ---
+        //modelBuilder.Entity<Invoice>().HasData(
+        //    new Invoice { InvoiceId = 1, SubscriptionId = subscription1Id, Amount = 999000m, Status = "Paid", IssueDate = new DateTime(2025, 9, 1), DueDate = new DateTime(2025, 9, 7) }
+        //);
 
-        // --- BẢNG: Notification ---
-        modelBuilder.Entity<Notification>().HasData(
-            new Notification { NotificationId = 1, ReceiverId = customer1Id, Content = "Your vehicle maintenance is completed.", Type = "StatusUpdate", TriggerDate = DateTime.Now, IsRead = false },
-            new Notification { NotificationId = 2, ReceiverId = customer2Id, Content = "Your appointment is scheduled for tomorrow.", Type = "MaintenanceReminder", TriggerDate = DateTime.Now, IsRead = false }
-        );
+        //// --- BẢNG: Notification ---
+        //modelBuilder.Entity<Notification>().HasData(
+        //    new Notification { NotificationId = 1, ReceiverId = customer1Id, Content = "Your vehicle maintenance is completed.", Type = "StatusUpdate", TriggerDate = DateTime.Now, IsRead = false },
+        //    new Notification { NotificationId = 2, ReceiverId = customer2Id, Content = "Your appointment is scheduled for tomorrow.", Type = "MaintenanceReminder", TriggerDate = DateTime.Now, IsRead = false }
+        //);
 
-        // --- BẢNG: Feedback ---
-        modelBuilder.Entity<Feedback>().HasData(
-            new Feedback { FeedbackId = 1, OrderId = 1, UserId = customer1Id, Rating = 5, Comment = "Excellent service! Technician was professional.", CreatedAt = DateTime.Now }
-        );
+        //// --- BẢNG: Feedback ---
+        //modelBuilder.Entity<Feedback>().HasData(
+        //    new Feedback { FeedbackId = 1, OrderId = 1, UserId = customer1Id, Rating = 5, Comment = "Excellent service! Technician was professional.", CreatedAt = DateTime.Now }
+        //);
 
         #endregion
 

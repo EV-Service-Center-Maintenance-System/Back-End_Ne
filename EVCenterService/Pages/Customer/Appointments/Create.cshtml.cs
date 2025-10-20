@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Test.Pages.Customer.Appointments
+namespace EVCenterService.Pages.Customer.Appointments
 {
     public class CreateModel : PageModel
     {

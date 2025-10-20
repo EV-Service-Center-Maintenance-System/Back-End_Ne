@@ -1,0 +1,97 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EV Service Center</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+    <div class="wrapper">
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <a asp-page="/Index">
+                    <img src="~/images/evolve-auto-logo.png" alt="EV Service Center Logo" class="sidebar-logo">
+                </a>
+            </div>
+            <ul class="nav flex-column sidebar-nav">
+
+                @if (User.IsInRole("Admin"))
+                {
+                    <li class="nav-item">
+                        <a class="nav-link @(Context.Request.Path.StartsWithSegments("/Admin/Index") ? "active" : "")" asp-page="/Admin/Index">
+                            <i class="bi bi-grid"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @(Context.Request.Path.StartsWithSegments("/Admin/Staff") ? "active" : "")" asp-page="/Admin/Staff/Index">
+                            <i class="bi bi-people"></i> Quản lý nhân sự
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-page="/Admin/Services/Index">
+                            <i class="bi bi-tools"></i> Quản lý dịch vụ
+                        </a>
+                    </li>
+                }
+
+                @if (User.IsInRole("Staff"))
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" asp-page="/Staff/Appointments/Index">
+                            <i class="bi bi-calendar-week"></i> Quản lý lịch hẹn
+                        </a>
+                    </li>
+                }
+
+                @if (User.IsInRole("Customer"))
+                {
+                    <li class="nav-item">
+                        <a class="nav-link @(Context.Request.Path.StartsWithSegments("/Customer/Index") ? "active" : "")" asp-page="/Customer/Index">
+                            <i class="bi bi-grid"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @(Context.Request.Path.StartsWithSegments("/Customer/Appointments/Create") ? "active" : "")" asp-page="/Customer/Appointments/Create">
+                            <i class="bi bi-plus-circle"></i> Đặt lịch dịch vụ
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @(Context.Request.Path.StartsWithSegments("/Customer/Appointments/Index") ? "active" : "")" asp-page="/Customer/Appointments/Index">
+                            <i class="bi bi-clock-history"></i> Lịch sử dịch vụ
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @(Context.Request.Path.StartsWithSegments("/Customer/Vehicles") ? "active" : "")" asp-page="/Customer/Vehicles/Index">
+                            <i class="bi bi-car-front-fill"></i> Quản lý xe
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @(Context.Request.Path.StartsWithSegments("/Customer/Profile") ? "active" : "")" asp-page="/Customer/Profile">
+                            <i class="bi bi-person-circle"></i> Hồ sơ của tôi
+                        </a>
+                    </li>
+                }
+            </ul>
+
+            <ul class="nav flex-column sidebar-nav mt-auto">
+                <li class="nav-item">
+                    <a class="nav-link" asp-page="/Account/Logout">
+                        <i class="bi bi-box-arrow-left"></i> Đăng xuất
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="main-content">
+            <main role="main" class="pb-3">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,7 +1,7 @@
-﻿@page "{id:guid}"
-@model EVCenterService.Pages.Admin.Staff.EditModel
+﻿@page
+@model EVCenterService.Pages.Admin.Staff.CreateModel
 @{
-    ViewData["Title"] = "Chỉnh sửa thông tin nhân sự";
+    ViewData["Title"] = "Thêm Mới Nhân Sự";
     Layout = "_AppLayout";
 }
 
@@ -13,8 +13,6 @@
             <div class="card-body">
                 <form method="post">
                     <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
-                    <input type="hidden" asp-for="StaffAccount.UserId" />
-                    <input type="hidden" asp-for="StaffAccount.Password" />
 
                     <div class="mb-3">
                         <label asp-for="StaffAccount.FullName" class="form-label">Họ và Tên</label>
@@ -31,19 +29,21 @@
                         <input asp-for="StaffAccount.Phone" class="form-control" />
                     </div>
                     <div class="mb-3">
-                        <label asp-for="NewPassword" class="form-label">Mật khẩu mới (để trống nếu không đổi)</label>
-                        <input asp-for="NewPassword" type="password" class="form-control" />
+                        <label asp-for="StaffAccount.Password" class="form-label">Mật khẩu</label>
+                        <input asp-for="StaffAccount.Password" type="password" class="form-control" />
+                        <span asp-validation-for="StaffAccount.Password" class="text-danger"></span>
                     </div>
                     <div class="mb-3">
                         <label asp-for="StaffAccount.Role" class="form-label">Vai trò</label>
                         <select asp-for="StaffAccount.Role" class="form-select">
+                            <option value="">-- Chọn vai trò --</option>
                             <option value="Staff">Staff</option>
                             <option value="Technican">Technican</option>
                         </select>
                         <span asp-validation-for="StaffAccount.Role" class="text-danger"></span>
                     </div>
 
-                    <button type="submit" class="btn btn-primary">Lưu Thay Đổi</button>
+                    <button type="submit" class="btn btn-primary">Tạo Mới</button>
                     <a asp-page="./Index" class="btn btn-secondary">Hủy</a>
                 </form>
             </div>

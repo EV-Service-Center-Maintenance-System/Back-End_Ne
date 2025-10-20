@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Test.Pages.Admin
+namespace EVCenterService.Pages.Admin
 {
     [Authorize(Roles = "Admin")]
     public class IndexModel : PageModel
