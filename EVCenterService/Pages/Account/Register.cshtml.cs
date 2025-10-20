@@ -10,7 +10,6 @@ using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using AccountEntity = EVCenterService.Models.Account;
-using Microsoft.AspNetCore.Authentication.Cookies;
 
 
 namespace EVCenterService.Pages.Account

@@ -1,7 +1,7 @@
 ﻿@page
 @model EVCenterService.Pages.Customer.Vehicles.IndexModel
 @{
-	ViewData["Title"] = "Manage Car";
+    ViewData["Title"] = "Manage Car";
 }
 <h2 class="mb-4">🚗 Manage Car</h2>
 
@@ -35,11 +35,12 @@ else
                     <td>@item.BatteryCapacity?.ToString("0.##")</td>
                     <td>@item.Mileage?.ToString("0.##")</td>
                     <td>@(item.LastMaintenanceDate?.ToString("dd/MM/yyyy") ?? "-")</td>
-                    <td>
-                        <a asp-page="Edit" asp-route-id="@item.VehicleId" class="btn btn-sm btn-warning">Sửa</a>
-                        <form method="post" asp-page-handler="Delete" asp-route-id="@item.VehicleId" class="d-inline">
-                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Xóa xe này?');">Xóa</button>
-                        </form>
+                    <td class="text-end">
+                        <div class="btn-group">
+                            <a asp-page="Edit" asp-route-id="@item.VehicleId" class="btn btn-sm btn-warning">Sửa</a>
+
+                            <a asp-page="Delete" asp-route-id="@item.VehicleId" class="btn btn-sm btn-danger">Xóa</a>
+                        </div>
                     </td>
                 </tr>
             }
