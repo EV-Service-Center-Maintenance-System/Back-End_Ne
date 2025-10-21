@@ -8,19 +8,34 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
-<body class="@(ViewData["Title"] == "Trang chủ" ? "dark-theme-body" : "")">
-    <header class="public-header">
+<body>
+    <header class="public-header-light sticky-top">
         <nav class="navbar navbar-expand-lg">
             <div class="container">
                 <a class="navbar-brand d-flex align-items-center" asp-area="" asp-page="/Index">
                     <img src="~/images/evolve-auto-logo.jpg" alt="EV Service Center Logo" class="header-logo">
-                    <span class="fw-bold fs-5">EV Service Center</span>
+                    <span>EV Service Center</span>
                 </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-lg-inline-flex justify-content-end">
-                    <ul class="navbar-nav">
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav main-nav">
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewData["Title"] == "Trang chủ" ? "active" : "")" asp-page="/Index">Trang chủ</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Dịch vụ</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Về chúng tôi</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Liên hệ</a>
+                        </li>
+                    </ul>
+
+                    <ul class="navbar-nav ms-auto auth-buttons">
                         @if (User.Identity != null && User.Identity.IsAuthenticated)
                         {
                             <li class="nav-item dropdown">
@@ -37,17 +52,21 @@
                                         <li><a class="dropdown-item" asp-page="/Customer/Index">Trang cá nhân</a></li>
                                     }
                                     <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item" asp-page="/Account/Logout">Đăng xuất</a></li>
+                                    <li>
+                                        <form class="form-inline" asp-page="/Account/Logout" method="post">
+                                            <button type="submit" class="dropdown-item">Đăng xuất</button>
+                                        </form>
+                                    </li>
                                 </ul>
                             </li>
                         }
                         else
                         {
                             <li class="nav-item">
-                                <a class="btn btn-secondary me-2" asp-page="/Account/Login">Đăng nhập</a>
+                                <a class="btn btn-login me-2" asp-page="/Account/Login">Đăng nhập</a>
                             </li>
                             <li class="nav-item">
-                                <a class="btn btn-primary" asp-page="/Account/Register">Đăng ký</a>
+                                <a class="btn btn-register" asp-page="/Account/Register">Đăng ký</a>
                             </li>
                         }
                     </ul>
@@ -60,7 +79,7 @@
         @RenderBody()
     </main>
 
-    <footer class="pt-5 pb-4 mt-5">
+    <footer class="bg-white border-top pt-5 pb-4 mt-5">
         <div class="container">
             <div class="row gy-4">
                 <div class="col-lg-4 col-md-6">
@@ -68,19 +87,19 @@
                         <img src="~/images/evolve-auto-logo.jpg" alt="EV Service Center Logo" class="footer-logo">
                         <span class="fw-bold fs-5">EV Service Center</span>
                     </div>
-                    <p>Trung tâm dịch vụ xe điện hàng đầu Việt Nam.</p>
+                    <p class="text-secondary">Trung tâm dịch vụ xe điện hàng đầu Việt Nam.</p>
                 </div>
                 <div class="col-lg-2 offset-lg-1 col-md-6">
                     <h6 class="fw-bold">Dịch vụ</h6>
                     <ul class="list-unstyled">
-                        <li><a href="#" class="text-decoration-none">Bảo dưỡng định kỳ</a></li>
-                        <li><a href="#" class="text-decoration-none">Sửa chữa</a></li>
-                        <li><a href="#" class="text-decoration-none">Thay thế phụ tùng</a></li>
+                        <li><a href="#" class="text-secondary text-decoration-none">Bảo dưỡng định kỳ</a></li>
+                        <li><a href="#" class="text-secondary text-decoration-none">Sửa chữa</a></li>
+                        <li><a href="#" class="text-secondary text-decoration-none">Thay thế phụ tùng</a></li>
                     </ul>
                 </div>
                 <div class="col-lg-2 col-md-6">
                     <h6 class="fw-bold">Liên hệ</h6>
-                    <ul class="list-unstyled">
+                    <ul class="list-unstyled text-secondary">
                         <li>Hotline: 1900-xxxx</li>
                         <li>Email: support@ev.com</li>
                     </ul>
@@ -88,13 +107,13 @@
                 <div class="col-lg-2 col-md-6">
                     <h6 class="fw-bold">Theo dõi</h6>
                     <ul class="list-unstyled">
-                        <li><a href="#" class="text-decoration-none">Facebook</a></li>
-                        <li><a href="#" class="text-decoration-none">Instagram</a></li>
+                        <li><a href="#" class="text-secondary text-decoration-none">Facebook</a></li>
+                        <li><a href="#" class="text-secondary text-decoration-none">Instagram</a></li>
                     </ul>
                 </div>
             </div>
             <hr class="my-4">
-            <div class="text-center small">
+            <div class="text-center text-secondary small">
                 &copy; 2025 - EV Service Center. All rights reserved.
             </div>
         </div>
