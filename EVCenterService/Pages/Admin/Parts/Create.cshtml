@@ -1,0 +1,55 @@
+﻿@page
+@model EVCenterService.Pages.Admin.Parts.CreateModel
+@{
+    ViewData["Title"] = "Thêm Phụ Tùng Mới";
+    Layout = "_AppLayout";
+}
+
+<h2 class="mb-4 text-white">@ViewData["Title"]</h2>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card data-card border-0">
+            <div class="card-body">
+                <form method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                    <div class="mb-3">
+                        <label asp-for="Part.PartId" class="form-label">Mã Phụ Tùng (ID)</label>
+                        <input asp-for="Part.PartId" class="form-control" />
+                        <span asp-validation-for="Part.PartId" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Part.Name" class="form-label">Tên Phụ Tùng</label>
+                        <input asp-for="Part.Name" class="form-control" />
+                        <span asp-validation-for="Part.Name" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Part.Type" class="form-label">Loại Phụ Tùng</label>
+                        <input asp-for="Part.Type" class="form-control" />
+                        <span asp-validation-for="Part.Type" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Part.Brand" class="form-label">Thương Hiệu</label>
+                        <input asp-for="Part.Brand" class="form-control" />
+                        <span asp-validation-for="Part.Brand" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Part.UnitPrice" class="form-label">Đơn Giá (VNĐ)</label>
+                        <input asp-for="Part.UnitPrice" class="form-control" type="number" />
+                        <span asp-validation-for="Part.UnitPrice" class="text-danger"></span>
+                    </div>
+
+                    <hr class="my-4" />
+                    <button type="submit" class="btn btn-primary">Tạo Mới</button>
+                    <a asp-page="./Index" class="btn btn-secondary">Hủy</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

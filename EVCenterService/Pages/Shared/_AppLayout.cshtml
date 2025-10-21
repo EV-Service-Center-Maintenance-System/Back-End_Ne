@@ -36,6 +36,11 @@
                             <i class="bi bi-tools"></i> Quản lý dịch vụ
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link @(Context.Request.Path.StartsWithSegments("/Admin/Parts") ? "active" : "")" asp-page="/Admin/Parts/Index">
+                            <i class="bi bi-box-seam-fill"></i> Quản lý phụ tùng
+                        </a>
+                    </li>
                 }
             </ul>
 

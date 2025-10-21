@@ -310,3 +310,19 @@ body {
 .main-content .data-card .text-muted {
     color: var(--text-muted) !important; /* ??m b?o text ph? có màu xám nh?t */
 }
+
+/* Làm cho label sáng h?n */
+.main-content .form-label {
+    color: var(--text-muted); /* Dùng màu xám nh?t */
+    font-weight: 500;
+}
+
+/* ??m b?o text khi nh?p vào ô input có màu sáng */
+.main-content .form-control {
+    color: var(--text-light);
+}
+
+    /* ??m b?o placeholder (n?u có) c?ng sáng màu */
+    .main-content .form-control::placeholder {
+        color: var(--text-muted);
+    }

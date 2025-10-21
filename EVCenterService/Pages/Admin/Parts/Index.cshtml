@@ -1,4 +1,76 @@
 ﻿@page
 @model EVCenterService.Pages.Admin.Parts.IndexModel
 @{
+    ViewData["Title"] = "Quản lý Phụ tùng";
+    Layout = "_AppLayout";
 }
+
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="text-white">@ViewData["Title"]</h1>
+        <p class="lead mb-0 text-muted">Quản lý danh sách phụ tùng và tồn kho.</p>
+    </div>
+    <a asp-page="Create" class="btn btn-add-new">
+        <i class="bi bi-plus-lg me-2"></i>Thêm Phụ tùng mới
+    </a>
+</div>
+
+@if (TempData["StatusMessage"] is not null)
+{
+    <div class="alert alert-success">@TempData["StatusMessage"]</div>
+}
+
+<div class="card data-card border-0">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h5 class="card-title mb-0">Danh sách phụ tùng</h5>
+                <p class="text-muted small mb-0">Tổng số: @Model.PartList.Count loại phụ tùng</p>
+            </div>
+            <div class="search-bar px-3 py-1 d-flex align-items-center">
+                <i class="bi bi-search me-2 text-muted"></i>
+                <input type="text" class="form-control" placeholder="Tìm kiếm phụ tùng...">
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-borderless table-custom">
+                <thead>
+                    <tr>
+                        <th>Tên phụ tùng</th>
+                        <th>Loại</th>
+                        <th>Hãng</th>
+                        <th>Đơn giá</th>
+                        <th>Tổng tồn kho</th>
+                        <th class="text-end">Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.PartList)
+                    {
+                        <tr>
+                            <td><span class="fw-bold">@item.Name</span></td>
+                            <td class="text-muted">@item.Type</td>
+                            <td class="text-muted">@item.Brand</td>
+                            <td>@item.UnitPrice?.ToString("N0") đ</td>
+                            <td>
+                                @if (item.TotalQuantity > 0)
+                                {
+                                    <span class="badge bg-success">@item.TotalQuantity</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">Hết hàng</span>
+                                }
+                            </td>
+                            <td class="text-end">
+                                <a asp-page="./Edit" asp-route-id="@item.PartId" class="btn action-btn me-1"><i class="bi bi-pencil-square"></i></a>
+                                <a asp-page="./Delete" asp-route-id="@item.PartId" class="btn action-btn"><i class="bi bi-trash-fill"></i></a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
