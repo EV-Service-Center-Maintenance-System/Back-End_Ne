@@ -1,0 +1,12 @@
+﻿@page
+@model EVCenterService.Pages.Customer.Appointments.DeleteModel
+@{
+	Layout = "_AppLayout";
+	ViewData["Title"] = "Delete Order";
+}
+<h3>Bạn có chắc muốn hủy lịch hẹn này?</h3>
+
+<form method="post">
+	<button type="submit" class="btn btn-danger">Xác nhận hủy</button>
+	<a asp-page="Index" class="btn btn-secondary ms-2">Quay lại</a>
+</form>

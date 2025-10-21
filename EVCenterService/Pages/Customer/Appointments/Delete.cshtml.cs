@@ -1,4 +1,3 @@
-using EVCenterService.Models;
 using EVCenterService.Service.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,20 +7,20 @@ using System.Security.Claims;
 namespace EVCenterService.Pages.Customer.Appointments
 {
     [Authorize(Roles = "Customer")]
-    public class IndexModel : PageModel
+    public class DeleteModel : PageModel
     {
         private readonly ICustomerBookingService _service;
-        public IndexModel(ICustomerBookingService service)
+
+        public DeleteModel(ICustomerBookingService service)
         {
             _service = service;
         }
 
-        public IEnumerable<OrderService> Bookings { get; set; }
-
-        public async Task OnGetAsync()
+        public async Task<IActionResult> OnPostAsync(int id)
         {
             var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            Bookings = await _service.GetAllBookingsAsync(userId);
+            await _service.DeleteBookingAsync(id, userId);
+            return RedirectToPage("Index");
         }
     }
 }
