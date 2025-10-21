@@ -28,20 +28,28 @@ namespace EVCenterService.Pages.Account
         [BindProperty]
         public InputModel Input { get; set; }
 
-        // ... (class InputModel gi? nguyên)
         public class InputModel
         {
             [Required(ErrorMessage = "H? và tên là b?t bu?c.")]
+            [StringLength(100, ErrorMessage = "H? và tên không ???c v??t quá 100 ký t?.")]
             public string FullName { get; set; }
+
             [Required(ErrorMessage = "Email là b?t bu?c.")]
             [EmailAddress(ErrorMessage = "??nh d?ng email không h?p l?.")]
+            [StringLength(255)] 
             public string Email { get; set; }
+
             [Required(ErrorMessage = "S? ?i?n tho?i là b?t bu?c.")]
+            [RegularExpression(@"^[0-9]+$", ErrorMessage = "S? ?i?n tho?i ch? ???c ch?a ch? s?.")]
+            [StringLength(20, ErrorMessage = "S? ?i?n tho?i không ???c v??t quá 20 ch? s?.")]
             public string PhoneNumber { get; set; }
+
             [Required(ErrorMessage = "M?t kh?u là b?t bu?c.")]
             [DataType(DataType.Password)]
             [MinLength(6, ErrorMessage = "M?t kh?u ph?i có ít nh?t 6 ký t?.")]
+            [StringLength(100, MinimumLength = 6)] 
             public string Password { get; set; }
+
             [DataType(DataType.Password)]
             [Compare("Password", ErrorMessage = "M?t kh?u và m?t kh?u xác nh?n không kh?p.")]
             public string ConfirmPassword { get; set; }
@@ -55,7 +63,7 @@ namespace EVCenterService.Pages.Account
 
             if (await _context.Accounts.AnyAsync(a => a.Email == Input.Email))
             {
-                ModelState.AddModelError(string.Empty, "M?t tài kho?n v?i email này ?ã t?n t?i.");
+                ModelState.AddModelError(string.Empty, "Tài kho?n và email này ?ã t?n t?i.");
                 return Page();
             }
 
@@ -81,11 +89,10 @@ namespace EVCenterService.Pages.Account
                 new Claim(ClaimTypes.Role, newAccount.Role)
             };
 
-            // S?A L?I T?I ?ÂY: Dùng ?úng tên ?ã ??ng ký
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
 
-            return RedirectToPage("/Customer/Appointments/Index");
+            return RedirectToPage("/Customer/Index");
         }
     }
 }
