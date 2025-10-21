@@ -22,41 +22,28 @@ namespace EVCenterService.Pages.Customer.Appointments
             _bookingService = bookingService;
         }
 
-        [BindProperty]
-        public OrderService Booking { get; set; } = new OrderService();
-
-        [BindProperty]
-        public int SelectedServiceId { get; set; } 
-
-        [BindProperty]
-        public TimeSpan SelectedTime { get; set; } 
+        [BindProperty] public OrderService Booking { get; set; } = new();
+        [BindProperty] public List<int> SelectedServiceIds { get; set; } = new();
+        [BindProperty] public TimeSpan SelectedTime { get; set; }
 
         public SelectList VehicleList { get; set; }
-        public SelectList ServiceList { get; set; }
+        public List<ServiceCatalog> ServiceList { get; set; }
 
         public async Task OnGetAsync()
         {
             var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-            var vehicles = await _context.Vehicles
-                .Where(v => v.UserId == userId)
-                .ToListAsync();
-
-            var services = await _context.ServiceCatalogs
-                .OrderBy(s => s.Name)
-                .ToListAsync();
-
-            VehicleList = new SelectList(vehicles, "VehicleId", "Model");
-
-            ServiceList = new SelectList(
-                services.Select(s => new
-                {
-                    s.ServiceId,
-                    Text = $"{s.Name} - {(s.BasePrice ?? 0):N0} đ"
-                }),
-                "ServiceId",
-                "Text"
+            VehicleList = new SelectList(
+                await _context.Vehicles.Where(v => v.UserId == userId).ToListAsync(),
+                "VehicleId", "Model"
             );
+
+            ServiceList = await _context.ServiceCatalogs
+                .OrderBy(s => s.Name)
+                .AsNoTracking()
+                .ToListAsync();
+
+            Booking.AppointmentDate = DateTime.Now;
         }
 
         public async Task<IActionResult> OnPostAsync()
@@ -64,7 +51,7 @@ namespace EVCenterService.Pages.Customer.Appointments
             var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             Booking.UserId = userId;
             Booking.AppointmentDate = Booking.AppointmentDate.Date + SelectedTime;
-            Booking.Status = "Chờ xác nhận";
+            Booking.Status = "pending";
 
             if (!ModelState.IsValid)
             {
@@ -72,21 +59,32 @@ namespace EVCenterService.Pages.Customer.Appointments
                 return Page();
             }
 
-            var newOrder = await _bookingService.CreateBookingAsync(Booking, SelectedServiceId);
+            // 🔹 Tính tổng giá từ tất cả dịch vụ được chọn
+            var services = await _context.ServiceCatalogs
+                .Where(s => SelectedServiceIds.Contains(s.ServiceId))
+                .ToListAsync();
 
-            var service = await _context.ServiceCatalogs.FirstOrDefaultAsync(s => s.ServiceId == SelectedServiceId);
-            var newDetail = new OrderDetail
+            var total = services.Sum(s => s.BasePrice ?? 0);
+            Booking.TotalCost = total;
+
+            // 🔹 Tạo OrderService
+            var newOrder = await _bookingService.CreateBookingAsync(Booking, 0); // serviceId không dùng nữa
+
+            // 🔹 Tạo nhiều OrderDetail
+            foreach (var s in services)
             {
-                OrderId = newOrder.OrderId,
-                ServiceId = SelectedServiceId,
-                Quantity = 1,
-                UnitPrice = service?.BasePrice ?? 0
-            };
+                _context.OrderDetails.Add(new OrderDetail
+                {
+                    OrderId = newOrder.OrderId,
+                    ServiceId = s.ServiceId,
+                    Quantity = 1,
+                    UnitPrice = s.BasePrice ?? 0
+                });
+            }
 
-            _context.OrderDetails.Add(newDetail);
             await _context.SaveChangesAsync();
 
-            TempData["Message"] = " Đặt lịch thành công! Vui lòng chờ xác nhận.";
+            TempData["Message"] = "Order Successfull! Please waiting to approve.";
             return RedirectToPage("/Customer/Appointments/Index");
         }
     }

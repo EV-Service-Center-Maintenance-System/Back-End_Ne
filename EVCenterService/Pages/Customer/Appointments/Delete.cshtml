@@ -6,7 +6,42 @@
 }
 <h3>Bạn có chắc muốn hủy lịch hẹn này?</h3>
 
-<form method="post">
-	<button type="submit" class="btn btn-danger">Xác nhận hủy</button>
-	<a asp-page="Index" class="btn btn-secondary ms-2">Quay lại</a>
-</form>
+@if (Model.Booking == null)
+{
+    <div class="alert alert-warning">Không tìm thấy lịch hẹn.</div>
+}
+else
+{
+    <div class="card shadow-sm p-4 bg-light">
+        <h5 class="mb-3">Thông tin lịch hẹn</h5>
+
+        <dl class="row">
+            <dt class="col-sm-3">Xe:</dt>
+            <dd class="col-sm-9">@Model.Booking.Vehicle?.Model</dd>
+
+            <dt class="col-sm-3">Ngày hẹn:</dt>
+            <dd class="col-sm-9">@Model.Booking.AppointmentDate.ToString("dd/MM/yyyy HH:mm")</dd>
+
+            <dt class="col-sm-3">Dịch vụ:</dt>
+            <dd class="col-sm-9">
+                @string.Join(", ", Model.Booking.OrderDetails.Select(d => d.Service?.Name ?? "N/A"))
+            </dd>
+
+            <dt class="col-sm-3">Tổng tiền:</dt>
+            <dd class="col-sm-9">@string.Format("{0:N0} đ", Model.Booking.TotalCost ?? 0)</dd>
+
+            <dt class="col-sm-3">Ghi chú:</dt>
+            <dd class="col-sm-9">@Model.Booking.ChecklistNote</dd>
+        </dl>
+
+        <div class="alert alert-danger mt-3">
+            <strong>Bạn có chắc chắn muốn xóa lịch hẹn này không?</strong><br />
+            Hành động này không thể hoàn tác.
+        </div>
+
+        <form method="post">
+            <button type="submit" class="btn btn-danger">Xác nhận xóa</button>
+            <a asp-page="Index" class="btn btn-secondary ms-2">Hủy</a>
+        </form>
+    </div>
+}

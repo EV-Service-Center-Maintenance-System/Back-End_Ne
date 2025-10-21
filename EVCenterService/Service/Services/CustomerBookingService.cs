@@ -8,87 +8,73 @@ namespace EVCenterService.Service.Services
 {
     public class CustomerBookingService : ICustomerBookingService
     {
-        private readonly ICustomerBookingRepository _repo;
         private readonly EVServiceCenterContext _context;
 
-        public CustomerBookingService(ICustomerBookingRepository repo, EVServiceCenterContext context)
+        public CustomerBookingService(EVServiceCenterContext context)
         {
-            _repo = repo;
             _context = context;
         }
 
-        public async Task<IEnumerable<OrderService>> GetAllBookingsAsync(Guid userId)
+        public async Task<OrderService> CreateBookingAsync(OrderService order, int serviceId = 0)
         {
-            return await _repo.GetAllByUserAsync(userId);
-        }
+            if (order == null)
+                throw new ArgumentNullException(nameof(order));
 
-        public async Task<OrderService?> GetBookingByIdAsync(int orderId, Guid userId)
-        {
-            return await _repo.GetByIdAsync(orderId, userId);
-        }
+            order.Status ??= "Chờ xác nhận";
+            order.TotalCost ??= 0;
 
-        public async Task<OrderService> CreateBookingAsync(OrderService order, int serviceId)
-        {
-            var service = await _context.ServiceCatalogs.FirstOrDefaultAsync(s => s.ServiceId == serviceId);
-            if (service == null)
-                throw new Exception("Dịch vụ không tồn tại.");
-
-            order.Status = "Pending";
-            order.TotalCost = service.BasePrice ?? 0;
-            order.AppointmentDate = order.AppointmentDate.ToLocalTime();
-
-            await _repo.CreateAsync(order);
-            await _repo.SaveChangesAsync();
-
-            var detail = new OrderDetail
-            {
-                OrderId = order.OrderId,
-                ServiceId = serviceId,
-                Quantity = 1,
-                UnitPrice = service.BasePrice
-            };
-
-            _context.OrderDetails.Add(detail);
+            _context.OrderServices.Add(order);
             await _context.SaveChangesAsync();
 
             return order;
         }
 
-        public async Task UpdateBookingAsync(OrderService order, int serviceId)
+        public async Task<IEnumerable<OrderService>> GetAllBookingsAsync(Guid userId)
         {
-            var existing = await _repo.GetByIdAsync(order.OrderId, order.UserId ?? Guid.Empty);
+            return await _context.OrderServices
+                .Include(o => o.OrderDetails)
+                .ThenInclude(d => d.Service)
+                .Include(o => o.Vehicle)
+                .Where(o => o.UserId == userId)
+                .OrderByDescending(o => o.AppointmentDate)
+                .ToListAsync();
+        }
+
+        public async Task<OrderService?> GetBookingByIdAsync(int orderId, Guid userId)
+        {
+            return await _context.OrderServices
+                .Include(o => o.OrderDetails)
+                .ThenInclude(d => d.Service)
+                .Include(o => o.Vehicle)
+                .FirstOrDefaultAsync(o => o.OrderId == orderId && o.UserId == userId);
+        }
+
+        public async Task UpdateBookingAsync(OrderService order, int serviceId = 0)
+        {
+            var existing = await _context.OrderServices
+                .FirstOrDefaultAsync(o => o.OrderId == order.OrderId);
+
             if (existing == null)
-                throw new Exception("Không tìm thấy lịch hẹn.");
+                throw new Exception("Không tìm thấy lịch hẹn để cập nhật.");
 
-            var service = await _context.ServiceCatalogs.FirstOrDefaultAsync(s => s.ServiceId == serviceId);
-            if (service == null)
-                throw new Exception("Dịch vụ không tồn tại.");
-
-            existing.VehicleId = order.VehicleId;
-            existing.AppointmentDate = order.AppointmentDate.ToLocalTime();
+            existing.AppointmentDate = order.AppointmentDate;
             existing.ChecklistNote = order.ChecklistNote;
-            existing.TotalCost = service.BasePrice ?? 0;
+            existing.Status = order.Status;
 
-            await _repo.UpdateAsync(existing);
-            await _repo.SaveChangesAsync();
-
-            var detail = await _context.OrderDetails.FirstOrDefaultAsync(d => d.OrderId == existing.OrderId);
-            if (detail != null)
-            {
-                detail.ServiceId = serviceId;
-                detail.UnitPrice = service.BasePrice;
-                await _context.SaveChangesAsync();
-            }
+            _context.OrderServices.Update(existing);
+            await _context.SaveChangesAsync();
         }
 
         public async Task DeleteBookingAsync(int orderId, Guid userId)
         {
-            var existing = await _repo.GetByIdAsync(orderId, userId);
-            if (existing == null)
+            var booking = await _context.OrderServices
+                .FirstOrDefaultAsync(o => o.OrderId == orderId && o.UserId == userId);
+
+            if (booking == null)
                 throw new Exception("Không tìm thấy lịch hẹn.");
 
-            await _repo.DeleteAsync(existing);
-            await _repo.SaveChangesAsync();
+            _context.OrderServices.Remove(booking);
+            await _context.SaveChangesAsync();
         }
     }
 }

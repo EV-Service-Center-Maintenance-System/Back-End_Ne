@@ -5,58 +5,71 @@
     ViewData["Title"] = "Order Service List";
 }
 
-<h2 class="mb-3">Lịch hẹn dịch vụ của bạn</h2>
+<h2 class="mb-3">Customer Order List</h2>
 
-<table class="table table-striped table-bordered">
-    <thead class="table-light">
-        <tr>
-            <th>#</th>
-            <th>Xe</th>
-            <th>Dịch vụ</th>
-            <th>Ngày hẹn</th>
-            <th>Ghi chú</th>
-            <th>Trạng thái</th>
-            <th>Tổng tiền</th>
-            <th>Hành động</th>
-        </tr>
-    </thead>
-    <tbody>
-        @if (Model.Bookings != null && Model.Bookings.Any())
-        {
-            int i = 1;
-            foreach (var order in Model.Bookings)
+@if (Model.Bookings == null || !Model.Bookings.Any())
+{
+    <div class="alert alert-info">Bạn chưa có lịch hẹn nào.</div>
+}
+else
+{
+    <table class="table table-hover table-bordered align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>#</th>
+                <th>Xe</th>
+                <th>Dịch vụ</th>
+                <th>Ngày hẹn</th>
+                <th>Ghi chú</th>
+                <th>Trạng thái</th>
+                <th>Tổng tiền</th>
+                <th class="text-center">Hành động</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                int index = 1;
+            }
+
+            @foreach (var order in Model.Bookings)
             {
-                var serviceName = order.OrderDetails.FirstOrDefault()?.Service?.Name ?? "—";
+                var serviceNames = string.Join(", ", order.OrderDetails
+                .Where(d => d.Service != null)
+                .Select(d => d.Service.Name));
+
+                var badgeClass = order.Status?.ToLower() switch
+                {
+                    "pending" => "bg-warning text-dark",
+                    "confirmed" => "bg-primary",
+                    "inprogress" => "bg-info text-dark",
+                    "completed" => "bg-success",
+                    "cancelled" => "bg-danger",
+                    _ => "bg-secondary"
+                };
+
                 <tr>
-                    <td>@(i++)</td>
+                    <td>@index</td>
                     <td>@order.Vehicle?.Model</td>
-                    <td>@serviceName</td>
+                    <td>@serviceNames</td>
                     <td>@order.AppointmentDate.ToString("dd/MM/yyyy HH:mm")</td>
                     <td>@order.ChecklistNote</td>
                     <td>
-                        <span class="badge bg-@(order.Status == "Completed" ? "success" : "warning")">
-                            @order.Status
+                        <span class="badge @badgeClass">
+                            @(order.Status?.ToUpperInvariant() ?? "UNKNOWN")
                         </span>
                     </td>
-                    <td>@String.Format("{0:N0} đ", order.TotalCost ?? 0)</td>
-                    <td>
+                    <td>@string.Format("{0:N0} đ", order.TotalCost ?? 0)</td>
+                    <td class="text-center">
                         <a asp-page="Edit" asp-route-id="@order.OrderId" class="btn btn-sm btn-primary">Sửa</a>
-                        <form method="post" asp-page="Delete" asp-route-id="@order.OrderId" style="display:inline;">
-                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Bạn chắc chắn muốn hủy lịch này?');">
-                                Xóa
-                            </button>
-                        </form>
+                        <a asp-page="Delete" asp-route-id="@order.OrderId" class="btn btn-sm btn-danger"
+                           onclick="return confirm('Bạn có chắc chắn muốn xóa lịch hẹn này không?');">Xóa</a>
                     </td>
                 </tr>
+
+                index++;
             }
-        }
-        else
-        {
-            <tr>
-                <td colspan="8" class="text-center text-muted">Chưa có lịch hẹn nào</td>
-            </tr>
-        }
-    </tbody>
-</table>
+        </tbody>
+    </table>
+}
 
 <a asp-page="Create" class="btn btn-success mt-3">+ Đặt lịch mới</a>
