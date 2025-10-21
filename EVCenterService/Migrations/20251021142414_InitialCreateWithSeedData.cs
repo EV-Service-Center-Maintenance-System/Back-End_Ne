@@ -3,10 +3,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace EVCenterService.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InitialCreateWithSeedData : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -21,7 +23,8 @@ namespace EVCenterService.Migrations
                     Phone = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: true),
                     Password = table.Column<string>(type: "varchar(255)", unicode: false, maxLength: 255, nullable: false),
                     Role = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
-                    Certification = table.Column<string>(type: "varchar(255)", unicode: false, maxLength: 255, nullable: true)
+                    Certification = table.Column<string>(type: "varchar(255)", unicode: false, maxLength: 255, nullable: true),
+                    Status = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -32,7 +35,8 @@ namespace EVCenterService.Migrations
                 name: "MaintenanceCenter",
                 columns: table => new
                 {
-                    CenterID = table.Column<int>(type: "int", nullable: false),
+                    CenterID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "varchar(255)", unicode: false, maxLength: 255, nullable: true),
                     Address = table.Column<string>(type: "varchar(255)", unicode: false, maxLength: 255, nullable: true),
                     Phone = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: true),
@@ -49,7 +53,8 @@ namespace EVCenterService.Migrations
                 name: "Part",
                 columns: table => new
                 {
-                    PartID = table.Column<int>(type: "int", nullable: false),
+                    PartID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "varchar(255)", unicode: false, maxLength: 255, nullable: false),
                     Type = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: true),
                     Brand = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: true),
@@ -64,7 +69,8 @@ namespace EVCenterService.Migrations
                 name: "ServiceCatalog",
                 columns: table => new
                 {
-                    ServiceID = table.Column<int>(type: "int", nullable: false),
+                    ServiceID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "varchar(255)", unicode: false, maxLength: 255, nullable: false),
                     Description = table.Column<string>(type: "text", nullable: true),
                     BasePrice = table.Column<decimal>(type: "decimal(10,2)", nullable: true),
@@ -96,7 +102,8 @@ namespace EVCenterService.Migrations
                 name: "Notification",
                 columns: table => new
                 {
-                    NotificationID = table.Column<int>(type: "int", nullable: false),
+                    NotificationID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     ReceiverID = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     Content = table.Column<string>(type: "text", nullable: false),
                     Type = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: true),
@@ -117,7 +124,8 @@ namespace EVCenterService.Migrations
                 name: "Vehicle",
                 columns: table => new
                 {
-                    VehicleID = table.Column<int>(type: "int", nullable: false),
+                    VehicleID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     UserID = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     VIN = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
                     Model = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: true),
@@ -139,7 +147,8 @@ namespace EVCenterService.Migrations
                 name: "Storage",
                 columns: table => new
                 {
-                    StorageID = table.Column<int>(type: "int", nullable: false),
+                    StorageID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     CenterID = table.Column<int>(type: "int", nullable: true),
                     PartID = table.Column<int>(type: "int", nullable: true),
                     Quantity = table.Column<int>(type: "int", nullable: false),
@@ -192,7 +201,8 @@ namespace EVCenterService.Migrations
                 name: "OrderService",
                 columns: table => new
                 {
-                    OrderID = table.Column<int>(type: "int", nullable: false),
+                    OrderID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     VehicleID = table.Column<int>(type: "int", nullable: true),
                     UserID = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     AppointmentDate = table.Column<DateTime>(type: "datetime", nullable: false),
@@ -219,7 +229,8 @@ namespace EVCenterService.Migrations
                 name: "Invoice",
                 columns: table => new
                 {
-                    InvoiceID = table.Column<int>(type: "int", nullable: false),
+                    InvoiceID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     SubscriptionID = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     Amount = table.Column<decimal>(type: "decimal(12,2)", nullable: true),
                     Status = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: true),
@@ -240,7 +251,8 @@ namespace EVCenterService.Migrations
                 name: "Feedback",
                 columns: table => new
                 {
-                    FeedbackID = table.Column<int>(type: "int", nullable: false),
+                    FeedbackID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     OrderID = table.Column<int>(type: "int", nullable: true),
                     UserID = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     Rating = table.Column<int>(type: "int", nullable: true),
@@ -266,7 +278,8 @@ namespace EVCenterService.Migrations
                 name: "OrderDetail",
                 columns: table => new
                 {
-                    OrderDetailID = table.Column<int>(type: "int", nullable: false),
+                    OrderDetailID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     OrderID = table.Column<int>(type: "int", nullable: true),
                     ServiceID = table.Column<int>(type: "int", nullable: true),
                     Quantity = table.Column<int>(type: "int", nullable: true, defaultValue: 1),
@@ -291,7 +304,8 @@ namespace EVCenterService.Migrations
                 name: "PartsUsed",
                 columns: table => new
                 {
-                    UsageID = table.Column<int>(type: "int", nullable: false),
+                    UsageID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     OrderID = table.Column<int>(type: "int", nullable: true),
                     PartID = table.Column<int>(type: "int", nullable: true),
                     Quantity = table.Column<int>(type: "int", nullable: false),
@@ -316,7 +330,8 @@ namespace EVCenterService.Migrations
                 name: "Slot",
                 columns: table => new
                 {
-                    SlotID = table.Column<int>(type: "int", nullable: false),
+                    SlotID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     CenterID = table.Column<int>(type: "int", nullable: true),
                     TechnicianID = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     OrderID = table.Column<int>(type: "int", nullable: true),
@@ -342,6 +357,141 @@ namespace EVCenterService.Migrations
                         principalTable: "Account",
                         principalColumn: "UserID");
                 });
+
+            migrationBuilder.InsertData(
+                table: "Account",
+                columns: new[] { "UserID", "Certification", "Email", "FullName", "Password", "Phone", "Role", "Status" },
+                values: new object[,]
+                {
+                    { new Guid("204d12c7-5c95-4112-90b7-4ff604d3c518"), null, "user2@gmail.com", "Do Thi E", "AQAAAAIAAYagAAAAEDQe02X7ZL5Ex23HILQVyzSrNik6gw/JshiSOsJR/TmSPiGNIc0eGbykgXm0V6l9Nw==", "0905000005", "Customer", "Active" },
+                    { new Guid("5f06e2df-3e55-4dbe-b646-649f6a0c1784"), "EV Battery Specialist", "tech2@gmail.com", "Le Thi C", "AQAAAAIAAYagAAAAEPuEweg4GwluQNj5tgY/rcXfOGVz55pfCTdmkTrm6Zz00541JmHk1npt0As6BEE5MQ==", "0903000003", "Technician", "Active" },
+                    { new Guid("84d971da-f79c-4071-b38c-0d41bbe05896"), null, "user1@gmail.com", "Pham Van D", "AQAAAAIAAYagAAAAEIafCabwuZ76VVOvph/P4PecCUovWm98txQpyQsTTHggRG2zsgAMV4mpQwNGI1ewdg==", "0904000004", "Customer", "Active" },
+                    { new Guid("d591319d-f93c-4425-9d25-788a8e0560ca"), null, "staff@gmail.com", "Phan Anh C", "AQAAAAIAAYagAAAAEP+chYJOiKIkCWO0xatjblQQE0ev/6YbghOSBXZDuKLp0jeODd9v8jgG89Jnu4vpbg==", "0906000006", "Staff", "Active" },
+                    { new Guid("e7e85ab2-c968-4b00-b8ab-eb1250ffcbc0"), "EV Maintenance Level 1", "tech1@gmail.com", "Tran Van B", "AQAAAAIAAYagAAAAEPTzzMMJUGu0eNSmmX391OfKZiIlZttZnsy50u4D7NnPJCGi1BcKRY06lfYfn9CUMA==", "0902000002", "Technician", "Active" },
+                    { new Guid("f0236613-101d-4633-8bbd-634eeecfdaa4"), null, "admin@gmail.com", "Admin", "AQAAAAIAAYagAAAAEJH8E8X3GMdH1foBsdQ5MQO+cJJ8bQ9yFnZXS8lr6/j4EcXL/rKf35KaD2P0m5q5sg==", "0901000001", "Admin", "Active" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "MaintenanceCenter",
+                columns: new[] { "CenterID", "Address", "CloseTime", "Email", "Name", "OpenTime", "Phone" },
+                values: new object[,]
+                {
+                    { 1, "12 Le Loi, Q1, HCM", new TimeOnly(18, 0, 0), "center1@evcenter.vn", "EV Center - District 1", new TimeOnly(8, 0, 0), "0281111111" },
+                    { 2, "22 Vo Van Ngan, Thu Duc, HCM", new TimeOnly(17, 30, 0), "center2@evcenter.vn", "EV Center - Thu Duc", new TimeOnly(8, 0, 0), "0282222222" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Part",
+                columns: new[] { "PartID", "Brand", "Name", "Type", "UnitPrice" },
+                values: new object[,]
+                {
+                    { 1, "Tesla", "EV Battery Pack", "Battery", 15000000m },
+                    { 2, "VinFast", "Charging Port", "Electrical", 3000000m },
+                    { 3, "Brembo", "Brake Pad", "Mechanical", 1000000m },
+                    { 4, "Shell", "Coolant Fluid", "Chemical", 500000m }
+                });
+
+            migrationBuilder.InsertData(
+                table: "ServiceCatalog",
+                columns: new[] { "ServiceID", "BasePrice", "Description", "DurationMinutes", "Name" },
+                values: new object[,]
+                {
+                    { 1, 20000000m, "Replace entire battery pack", 180, "Battery Replacement" },
+                    { 2, 1500000m, "Inspect and replace brake pads if needed", 60, "Brake Check" },
+                    { 3, 800000m, "Check coolant and thermal management", 45, "Cooling System Check" },
+                    { 4, 1000000m, "Full vehicle health check", 90, "General Inspection" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "SubscriptionPlan",
+                columns: new[] { "PlanID", "Benefits", "Code", "DurationDays", "IsActive", "Name", "PriceVND" },
+                values: new object[,]
+                {
+                    { new Guid("37107aac-6fa1-4741-a6e6-7dd4e5622bd9"), "1 free inspection/month", "BASIC", 30, true, "Basic Care", 499000m },
+                    { new Guid("ffab7bc7-c34e-4683-92f0-4da0fbe4d980"), "Priority booking, 3 free inspections", "PREMIUM", 90, true, "Premium Care", 999000m }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Notification",
+                columns: new[] { "NotificationID", "Content", "IsRead", "ReceiverID", "TriggerDate", "Type" },
+                values: new object[,]
+                {
+                    { 1, "Your vehicle maintenance is completed.", false, new Guid("84d971da-f79c-4071-b38c-0d41bbe05896"), new DateTime(2025, 10, 21, 21, 24, 12, 378, DateTimeKind.Local).AddTicks(5332), "StatusUpdate" },
+                    { 2, "Your appointment is scheduled for tomorrow.", false, new Guid("204d12c7-5c95-4112-90b7-4ff604d3c518"), new DateTime(2025, 10, 21, 21, 24, 12, 378, DateTimeKind.Local).AddTicks(5335), "MaintenanceReminder" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Slot",
+                columns: new[] { "SlotID", "CenterID", "EndTime", "OrderID", "StartTime", "TechnicianID" },
+                values: new object[] { 2, 2, new DateTime(2025, 10, 9, 17, 0, 0, 0, DateTimeKind.Unspecified), null, new DateTime(2025, 10, 9, 13, 0, 0, 0, DateTimeKind.Unspecified), new Guid("5f06e2df-3e55-4dbe-b646-649f6a0c1784") });
+
+            migrationBuilder.InsertData(
+                table: "Storage",
+                columns: new[] { "StorageID", "CenterID", "MinThreshold", "PartID", "Quantity" },
+                values: new object[,]
+                {
+                    { 1, 1, 3, 1, 10 },
+                    { 2, 1, 2, 2, 5 },
+                    { 3, 2, 3, 3, 8 },
+                    { 4, 2, 5, 4, 15 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Subscription",
+                columns: new[] { "SubscriptionID", "AutoRenew", "CreatedAt", "EndDate", "PlanID", "StartDate", "Status", "UserID" },
+                values: new object[] { new Guid("d4c2fd9c-00ff-40ff-ab88-3eb91f4150f4"), true, new DateTime(2025, 10, 21, 21, 24, 12, 378, DateTimeKind.Local).AddTicks(5250), new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new Guid("ffab7bc7-c34e-4683-92f0-4da0fbe4d980"), new DateTime(2025, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "active", new Guid("84d971da-f79c-4071-b38c-0d41bbe05896") });
+
+            migrationBuilder.InsertData(
+                table: "Vehicle",
+                columns: new[] { "VehicleID", "BatteryCapacity", "LastMaintenanceDate", "Mileage", "Model", "UserID", "VIN" },
+                values: new object[,]
+                {
+                    { 1, 82.0m, new DateOnly(2025, 8, 15), 15000m, "VinFast VF8", new Guid("84d971da-f79c-4071-b38c-0d41bbe05896"), "VN123456789ABCDEFG" },
+                    { 2, 75.5m, new DateOnly(2025, 9, 20), 22000m, "Tesla Model Y", new Guid("204d12c7-5c95-4112-90b7-4ff604d3c518"), "VN999999999ABCDEFG" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Invoice",
+                columns: new[] { "InvoiceID", "Amount", "DueDate", "IssueDate", "Status", "SubscriptionID" },
+                values: new object[] { 1, 999000m, new DateTime(2025, 9, 7, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Paid", new Guid("d4c2fd9c-00ff-40ff-ab88-3eb91f4150f4") });
+
+            migrationBuilder.InsertData(
+                table: "OrderService",
+                columns: new[] { "OrderID", "AppointmentDate", "ChecklistNote", "Status", "TotalCost", "UserID", "VehicleID" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), "Replaced brake pads, coolant check", "Completed", 2500000m, new Guid("84d971da-f79c-4071-b38c-0d41bbe05896"), 1 },
+                    { 2, new DateTime(2025, 10, 7, 0, 0, 0, 0, DateTimeKind.Unspecified), "General checkup", "Pending", 1000000m, new Guid("204d12c7-5c95-4112-90b7-4ff604d3c518"), 2 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Feedback",
+                columns: new[] { "FeedbackID", "Comment", "CreatedAt", "OrderID", "Rating", "UserID" },
+                values: new object[] { 1, "Excellent service! Technician was professional.", new DateTime(2025, 10, 21, 21, 24, 12, 378, DateTimeKind.Local).AddTicks(5363), 1, 5, new Guid("84d971da-f79c-4071-b38c-0d41bbe05896") });
+
+            migrationBuilder.InsertData(
+                table: "OrderDetail",
+                columns: new[] { "OrderDetailID", "OrderID", "Quantity", "ServiceID", "UnitPrice" },
+                values: new object[,]
+                {
+                    { 1, 1, 1, 2, 1500000m },
+                    { 2, 1, 1, 3, 1000000m },
+                    { 3, 2, 1, 4, 1000000m }
+                });
+
+            migrationBuilder.InsertData(
+                table: "PartsUsed",
+                columns: new[] { "UsageID", "Note", "OrderID", "PartID", "Quantity" },
+                values: new object[,]
+                {
+                    { 1, "Brake pads replaced", 1, 3, 4 },
+                    { 2, "Coolant refilled", 1, 4, 1 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Slot",
+                columns: new[] { "SlotID", "CenterID", "EndTime", "OrderID", "StartTime", "TechnicianID" },
+                values: new object[] { 1, 1, new DateTime(2025, 10, 5, 12, 0, 0, 0, DateTimeKind.Unspecified), 1, new DateTime(2025, 10, 5, 8, 0, 0, 0, DateTimeKind.Unspecified), new Guid("e7e85ab2-c968-4b00-b8ab-eb1250ffcbc0") });
 
             migrationBuilder.CreateIndex(
                 name: "UQ__Account__5C7E359E226AF5C9",

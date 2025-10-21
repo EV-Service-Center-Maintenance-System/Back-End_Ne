@@ -64,7 +64,7 @@ public partial class EVServiceCenterContext : DbContext
         {
             entity.HasKey(e => e.FeedbackId).HasName("PK__Feedback__6A4BEDF608B7A8D8");
 
-            entity.Property(e => e.FeedbackId).ValueGeneratedNever();
+            entity.Property(e => e.FeedbackId).ValueGeneratedOnAdd();
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
 
             entity.HasOne(d => d.Order).WithMany(p => p.Feedbacks).HasConstraintName("FK__Feedback__OrderI__6FE99F9F");
@@ -76,7 +76,7 @@ public partial class EVServiceCenterContext : DbContext
         {
             entity.HasKey(e => e.InvoiceId).HasName("PK__Invoice__D796AAD5F01DE521");
 
-            entity.Property(e => e.InvoiceId).ValueGeneratedNever();
+            entity.Property(e => e.InvoiceId).ValueGeneratedOnAdd();
 
             entity.HasOne(d => d.Subscription).WithMany(p => p.Invoices).HasConstraintName("FK__Invoice__Subscri__68487DD7");
         });
@@ -85,14 +85,14 @@ public partial class EVServiceCenterContext : DbContext
         {
             entity.HasKey(e => e.CenterId).HasName("PK__Maintena__398FC7D7AF460D18");
 
-            entity.Property(e => e.CenterId).ValueGeneratedNever();
+            entity.Property(e => e.CenterId).ValueGeneratedOnAdd();
         });
 
         modelBuilder.Entity<Notification>(entity =>
         {
             entity.HasKey(e => e.NotificationId).HasName("PK__Notifica__20CF2E32499BFD16");
 
-            entity.Property(e => e.NotificationId).ValueGeneratedNever();
+            entity.Property(e => e.NotificationId).ValueGeneratedOnAdd();
             entity.Property(e => e.IsRead).HasDefaultValue(false);
 
             entity.HasOne(d => d.Receiver).WithMany(p => p.Notifications).HasConstraintName("FK__Notificat__Recei__6C190EBB");
@@ -102,7 +102,7 @@ public partial class EVServiceCenterContext : DbContext
         {
             entity.HasKey(e => e.OrderDetailId).HasName("PK__OrderDet__D3B9D30C5D8A0C85");
 
-            entity.Property(e => e.OrderDetailId).ValueGeneratedNever();
+            entity.Property(e => e.OrderDetailId).ValueGeneratedOnAdd();
             entity.Property(e => e.Quantity).HasDefaultValue(1);
 
             entity.HasOne(d => d.Order).WithMany(p => p.OrderDetails).HasConstraintName("FK__OrderDeta__Order__5070F446");
@@ -114,7 +114,7 @@ public partial class EVServiceCenterContext : DbContext
         {
             entity.HasKey(e => e.OrderId).HasName("PK__OrderSer__C3905BAFC93F21DA");
 
-            entity.Property(e => e.OrderId).ValueGeneratedNever();
+            entity.Property(e => e.OrderId).ValueGeneratedOnAdd();
 
             entity.HasOne(d => d.User).WithMany(p => p.OrderServices).HasConstraintName("FK__OrderServ__UserI__4CA06362");
 
@@ -125,14 +125,14 @@ public partial class EVServiceCenterContext : DbContext
         {
             entity.HasKey(e => e.PartId).HasName("PK__Part__7C3F0D3032B58819");
 
-            entity.Property(e => e.PartId).ValueGeneratedNever();
+            entity.Property(e => e.PartId).ValueGeneratedOnAdd();
         });
 
         modelBuilder.Entity<PartsUsed>(entity =>
         {
             entity.HasKey(e => e.UsageId).HasName("PK__PartsUse__29B197C0E363B8D3");
 
-            entity.Property(e => e.UsageId).ValueGeneratedNever();
+            entity.Property(e => e.UsageId).ValueGeneratedOnAdd();
 
             entity.HasOne(d => d.Order).WithMany(p => p.PartsUseds).HasConstraintName("FK__PartsUsed__Order__5441852A");
 
@@ -143,14 +143,14 @@ public partial class EVServiceCenterContext : DbContext
         {
             entity.HasKey(e => e.ServiceId).HasName("PK__ServiceC__C51BB0EAA34714D3");
 
-            entity.Property(e => e.ServiceId).ValueGeneratedNever();
+            entity.Property(e => e.ServiceId).ValueGeneratedOnAdd();
         });
 
         modelBuilder.Entity<Slot>(entity =>
         {
             entity.HasKey(e => e.SlotId).HasName("PK__Slot__0A124A4F392B4E0A");
 
-            entity.Property(e => e.SlotId).ValueGeneratedNever();
+            entity.Property(e => e.SlotId).ValueGeneratedOnAdd();
 
             entity.HasOne(d => d.Center).WithMany(p => p.Slots).HasConstraintName("FK__Slot__CenterID__59063A47");
 
@@ -163,7 +163,7 @@ public partial class EVServiceCenterContext : DbContext
         {
             entity.HasKey(e => e.StorageId).HasName("PK__Storage__8A247E37D28F7A41");
 
-            entity.Property(e => e.StorageId).ValueGeneratedNever();
+            entity.Property(e => e.StorageId).ValueGeneratedOnAdd();
 
             entity.HasOne(d => d.Center).WithMany(p => p.Storages).HasConstraintName("FK__Storage__CenterI__45F365D3");
 
@@ -196,7 +196,7 @@ public partial class EVServiceCenterContext : DbContext
         {
             entity.HasKey(e => e.VehicleId).HasName("PK__Vehicle__476B54B29147CA38");
 
-            entity.Property(e => e.VehicleId).ValueGeneratedNever();
+            entity.Property(e => e.VehicleId).ValueGeneratedOnAdd();
 
             entity.HasOne(d => d.User).WithMany(p => p.Vehicles).HasConstraintName("FK__Vehicle__UserID__3D5E1FD2");
         });
@@ -301,13 +301,13 @@ public partial class EVServiceCenterContext : DbContext
             new Part { PartId = 4, Name = "Coolant Fluid", Type = "Chemical", Brand = "Shell", UnitPrice = 500000m }
         );
 
-        //// --- BẢNG: Storage ---
-        //modelBuilder.Entity<Storage>().HasData(
-        //    new Storage { StorageId = 1, CenterId = 1, PartId = 1, Quantity = 10, MinThreshold = 3 },
-        //    new Storage { StorageId = 2, CenterId = 1, PartId = 2, Quantity = 5, MinThreshold = 2 },
-        //    new Storage { StorageId = 3, CenterId = 2, PartId = 3, Quantity = 8, MinThreshold = 3 },
-        //    new Storage { StorageId = 4, CenterId = 2, PartId = 4, Quantity = 15, MinThreshold = 5 }
-        //);
+        // --- BẢNG: Storage ---
+        modelBuilder.Entity<Storage>().HasData(
+            new Storage { StorageId = 1, CenterId = 1, PartId = 1, Quantity = 10, MinThreshold = 3 },
+            new Storage { StorageId = 2, CenterId = 1, PartId = 2, Quantity = 5, MinThreshold = 2 },
+            new Storage { StorageId = 3, CenterId = 2, PartId = 3, Quantity = 8, MinThreshold = 3 },
+            new Storage { StorageId = 4, CenterId = 2, PartId = 4, Quantity = 15, MinThreshold = 5 }
+        );
 
         // --- BẢNG: ServiceCatalog ---
         modelBuilder.Entity<ServiceCatalog>().HasData(
@@ -317,40 +317,40 @@ public partial class EVServiceCenterContext : DbContext
             new ServiceCatalog { ServiceId = 4, Name = "General Inspection", Description = "Full vehicle health check", BasePrice = 1000000m, DurationMinutes = 90 }
         );
 
-        //// --- BẢNG: Vehicle ---
-        //modelBuilder.Entity<Vehicle>().HasData(
-        //    new Vehicle { VehicleId = 1, UserId = customer1Id, Vin = "VN123456789ABCDEFG", Model = "VinFast VF8", BatteryCapacity = 82.0m, Mileage = 15000m, LastMaintenanceDate = new DateOnly(2025, 8, 15) },
-        //    new Vehicle { VehicleId = 2, UserId = customer2Id, Vin = "VN999999999ABCDEFG", Model = "Tesla Model Y", BatteryCapacity = 75.5m, Mileage = 22000m, LastMaintenanceDate = new DateOnly(2025, 9, 20) }
-        //);
+        // --- BẢNG: Vehicle ---
+        modelBuilder.Entity<Vehicle>().HasData(
+            new Vehicle { VehicleId = 1, UserId = customer1Id, Vin = "VN123456789ABCDEFG", Model = "VinFast VF8", BatteryCapacity = 82.0m, Mileage = 15000m, LastMaintenanceDate = new DateOnly(2025, 8, 15) },
+            new Vehicle { VehicleId = 2, UserId = customer2Id, Vin = "VN999999999ABCDEFG", Model = "Tesla Model Y", BatteryCapacity = 75.5m, Mileage = 22000m, LastMaintenanceDate = new DateOnly(2025, 9, 20) }
+        );
 
-        //// --- BẢNG: OrderService ---
-        //modelBuilder.Entity<OrderService>().HasData(
-        //    new OrderService { OrderId = 1, VehicleId = 1, UserId = customer1Id, AppointmentDate = new DateTime(2025, 10, 5), Status = "Completed", ChecklistNote = "Replaced brake pads, coolant check", TotalCost = 2500000m },
-        //    new OrderService { OrderId = 2, VehicleId = 2, UserId = customer2Id, AppointmentDate = new DateTime(2025, 10, 7), Status = "Pending", ChecklistNote = "General checkup", TotalCost = 1000000m }
-        //);
+        // --- BẢNG: OrderService ---
+        modelBuilder.Entity<OrderService>().HasData(
+            new OrderService { OrderId = 1, VehicleId = 1, UserId = customer1Id, AppointmentDate = new DateTime(2025, 10, 5), Status = "Completed", ChecklistNote = "Replaced brake pads, coolant check", TotalCost = 2500000m },
+            new OrderService { OrderId = 2, VehicleId = 2, UserId = customer2Id, AppointmentDate = new DateTime(2025, 10, 7), Status = "Pending", ChecklistNote = "General checkup", TotalCost = 1000000m }
+        );
 
-        //// --- BẢNG: OrderDetail ---
-        //modelBuilder.Entity<OrderDetail>().HasData(
-        //    new OrderDetail { OrderDetailId = 1, OrderId = 1, ServiceId = 2, Quantity = 1, UnitPrice = 1500000m },
-        //    new OrderDetail { OrderDetailId = 2, OrderId = 1, ServiceId = 3, Quantity = 1, UnitPrice = 1000000m },
-        //    new OrderDetail { OrderDetailId = 3, OrderId = 2, ServiceId = 4, Quantity = 1, UnitPrice = 1000000m }
-        //);
+        // --- BẢNG: OrderDetail ---
+        modelBuilder.Entity<OrderDetail>().HasData(
+            new OrderDetail { OrderDetailId = 1, OrderId = 1, ServiceId = 2, Quantity = 1, UnitPrice = 1500000m },
+            new OrderDetail { OrderDetailId = 2, OrderId = 1, ServiceId = 3, Quantity = 1, UnitPrice = 1000000m },
+            new OrderDetail { OrderDetailId = 3, OrderId = 2, ServiceId = 4, Quantity = 1, UnitPrice = 1000000m }
+        );
 
-        //// --- BẢNG: PartsUsed ---
-        //modelBuilder.Entity<PartsUsed>().HasData(
-        //    new PartsUsed { UsageId = 1, OrderId = 1, PartId = 3, Quantity = 4, Note = "Brake pads replaced" },
-        //    new PartsUsed { UsageId = 2, OrderId = 1, PartId = 4, Quantity = 1, Note = "Coolant refilled" }
-        //);
+        // --- BẢNG: PartsUsed ---
+        modelBuilder.Entity<PartsUsed>().HasData(
+            new PartsUsed { UsageId = 1, OrderId = 1, PartId = 3, Quantity = 4, Note = "Brake pads replaced" },
+            new PartsUsed { UsageId = 2, OrderId = 1, PartId = 4, Quantity = 1, Note = "Coolant refilled" }
+        );
 
-        // --- BẢNG: Slot ---
-        // Lưu ý: EF Core không hỗ trợ seeding với kiểu dữ liệu TIME,
+        //---BẢNG: Slot-- -
+        //Lưu ý: EF Core không hỗ trợ seeding với kiểu dữ liệu TIME,
         // nên chúng ta sẽ dùng DateTime và bỏ qua phần ngày.
         // Hoặc tốt hơn là đổi kiểu dữ liệu cột trong Model thành DateTime.
-        // Giả định bạn đã đổi cột StartTime/EndTime thành DateTime trong Model.
-        //modelBuilder.Entity<Slot>().HasData(
-        //    new Slot { SlotId = 1, CenterId = 1, TechnicianId = tech1Id, OrderId = 1, StartTime = new DateTime(2025, 10, 5, 8, 0, 0), EndTime = new DateTime(2025, 10, 5, 12, 0, 0) },
-        //    new Slot { SlotId = 2, CenterId = 2, TechnicianId = tech2Id, OrderId = null, StartTime = new DateTime(2025, 10, 9, 13, 0, 0), EndTime = new DateTime(2025, 10, 9, 17, 0, 0) }
-        //);
+        // Giả định bạn đã đổi cột StartTime / EndTime thành DateTime trong Model.
+        modelBuilder.Entity<Slot>().HasData(
+            new Slot { SlotId = 1, CenterId = 1, TechnicianId = tech1Id, OrderId = 1, StartTime = new DateTime(2025, 10, 5, 8, 0, 0), EndTime = new DateTime(2025, 10, 5, 12, 0, 0) },
+            new Slot { SlotId = 2, CenterId = 2, TechnicianId = tech2Id, OrderId = null, StartTime = new DateTime(2025, 10, 9, 13, 0, 0), EndTime = new DateTime(2025, 10, 9, 17, 0, 0) }
+        );
 
         // --- BẢNG: SubscriptionPlan ---
         modelBuilder.Entity<SubscriptionPlan>().HasData(
@@ -358,26 +358,26 @@ public partial class EVServiceCenterContext : DbContext
             new SubscriptionPlan { PlanId = planPremiumId, Code = "PREMIUM", Name = "Premium Care", PriceVnd = 999000m, DurationDays = 90, Benefits = "Priority booking, 3 free inspections", IsActive = true }
         );
 
-        //// --- BẢNG: Subscription ---
-        //modelBuilder.Entity<Subscription>().HasData(
-        //    new Subscription { SubscriptionId = subscription1Id, UserId = customer1Id, PlanId = planPremiumId, StartDate = new DateTime(2025, 9, 1), EndDate = new DateTime(2025, 12, 1), AutoRenew = true, Status = "active", CreatedAt = DateTime.Now }
-        //);
+        // --- BẢNG: Subscription ---
+        modelBuilder.Entity<Subscription>().HasData(
+            new Subscription { SubscriptionId = subscription1Id, UserId = customer1Id, PlanId = planPremiumId, StartDate = new DateTime(2025, 9, 1), EndDate = new DateTime(2025, 12, 1), AutoRenew = true, Status = "active", CreatedAt = DateTime.Now }
+        );
 
-        //// --- BẢNG: Invoice ---
-        //modelBuilder.Entity<Invoice>().HasData(
-        //    new Invoice { InvoiceId = 1, SubscriptionId = subscription1Id, Amount = 999000m, Status = "Paid", IssueDate = new DateTime(2025, 9, 1), DueDate = new DateTime(2025, 9, 7) }
-        //);
+        // --- BẢNG: Invoice ---
+        modelBuilder.Entity<Invoice>().HasData(
+            new Invoice { InvoiceId = 1, SubscriptionId = subscription1Id, Amount = 999000m, Status = "Paid", IssueDate = new DateTime(2025, 9, 1), DueDate = new DateTime(2025, 9, 7) }
+        );
 
-        //// --- BẢNG: Notification ---
-        //modelBuilder.Entity<Notification>().HasData(
-        //    new Notification { NotificationId = 1, ReceiverId = customer1Id, Content = "Your vehicle maintenance is completed.", Type = "StatusUpdate", TriggerDate = DateTime.Now, IsRead = false },
-        //    new Notification { NotificationId = 2, ReceiverId = customer2Id, Content = "Your appointment is scheduled for tomorrow.", Type = "MaintenanceReminder", TriggerDate = DateTime.Now, IsRead = false }
-        //);
+        // --- BẢNG: Notification ---
+        modelBuilder.Entity<Notification>().HasData(
+            new Notification { NotificationId = 1, ReceiverId = customer1Id, Content = "Your vehicle maintenance is completed.", Type = "StatusUpdate", TriggerDate = DateTime.Now, IsRead = false },
+            new Notification { NotificationId = 2, ReceiverId = customer2Id, Content = "Your appointment is scheduled for tomorrow.", Type = "MaintenanceReminder", TriggerDate = DateTime.Now, IsRead = false }
+        );
 
-        //// --- BẢNG: Feedback ---
-        //modelBuilder.Entity<Feedback>().HasData(
-        //    new Feedback { FeedbackId = 1, OrderId = 1, UserId = customer1Id, Rating = 5, Comment = "Excellent service! Technician was professional.", CreatedAt = DateTime.Now }
-        //);
+        // --- BẢNG: Feedback ---
+        modelBuilder.Entity<Feedback>().HasData(
+            new Feedback { FeedbackId = 1, OrderId = 1, UserId = customer1Id, Rating = 5, Comment = "Excellent service! Technician was professional.", CreatedAt = DateTime.Now }
+        );
 
         #endregion
 

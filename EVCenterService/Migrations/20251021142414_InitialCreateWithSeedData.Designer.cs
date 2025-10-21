@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EVCenterService.Migrations
 {
     [DbContext(typeof(EVServiceCenterContext))]
-    [Migration("20251019135917_UpdateAccountAndCleanSeedData")]
-    partial class UpdateAccountAndCleanSeedData
+    [Migration("20251021142414_InitialCreateWithSeedData")]
+    partial class InitialCreateWithSeedData
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -87,62 +87,62 @@ namespace EVCenterService.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = new Guid("8a46d62f-b68c-4b28-9ac3-ce30cb1c367e"),
+                            UserId = new Guid("f0236613-101d-4633-8bbd-634eeecfdaa4"),
                             Email = "admin@gmail.com",
                             FullName = "Admin",
-                            Password = "hashed_password_placeholder",
+                            Password = "AQAAAAIAAYagAAAAEJH8E8X3GMdH1foBsdQ5MQO+cJJ8bQ9yFnZXS8lr6/j4EcXL/rKf35KaD2P0m5q5sg==",
                             Phone = "0901000001",
                             Role = "Admin",
                             Status = "Active"
                         },
                         new
                         {
-                            UserId = new Guid("65ca8a9a-515e-4d15-a5f8-d51a4d9bcc96"),
+                            UserId = new Guid("e7e85ab2-c968-4b00-b8ab-eb1250ffcbc0"),
                             Certification = "EV Maintenance Level 1",
                             Email = "tech1@gmail.com",
                             FullName = "Tran Van B",
-                            Password = "hashed_password_placeholder",
+                            Password = "AQAAAAIAAYagAAAAEPTzzMMJUGu0eNSmmX391OfKZiIlZttZnsy50u4D7NnPJCGi1BcKRY06lfYfn9CUMA==",
                             Phone = "0902000002",
                             Role = "Technician",
                             Status = "Active"
                         },
                         new
                         {
-                            UserId = new Guid("a97493ff-192d-4ba1-9c37-4d909fbc0cee"),
+                            UserId = new Guid("5f06e2df-3e55-4dbe-b646-649f6a0c1784"),
                             Certification = "EV Battery Specialist",
                             Email = "tech2@gmail.com",
                             FullName = "Le Thi C",
-                            Password = "hashed_password_placeholder",
+                            Password = "AQAAAAIAAYagAAAAEPuEweg4GwluQNj5tgY/rcXfOGVz55pfCTdmkTrm6Zz00541JmHk1npt0As6BEE5MQ==",
                             Phone = "0903000003",
                             Role = "Technician",
                             Status = "Active"
                         },
                         new
                         {
-                            UserId = new Guid("1a34911e-98d4-45f1-a2f9-a6074134b16c"),
+                            UserId = new Guid("d591319d-f93c-4425-9d25-788a8e0560ca"),
                             Email = "staff@gmail.com",
                             FullName = "Phan Anh C",
-                            Password = "hashed_password_placeholder",
+                            Password = "AQAAAAIAAYagAAAAEP+chYJOiKIkCWO0xatjblQQE0ev/6YbghOSBXZDuKLp0jeODd9v8jgG89Jnu4vpbg==",
                             Phone = "0906000006",
                             Role = "Staff",
                             Status = "Active"
                         },
                         new
                         {
-                            UserId = new Guid("ddc47ff3-e23e-4e23-b064-d7803ae67014"),
+                            UserId = new Guid("84d971da-f79c-4071-b38c-0d41bbe05896"),
                             Email = "user1@gmail.com",
                             FullName = "Pham Van D",
-                            Password = "hashed_password_placeholder",
+                            Password = "AQAAAAIAAYagAAAAEIafCabwuZ76VVOvph/P4PecCUovWm98txQpyQsTTHggRG2zsgAMV4mpQwNGI1ewdg==",
                             Phone = "0904000004",
                             Role = "Customer",
                             Status = "Active"
                         },
                         new
                         {
-                            UserId = new Guid("4efbf8b8-8679-405f-904e-d5f24545accb"),
+                            UserId = new Guid("204d12c7-5c95-4112-90b7-4ff604d3c518"),
                             Email = "user2@gmail.com",
                             FullName = "Do Thi E",
-                            Password = "hashed_password_placeholder",
+                            Password = "AQAAAAIAAYagAAAAEDQe02X7ZL5Ex23HILQVyzSrNik6gw/JshiSOsJR/TmSPiGNIc0eGbykgXm0V6l9Nw==",
                             Phone = "0905000005",
                             Role = "Customer",
                             Status = "Active"
@@ -152,8 +152,11 @@ namespace EVCenterService.Migrations
             modelBuilder.Entity("EVCenterService.Models.Feedback", b =>
                 {
                     b.Property<int>("FeedbackId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("FeedbackID");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FeedbackId"));
 
                     b.Property<string>("Comment")
                         .HasColumnType("text");
@@ -182,13 +185,27 @@ namespace EVCenterService.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Feedback");
+
+                    b.HasData(
+                        new
+                        {
+                            FeedbackId = 1,
+                            Comment = "Excellent service! Technician was professional.",
+                            CreatedAt = new DateTime(2025, 10, 21, 21, 24, 12, 378, DateTimeKind.Local).AddTicks(5363),
+                            OrderId = 1,
+                            Rating = 5,
+                            UserId = new Guid("84d971da-f79c-4071-b38c-0d41bbe05896")
+                        });
                 });
 
             modelBuilder.Entity("EVCenterService.Models.Invoice", b =>
                 {
                     b.Property<int>("InvoiceId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("InvoiceID");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("InvoiceId"));
 
                     b.Property<decimal?>("Amount")
                         .HasColumnType("decimal(12, 2)");
@@ -214,13 +231,27 @@ namespace EVCenterService.Migrations
                     b.HasIndex("SubscriptionId");
 
                     b.ToTable("Invoice");
+
+                    b.HasData(
+                        new
+                        {
+                            InvoiceId = 1,
+                            Amount = 999000m,
+                            DueDate = new DateTime(2025, 9, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IssueDate = new DateTime(2025, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Status = "Paid",
+                            SubscriptionId = new Guid("d4c2fd9c-00ff-40ff-ab88-3eb91f4150f4")
+                        });
                 });
 
             modelBuilder.Entity("EVCenterService.Models.MaintenanceCenter", b =>
                 {
                     b.Property<int>("CenterId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("CenterID");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CenterId"));
 
                     b.Property<string>("Address")
                         .HasMaxLength(255)
@@ -279,8 +310,11 @@ namespace EVCenterService.Migrations
             modelBuilder.Entity("EVCenterService.Models.Notification", b =>
                 {
                     b.Property<int>("NotificationId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("NotificationID");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("NotificationId"));
 
                     b.Property<string>("Content")
                         .IsRequired()
@@ -309,13 +343,36 @@ namespace EVCenterService.Migrations
                     b.HasIndex("ReceiverId");
 
                     b.ToTable("Notification");
+
+                    b.HasData(
+                        new
+                        {
+                            NotificationId = 1,
+                            Content = "Your vehicle maintenance is completed.",
+                            IsRead = false,
+                            ReceiverId = new Guid("84d971da-f79c-4071-b38c-0d41bbe05896"),
+                            TriggerDate = new DateTime(2025, 10, 21, 21, 24, 12, 378, DateTimeKind.Local).AddTicks(5332),
+                            Type = "StatusUpdate"
+                        },
+                        new
+                        {
+                            NotificationId = 2,
+                            Content = "Your appointment is scheduled for tomorrow.",
+                            IsRead = false,
+                            ReceiverId = new Guid("204d12c7-5c95-4112-90b7-4ff604d3c518"),
+                            TriggerDate = new DateTime(2025, 10, 21, 21, 24, 12, 378, DateTimeKind.Local).AddTicks(5335),
+                            Type = "MaintenanceReminder"
+                        });
                 });
 
             modelBuilder.Entity("EVCenterService.Models.OrderDetail", b =>
                 {
                     b.Property<int>("OrderDetailId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("OrderDetailID");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderDetailId"));
 
                     b.Property<int?>("OrderId")
                         .HasColumnType("int")
@@ -341,13 +398,42 @@ namespace EVCenterService.Migrations
                     b.HasIndex("ServiceId");
 
                     b.ToTable("OrderDetail");
+
+                    b.HasData(
+                        new
+                        {
+                            OrderDetailId = 1,
+                            OrderId = 1,
+                            Quantity = 1,
+                            ServiceId = 2,
+                            UnitPrice = 1500000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 2,
+                            OrderId = 1,
+                            Quantity = 1,
+                            ServiceId = 3,
+                            UnitPrice = 1000000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 3,
+                            OrderId = 2,
+                            Quantity = 1,
+                            ServiceId = 4,
+                            UnitPrice = 1000000m
+                        });
                 });
 
             modelBuilder.Entity("EVCenterService.Models.OrderService", b =>
                 {
                     b.Property<int>("OrderId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("OrderID");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderId"));
 
                     b.Property<DateTime>("AppointmentDate")
                         .HasColumnType("datetime");
@@ -379,13 +465,38 @@ namespace EVCenterService.Migrations
                     b.HasIndex("VehicleId");
 
                     b.ToTable("OrderService");
+
+                    b.HasData(
+                        new
+                        {
+                            OrderId = 1,
+                            AppointmentDate = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ChecklistNote = "Replaced brake pads, coolant check",
+                            Status = "Completed",
+                            TotalCost = 2500000m,
+                            UserId = new Guid("84d971da-f79c-4071-b38c-0d41bbe05896"),
+                            VehicleId = 1
+                        },
+                        new
+                        {
+                            OrderId = 2,
+                            AppointmentDate = new DateTime(2025, 10, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ChecklistNote = "General checkup",
+                            Status = "Pending",
+                            TotalCost = 1000000m,
+                            UserId = new Guid("204d12c7-5c95-4112-90b7-4ff604d3c518"),
+                            VehicleId = 2
+                        });
                 });
 
             modelBuilder.Entity("EVCenterService.Models.Part", b =>
                 {
                     b.Property<int>("PartId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("PartID");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PartId"));
 
                     b.Property<string>("Brand")
                         .HasMaxLength(100)
@@ -449,8 +560,11 @@ namespace EVCenterService.Migrations
             modelBuilder.Entity("EVCenterService.Models.PartsUsed", b =>
                 {
                     b.Property<int>("UsageId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("UsageID");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UsageId"));
 
                     b.Property<string>("Note")
                         .HasColumnType("text");
@@ -474,13 +588,34 @@ namespace EVCenterService.Migrations
                     b.HasIndex("PartId");
 
                     b.ToTable("PartsUsed");
+
+                    b.HasData(
+                        new
+                        {
+                            UsageId = 1,
+                            Note = "Brake pads replaced",
+                            OrderId = 1,
+                            PartId = 3,
+                            Quantity = 4
+                        },
+                        new
+                        {
+                            UsageId = 2,
+                            Note = "Coolant refilled",
+                            OrderId = 1,
+                            PartId = 4,
+                            Quantity = 1
+                        });
                 });
 
             modelBuilder.Entity("EVCenterService.Models.ServiceCatalog", b =>
                 {
                     b.Property<int>("ServiceId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("ServiceID");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ServiceId"));
 
                     b.Property<decimal?>("BasePrice")
                         .HasColumnType("decimal(10, 2)");
@@ -540,8 +675,11 @@ namespace EVCenterService.Migrations
             modelBuilder.Entity("EVCenterService.Models.Slot", b =>
                 {
                     b.Property<int>("SlotId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("SlotID");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SlotId"));
 
                     b.Property<int?>("CenterId")
                         .HasColumnType("int")
@@ -573,13 +711,35 @@ namespace EVCenterService.Migrations
                         .HasFilter("[OrderID] IS NOT NULL");
 
                     b.ToTable("Slot");
+
+                    b.HasData(
+                        new
+                        {
+                            SlotId = 1,
+                            CenterId = 1,
+                            EndTime = new DateTime(2025, 10, 5, 12, 0, 0, 0, DateTimeKind.Unspecified),
+                            OrderId = 1,
+                            StartTime = new DateTime(2025, 10, 5, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            TechnicianId = new Guid("e7e85ab2-c968-4b00-b8ab-eb1250ffcbc0")
+                        },
+                        new
+                        {
+                            SlotId = 2,
+                            CenterId = 2,
+                            EndTime = new DateTime(2025, 10, 9, 17, 0, 0, 0, DateTimeKind.Unspecified),
+                            StartTime = new DateTime(2025, 10, 9, 13, 0, 0, 0, DateTimeKind.Unspecified),
+                            TechnicianId = new Guid("5f06e2df-3e55-4dbe-b646-649f6a0c1784")
+                        });
                 });
 
             modelBuilder.Entity("EVCenterService.Models.Storage", b =>
                 {
                     b.Property<int>("StorageId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("StorageID");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("StorageId"));
 
                     b.Property<int?>("CenterId")
                         .HasColumnType("int")
@@ -605,6 +765,40 @@ namespace EVCenterService.Migrations
                         .HasFilter("[CenterID] IS NOT NULL AND [PartID] IS NOT NULL");
 
                     b.ToTable("Storage");
+
+                    b.HasData(
+                        new
+                        {
+                            StorageId = 1,
+                            CenterId = 1,
+                            MinThreshold = 3,
+                            PartId = 1,
+                            Quantity = 10
+                        },
+                        new
+                        {
+                            StorageId = 2,
+                            CenterId = 1,
+                            MinThreshold = 2,
+                            PartId = 2,
+                            Quantity = 5
+                        },
+                        new
+                        {
+                            StorageId = 3,
+                            CenterId = 2,
+                            MinThreshold = 3,
+                            PartId = 3,
+                            Quantity = 8
+                        },
+                        new
+                        {
+                            StorageId = 4,
+                            CenterId = 2,
+                            MinThreshold = 5,
+                            PartId = 4,
+                            Quantity = 15
+                        });
                 });
 
             modelBuilder.Entity("EVCenterService.Models.Subscription", b =>
@@ -653,6 +847,19 @@ namespace EVCenterService.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Subscription");
+
+                    b.HasData(
+                        new
+                        {
+                            SubscriptionId = new Guid("d4c2fd9c-00ff-40ff-ab88-3eb91f4150f4"),
+                            AutoRenew = true,
+                            CreatedAt = new DateTime(2025, 10, 21, 21, 24, 12, 378, DateTimeKind.Local).AddTicks(5250),
+                            EndDate = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PlanId = new Guid("ffab7bc7-c34e-4683-92f0-4da0fbe4d980"),
+                            StartDate = new DateTime(2025, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Status = "active",
+                            UserId = new Guid("84d971da-f79c-4071-b38c-0d41bbe05896")
+                        });
                 });
 
             modelBuilder.Entity("EVCenterService.Models.SubscriptionPlan", b =>
@@ -699,7 +906,7 @@ namespace EVCenterService.Migrations
                     b.HasData(
                         new
                         {
-                            PlanId = new Guid("5f797d50-4dca-4d58-abd6-d6ace23c923a"),
+                            PlanId = new Guid("37107aac-6fa1-4741-a6e6-7dd4e5622bd9"),
                             Benefits = "1 free inspection/month",
                             Code = "BASIC",
                             DurationDays = 30,
@@ -709,7 +916,7 @@ namespace EVCenterService.Migrations
                         },
                         new
                         {
-                            PlanId = new Guid("62fc25c4-c7c8-4561-a6a5-4bceaa309cd6"),
+                            PlanId = new Guid("ffab7bc7-c34e-4683-92f0-4da0fbe4d980"),
                             Benefits = "Priority booking, 3 free inspections",
                             Code = "PREMIUM",
                             DurationDays = 90,
@@ -722,8 +929,11 @@ namespace EVCenterService.Migrations
             modelBuilder.Entity("EVCenterService.Models.Vehicle", b =>
                 {
                     b.Property<int>("VehicleId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("VehicleID");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("VehicleId"));
 
                     b.Property<decimal?>("BatteryCapacity")
                         .HasColumnType("decimal(10, 2)");
@@ -759,6 +969,28 @@ namespace EVCenterService.Migrations
                         .IsUnique();
 
                     b.ToTable("Vehicle");
+
+                    b.HasData(
+                        new
+                        {
+                            VehicleId = 1,
+                            BatteryCapacity = 82.0m,
+                            LastMaintenanceDate = new DateOnly(2025, 8, 15),
+                            Mileage = 15000m,
+                            Model = "VinFast VF8",
+                            UserId = new Guid("84d971da-f79c-4071-b38c-0d41bbe05896"),
+                            Vin = "VN123456789ABCDEFG"
+                        },
+                        new
+                        {
+                            VehicleId = 2,
+                            BatteryCapacity = 75.5m,
+                            LastMaintenanceDate = new DateOnly(2025, 9, 20),
+                            Mileage = 22000m,
+                            Model = "Tesla Model Y",
+                            UserId = new Guid("204d12c7-5c95-4112-90b7-4ff604d3c518"),
+                            Vin = "VN999999999ABCDEFG"
+                        });
                 });
 
             modelBuilder.Entity("EVCenterService.Models.Feedback", b =>
