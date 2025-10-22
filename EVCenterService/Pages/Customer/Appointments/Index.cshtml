@@ -1,38 +1,75 @@
 ﻿@page
+@model EVCenterService.Pages.Customer.Appointments.IndexModel
 @{
     Layout = "_AppLayout";
+    ViewData["Title"] = "Order Service List";
 }
 
-<h1 class="h2 mb-4">Service History</h1>
+<h2 class="mb-3">Customer Order List</h2>
 
-<div class="card">
-    <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0">
-            <thead>
+@if (Model.Bookings == null || !Model.Bookings.Any())
+{
+    <div class="alert alert-info">Bạn chưa có lịch hẹn nào.</div>
+}
+else
+{
+    <table class="table table-hover table-bordered align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>#</th>
+                <th>Xe</th>
+                <th>Dịch vụ</th>
+                <th>Ngày hẹn</th>
+                <th>Ghi chú</th>
+                <th>Trạng thái</th>
+                <th>Tổng tiền</th>
+                <th class="text-center">Hành động</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                int index = 1;
+            }
+
+            @foreach (var order in Model.Bookings)
+            {
+                var serviceNames = string.Join(", ", order.OrderDetails
+                .Where(d => d.Service != null)
+                .Select(d => d.Service.Name));
+
+                var badgeClass = order.Status?.ToLower() switch
+                {
+                    "pending" => "bg-warning text-dark",
+                    "confirmed" => "bg-primary",
+                    "inprogress" => "bg-info text-dark",
+                    "completed" => "bg-success",
+                    "cancelled" => "bg-danger",
+                    _ => "bg-secondary"
+                };
+
                 <tr>
-                    <th>Date</th>
-                    <th>Vehicle</th>
-                    <th>Services Performed</th>
-                    <th>Status</th>
-                    <th>Invoice</th>
+                    <td>@index</td>
+                    <td>@order.Vehicle?.Model</td>
+                    <td>@serviceNames</td>
+                    <td>@order.AppointmentDate.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>@order.ChecklistNote</td>
+                    <td>
+                        <span class="badge @badgeClass">
+                            @(order.Status?.ToUpperInvariant() ?? "UNKNOWN")
+                        </span>
+                    </td>
+                    <td>@string.Format("{0:N0} đ", order.TotalCost ?? 0)</td>
+                    <td class="text-center">
+                        <a asp-page="Edit" asp-route-id="@order.OrderId" class="btn btn-sm btn-primary">Sửa</a>
+                        <a asp-page="Delete" asp-route-id="@order.OrderId" class="btn btn-sm btn-danger"
+                           onclick="return confirm('Bạn có chắc chắn muốn xóa lịch hẹn này không?');">Xóa</a>
+                    </td>
                 </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>2025-08-15</td>
-                    <td>VinFast VF8</td>
-                    <td>Battery Health Check, Tire Rotation</td>
-                    <td><span class="badge fw-semibold bg-success">Completed</span></td>
-                    <td><a href="#" class="btn btn-sm btn-light border">View Invoice #1234</a></td>
-                </tr>
-                <tr>
-                    <td>2025-10-16</td>
-                    <td>VinFast VF8</td>
-                    <td>General Inspection</td>
-                    <td><span class="badge fw-semibold bg-info">In Progress</span></td>
-                    <td>-</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
+
+                index++;
+            }
+        </tbody>
+    </table>
+}
+
+<a asp-page="Create" class="btn btn-success mt-3">+ Đặt lịch mới</a>
