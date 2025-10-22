@@ -27,11 +27,11 @@ namespace EVCenterService.Pages.Admin.Parts
 
         public async Task<IActionResult> OnPostAsync()
         {
-            // Ki?m tra xem PartId ?ã t?n t?i ch?a
-            if (await _context.Parts.AnyAsync(p => p.PartId == Part.PartId))
-            {
-                ModelState.AddModelError("Part.PartId", "Mã Ph? tùng (ID) này ?ã t?n t?i.");
-            }
+            //// Ki?m tra xem PartId ?ã t?n t?i ch?a (vì PartId KHÔNG t? t?ng trong DB c?a b?n)
+            //if (await _context.Parts.AnyAsync(p => p.PartId == Part.PartId))
+            //{
+            //    ModelState.AddModelError("Part.PartId", "Mã Ph? tùng (ID) này ?ã t?n t?i.");
+            //}
 
             if (!ModelState.IsValid)
             {
@@ -44,31 +44,30 @@ namespace EVCenterService.Pages.Admin.Parts
             {
                 // 1. Thêm Part m?i
                 _context.Parts.Add(Part);
-                await _context.SaveChangesAsync(); // L?u Part tr??c
+                // L?u Part tr??c ?? ??m b?o PartId h?p l? cho b??c sau
+                // (Quan tr?ng vì PartId không t? t?ng, b?n ph?i cung c?p nó t? form)
+                await _context.SaveChangesAsync();
 
                 // 2. L?y danh sách t?t c? các CenterID
                 var centerIds = await _context.MaintenanceCenters.Select(c => c.CenterId).ToListAsync();
 
-                // 3. L?y StorageID l?n nh?t hi?n có ?? t?o ID m?i
-                int maxStorageId = await _context.Storages.AnyAsync() ? await _context.Storages.MaxAsync(s => s.StorageId) : 0;
-                int nextStorageId = maxStorageId + 1;
-
-                // 4. T?o các b?n ghi Storage t??ng ?ng
+                // 3. T?o các b?n ghi Storage t??ng ?ng (KHÔNG c?n tính toán StorageID)
                 foreach (var centerId in centerIds)
                 {
                     var storageEntry = new Storage
                     {
-                        StorageId = nextStorageId++, // S?A L?I: Gán StorageID duy nh?t
+                        // StorageId = nextStorageId++, // <-- XÓA DÒNG NÀY VÀ CÁC DÒNG TÍNH TOÁN ID ? TRÊN
                         CenterId = centerId,
-                        PartId = Part.PartId,
-                        Quantity = 0,
-                        MinThreshold = 5
+                        PartId = Part.PartId, // PartId l?y t? ??i t??ng Part v?a ???c thêm
+                        Quantity = 0, // S? l??ng ban ??u
+                        MinThreshold = 5 // Ng??ng m?c ??nh
                     };
                     _context.Storages.Add(storageEntry);
                 }
-                await _context.SaveChangesAsync(); // L?u Storage
+                // L?u các b?n ghi Storage (database s? t? t?o StorageID)
+                await _context.SaveChangesAsync();
 
-                // Commit transaction
+                // N?u m?i th? thành công, commit transaction
                 await transaction.CommitAsync();
 
                 TempData["StatusMessage"] = $"Ph? tùng '{Part.Name}' ?ã ???c t?o và thêm vào kho các trung tâm.";
@@ -76,9 +75,9 @@ namespace EVCenterService.Pages.Admin.Parts
             }
             catch (Exception ex)
             {
-                // Rollback n?u có l?i
+                // N?u có l?i, rollback transaction
                 await transaction.RollbackAsync();
-                Console.WriteLine($"Error creating part: {ex.Message}"); 
+                Console.WriteLine($"Error creating part: {ex.Message}");
                 ModelState.AddModelError(string.Empty, "?ã x?y ra l?i khi t?o ph? tùng. Vui lòng th? l?i ho?c liên h? qu?n tr? viên.");
                 return Page();
             }
