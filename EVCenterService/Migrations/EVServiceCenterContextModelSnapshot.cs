@@ -84,62 +84,62 @@ namespace EVCenterService.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = new Guid("f0236613-101d-4633-8bbd-634eeecfdaa4"),
+                            UserId = new Guid("3c9eba21-38f8-468f-93b7-06ef221e0b4e"),
                             Email = "admin@gmail.com",
                             FullName = "Admin",
-                            Password = "AQAAAAIAAYagAAAAEJH8E8X3GMdH1foBsdQ5MQO+cJJ8bQ9yFnZXS8lr6/j4EcXL/rKf35KaD2P0m5q5sg==",
+                            Password = "AQAAAAIAAYagAAAAEMp1RjhQPHvSemxcmI/fphhEhduhhc9T0F8YJPODGw3eTCg03c1tp29EIj66RDixow==",
                             Phone = "0901000001",
                             Role = "Admin",
                             Status = "Active"
                         },
                         new
                         {
-                            UserId = new Guid("e7e85ab2-c968-4b00-b8ab-eb1250ffcbc0"),
+                            UserId = new Guid("1267fa04-5cba-484b-944d-26f6ae43cd79"),
                             Certification = "EV Maintenance Level 1",
                             Email = "tech1@gmail.com",
                             FullName = "Tran Van B",
-                            Password = "AQAAAAIAAYagAAAAEPTzzMMJUGu0eNSmmX391OfKZiIlZttZnsy50u4D7NnPJCGi1BcKRY06lfYfn9CUMA==",
+                            Password = "AQAAAAIAAYagAAAAEAItwR2gS0GELwazJcTe1lU/9lB8SQGd+JiOEd4V+P9towl/yqH2mTpsqvfgnTk/XQ==",
                             Phone = "0902000002",
                             Role = "Technician",
                             Status = "Active"
                         },
                         new
                         {
-                            UserId = new Guid("5f06e2df-3e55-4dbe-b646-649f6a0c1784"),
+                            UserId = new Guid("33270676-668a-4e64-9875-96a107486590"),
                             Certification = "EV Battery Specialist",
                             Email = "tech2@gmail.com",
                             FullName = "Le Thi C",
-                            Password = "AQAAAAIAAYagAAAAEPuEweg4GwluQNj5tgY/rcXfOGVz55pfCTdmkTrm6Zz00541JmHk1npt0As6BEE5MQ==",
+                            Password = "AQAAAAIAAYagAAAAENLMxjCkAr3KGiD8w0YG5LjnCTmklUZRHnKe5tqnLLVqN2QDVWpETInrqOIX6IWISw==",
                             Phone = "0903000003",
                             Role = "Technician",
                             Status = "Active"
                         },
                         new
                         {
-                            UserId = new Guid("d591319d-f93c-4425-9d25-788a8e0560ca"),
+                            UserId = new Guid("f31fde89-cf12-4bcb-93cf-910ceea957a5"),
                             Email = "staff@gmail.com",
                             FullName = "Phan Anh C",
-                            Password = "AQAAAAIAAYagAAAAEP+chYJOiKIkCWO0xatjblQQE0ev/6YbghOSBXZDuKLp0jeODd9v8jgG89Jnu4vpbg==",
+                            Password = "AQAAAAIAAYagAAAAENs4Y4MMWnpXKRW5Hm6Tt6msxBy/v5/T8eXJ+YZN/14Jbo2YvNdNNVZGojPDtQ0IIg==",
                             Phone = "0906000006",
                             Role = "Staff",
                             Status = "Active"
                         },
                         new
                         {
-                            UserId = new Guid("84d971da-f79c-4071-b38c-0d41bbe05896"),
+                            UserId = new Guid("b46541ab-e42f-4337-940c-6bf5b8ca56c3"),
                             Email = "user1@gmail.com",
                             FullName = "Pham Van D",
-                            Password = "AQAAAAIAAYagAAAAEIafCabwuZ76VVOvph/P4PecCUovWm98txQpyQsTTHggRG2zsgAMV4mpQwNGI1ewdg==",
+                            Password = "AQAAAAIAAYagAAAAEH/2yHWFgFyl75eWnlHple+OawI+CDWM528mzh//9tyd9+uPSVOi57BI75AfZ/I/pQ==",
                             Phone = "0904000004",
                             Role = "Customer",
                             Status = "Active"
                         },
                         new
                         {
-                            UserId = new Guid("204d12c7-5c95-4112-90b7-4ff604d3c518"),
+                            UserId = new Guid("d729e2c6-d110-4f2e-b49c-6484fb564777"),
                             Email = "user2@gmail.com",
                             FullName = "Do Thi E",
-                            Password = "AQAAAAIAAYagAAAAEDQe02X7ZL5Ex23HILQVyzSrNik6gw/JshiSOsJR/TmSPiGNIc0eGbykgXm0V6l9Nw==",
+                            Password = "AQAAAAIAAYagAAAAEHko6LgAqt4iAMDwoUtIqy/vC4xlwRybsAcPxV7wXQmAkwXL7jfJkZbmhYSgJCVr/Q==",
                             Phone = "0905000005",
                             Role = "Customer",
                             Status = "Active"
@@ -188,10 +188,10 @@ namespace EVCenterService.Migrations
                         {
                             FeedbackId = 1,
                             Comment = "Excellent service! Technician was professional.",
-                            CreatedAt = new DateTime(2025, 10, 21, 21, 24, 12, 378, DateTimeKind.Local).AddTicks(5363),
+                            CreatedAt = new DateTime(2025, 10, 22, 13, 51, 53, 982, DateTimeKind.Local).AddTicks(1167),
                             OrderId = 1,
                             Rating = 5,
-                            UserId = new Guid("84d971da-f79c-4071-b38c-0d41bbe05896")
+                            UserId = new Guid("b46541ab-e42f-4337-940c-6bf5b8ca56c3")
                         });
                 });
 
@@ -237,7 +237,7 @@ namespace EVCenterService.Migrations
                             DueDate = new DateTime(2025, 9, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IssueDate = new DateTime(2025, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Status = "Paid",
-                            SubscriptionId = new Guid("d4c2fd9c-00ff-40ff-ab88-3eb91f4150f4")
+                            SubscriptionId = new Guid("d40c4ec2-45af-4b2b-bae5-b0cfab80163f")
                         });
                 });
 
@@ -347,8 +347,8 @@ namespace EVCenterService.Migrations
                             NotificationId = 1,
                             Content = "Your vehicle maintenance is completed.",
                             IsRead = false,
-                            ReceiverId = new Guid("84d971da-f79c-4071-b38c-0d41bbe05896"),
-                            TriggerDate = new DateTime(2025, 10, 21, 21, 24, 12, 378, DateTimeKind.Local).AddTicks(5332),
+                            ReceiverId = new Guid("b46541ab-e42f-4337-940c-6bf5b8ca56c3"),
+                            TriggerDate = new DateTime(2025, 10, 22, 13, 51, 53, 982, DateTimeKind.Local).AddTicks(1143),
                             Type = "StatusUpdate"
                         },
                         new
@@ -356,8 +356,8 @@ namespace EVCenterService.Migrations
                             NotificationId = 2,
                             Content = "Your appointment is scheduled for tomorrow.",
                             IsRead = false,
-                            ReceiverId = new Guid("204d12c7-5c95-4112-90b7-4ff604d3c518"),
-                            TriggerDate = new DateTime(2025, 10, 21, 21, 24, 12, 378, DateTimeKind.Local).AddTicks(5335),
+                            ReceiverId = new Guid("d729e2c6-d110-4f2e-b49c-6484fb564777"),
+                            TriggerDate = new DateTime(2025, 10, 22, 13, 51, 53, 982, DateTimeKind.Local).AddTicks(1146),
                             Type = "MaintenanceReminder"
                         });
                 });
@@ -471,7 +471,7 @@ namespace EVCenterService.Migrations
                             ChecklistNote = "Replaced brake pads, coolant check",
                             Status = "Completed",
                             TotalCost = 2500000m,
-                            UserId = new Guid("84d971da-f79c-4071-b38c-0d41bbe05896"),
+                            UserId = new Guid("b46541ab-e42f-4337-940c-6bf5b8ca56c3"),
                             VehicleId = 1
                         },
                         new
@@ -481,7 +481,7 @@ namespace EVCenterService.Migrations
                             ChecklistNote = "General checkup",
                             Status = "Pending",
                             TotalCost = 1000000m,
-                            UserId = new Guid("204d12c7-5c95-4112-90b7-4ff604d3c518"),
+                            UserId = new Guid("d729e2c6-d110-4f2e-b49c-6484fb564777"),
                             VehicleId = 2
                         });
                 });
@@ -717,7 +717,7 @@ namespace EVCenterService.Migrations
                             EndTime = new DateTime(2025, 10, 5, 12, 0, 0, 0, DateTimeKind.Unspecified),
                             OrderId = 1,
                             StartTime = new DateTime(2025, 10, 5, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            TechnicianId = new Guid("e7e85ab2-c968-4b00-b8ab-eb1250ffcbc0")
+                            TechnicianId = new Guid("1267fa04-5cba-484b-944d-26f6ae43cd79")
                         },
                         new
                         {
@@ -725,7 +725,7 @@ namespace EVCenterService.Migrations
                             CenterId = 2,
                             EndTime = new DateTime(2025, 10, 9, 17, 0, 0, 0, DateTimeKind.Unspecified),
                             StartTime = new DateTime(2025, 10, 9, 13, 0, 0, 0, DateTimeKind.Unspecified),
-                            TechnicianId = new Guid("5f06e2df-3e55-4dbe-b646-649f6a0c1784")
+                            TechnicianId = new Guid("33270676-668a-4e64-9875-96a107486590")
                         });
                 });
 
@@ -848,14 +848,14 @@ namespace EVCenterService.Migrations
                     b.HasData(
                         new
                         {
-                            SubscriptionId = new Guid("d4c2fd9c-00ff-40ff-ab88-3eb91f4150f4"),
+                            SubscriptionId = new Guid("d40c4ec2-45af-4b2b-bae5-b0cfab80163f"),
                             AutoRenew = true,
-                            CreatedAt = new DateTime(2025, 10, 21, 21, 24, 12, 378, DateTimeKind.Local).AddTicks(5250),
+                            CreatedAt = new DateTime(2025, 10, 22, 13, 51, 53, 982, DateTimeKind.Local).AddTicks(1082),
                             EndDate = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            PlanId = new Guid("ffab7bc7-c34e-4683-92f0-4da0fbe4d980"),
+                            PlanId = new Guid("8ce0ab6c-5efa-4d10-aa49-44cfda38876a"),
                             StartDate = new DateTime(2025, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Status = "active",
-                            UserId = new Guid("84d971da-f79c-4071-b38c-0d41bbe05896")
+                            UserId = new Guid("b46541ab-e42f-4337-940c-6bf5b8ca56c3")
                         });
                 });
 
@@ -903,7 +903,7 @@ namespace EVCenterService.Migrations
                     b.HasData(
                         new
                         {
-                            PlanId = new Guid("37107aac-6fa1-4741-a6e6-7dd4e5622bd9"),
+                            PlanId = new Guid("b08ba948-3652-4cc1-aebd-8314d6c56529"),
                             Benefits = "1 free inspection/month",
                             Code = "BASIC",
                             DurationDays = 30,
@@ -913,7 +913,7 @@ namespace EVCenterService.Migrations
                         },
                         new
                         {
-                            PlanId = new Guid("ffab7bc7-c34e-4683-92f0-4da0fbe4d980"),
+                            PlanId = new Guid("8ce0ab6c-5efa-4d10-aa49-44cfda38876a"),
                             Benefits = "Priority booking, 3 free inspections",
                             Code = "PREMIUM",
                             DurationDays = 90,
@@ -975,7 +975,7 @@ namespace EVCenterService.Migrations
                             LastMaintenanceDate = new DateOnly(2025, 8, 15),
                             Mileage = 15000m,
                             Model = "VinFast VF8",
-                            UserId = new Guid("84d971da-f79c-4071-b38c-0d41bbe05896"),
+                            UserId = new Guid("b46541ab-e42f-4337-940c-6bf5b8ca56c3"),
                             Vin = "VN123456789ABCDEFG"
                         },
                         new
@@ -985,7 +985,7 @@ namespace EVCenterService.Migrations
                             LastMaintenanceDate = new DateOnly(2025, 9, 20),
                             Mileage = 22000m,
                             Model = "Tesla Model Y",
-                            UserId = new Guid("204d12c7-5c95-4112-90b7-4ff604d3c518"),
+                            UserId = new Guid("d729e2c6-d110-4f2e-b49c-6484fb564777"),
                             Vin = "VN999999999ABCDEFG"
                         });
                 });
