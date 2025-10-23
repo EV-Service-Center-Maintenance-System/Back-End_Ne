@@ -24,6 +24,9 @@ builder.Services.AddScoped<IVehicleService, VehicleService>();
 builder.Services.AddScoped<ICustomerBookingRepository, CustomerBookingRepository>();
 builder.Services.AddScoped<ICustomerBookingService, CustomerBookingService>();
 
+builder.Services.AddScoped<IStaffAppointmentRepository, StaffAppointmentRepository>();
+builder.Services.AddScoped<IStaffAppointmentService, StaffAppointmentService>();
+
 // DI for migrationcd EVCenterService
 builder.Services.AddDbContext<EVServiceCenterContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));

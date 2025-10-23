@@ -8,5 +8,7 @@ namespace EVCenterService.Service.Interfaces
         Task ConfirmAppointmentAsync(int orderId);
         Task RejectAppointmentAsync(int orderId);
         Task AssignTechnicianAsync(int orderId, Guid technicianId);
+        Task<OrderService?> GetByIdAsync(int orderId);
+        Task<OrderService> GetAppointmentWithDetailsAsync(int orderId);
     }
 }

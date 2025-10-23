@@ -1,4 +1,78 @@
 ﻿@page
 @model EVCenterService.Pages.Staff.Appointments.ManageModel
 @{
+    Layout = "_AppLayout";
+    ViewData["Title"] = "Manage Booking";
+}
+
+<h2 class="mb-3">Appointment List</h2>
+
+@if (TempData["Message"] != null)
+{
+<div class="alert alert-success">@TempData["Message"]</div>
+}
+
+@if (Model.PendingAppointments == null || !Model.PendingAppointments.Any())
+{
+<div class="alert alert-info">Hiện không có lịch hẹn nào đang chờ xử lý.</div>
+}
+else
+{
+<table class="table table-bordered align-middle">
+    <thead class="table-dark">
+        <tr>
+            <th>#</th>
+            <th>Xe</th>
+            <th>Dịch vụ</th>
+            <th>Khách hàng</th>
+            <th>Ngày hẹn</th>
+            <th>Ghi chú</th>
+            <th class="text-center">Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+        int index = 1;
+        }
+
+        @foreach (var appointment in Model.PendingAppointments)
+        {
+        var services = string.Join(", ", appointment.OrderDetails.Select(d => d.Service?.Name ?? "N/A"));
+
+        <tr>
+            <td>@index++</td>
+            <td>@appointment.Vehicle?.Model</td>
+            <td>@services</td>
+            <td>@appointment.User?.FullName</td>
+            <td>@appointment.AppointmentDate.ToString("dd/MM/yyyy HH:mm")</td>
+            <td>@appointment.ChecklistNote</td>
+            <td class="text-center">
+                <div class="d-flex flex-wrap justify-content-center gap-2">
+                    <form method="post" asp-page-handler="Confirm" asp-route-orderId="@appointment.OrderId" class="d-inline">
+                        <button type="submit" class="btn btn-success btn-sm">✅ Confirm</button>
+                    </form>
+
+                    <form method="post" asp-page-handler="Reject" asp-route-orderId="@appointment.OrderId" class="d-inline">
+                        <button type="submit" class="btn btn-danger btn-sm">❌ Reject</button>
+                    </form>
+
+                    <form method="post" asp-page-handler="Assign" class="d-inline">
+                        <input type="hidden" name="orderId" value="@appointment.OrderId" />
+                        <select name="technicianId" class="form-select form-select-sm d-inline w-auto">
+                            <option value="">--Chọn kỹ thuật viên--</option>
+                            <option value="11111111-1111-1111-1111-111111111111">Tech 1</option>
+                            <option value="22222222-2222-2222-2222-222222222222">Tech 2</option>
+                        </select>
+                        <button type="submit" class="btn btn-warning btn-sm">👷‍♂️ Phân công</button>
+                    </form>
+
+                    <a asp-page="Details" asp-route-id="@appointment.OrderId" class="btn btn-outline-secondary btn-sm">
+                        👁️ View Details
+                    </a>
+                </div>
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>
 }
