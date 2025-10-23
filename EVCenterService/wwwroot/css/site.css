@@ -1,25 +1,19 @@
-/* ============================================= */
-/* == BI?N MÀU VÀ GIAO DI?N C? B?N (LIGHT THEME) == */
-/* ============================================= */
-:root {
-    --primary-color: #6366F1; /* Tím */
-    --primary-hover: #4f46e5;
-    --secondary-color: #f9a826; /* Vàng cam (cho nút Register) */
-    --secondary-hover: #f59e0b;
-    --light-bg: #f9fafb; /* N?n xám r?t nh?t */
-    --light-card: #ffffff;
-    --light-border: #e5e7eb;
-    --text-dark: #111827;
-    --text-light: #f8f9fa;
-    --text-muted: #6b7280;
-    --success: #10b981;
-    --danger: #ef4444;
-}
+/* ======================================================= */
+/* == CSS CHO HOMEPAGE (DARK THEME - ?Ã S?A L?I) == */
+/* ======================================================= */
 
-body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    background-color: var(--light-bg) !important; /* M?c ??nh n?n sáng */
-    color: var(--text-dark);
+/*
+ * B??C S?A L?I: Áp d?ng n?n (?nh xoáy) tr?c ti?p lên BODY
+ * khi nó có class .body-homepage-dark (Thêm t? Index.cshtml)
+*/
+body.body-homepage-dark {
+    /* Ghi ?è n?n xám/logo c? b?ng n?n xoáy m?i */
+    background-image: url('../images/homepage-dark-bg.jpg') !important;
+    background-color: #0d1117 !important; /* Màu n?n ?en d? phòng */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
 }
 
 .header-logo, .footer-logo {
@@ -29,16 +23,162 @@ body {
     margin-right: 8px;
 }
 
-/* ============================================= */
-/* == CSS CHO HEADER M?I (GI?NG M?U CARRIDE) == */
-/* ============================================= */
-.public-header-light {
-    /* S?A: Gi?m ?? m? xu?ng 60% */
-    background-color: rgba(255, 255, 255, 0.6) !important; /* N?n tr?ng m? (60% opaque) */
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+/* 1. L?p wrapper (GI? CH? CÒN TÁC D?NG SET MÀU CH?) */
+.homepage-dark-wrapper {
+    /* N?n ?ã ???c chuy?n lên body, ? ?ây ch? c?n gi? màu ch? */
+    color: var(--text-light);
+}
+
+/* 2. ?i?u ch?nh các section cho n?n t?i */
+
+/* Hero Section (Ph?n gi?i thi?u ??u) */
+.hero-section-dark {
+    padding-top: 8rem; /* Gi? padding gi?ng b?n light */
+    padding-bottom: 6rem;
+    background: transparent; /* N?n ?ã ???c ??t ? body */
+}
+
+    .hero-section-dark h1 {
+        color: #ffffff; /* Ch? tiêu ?? tr?ng */
+    }
+
+        /* Ch? "?i?n" màu xanh cyan n?i b?t nh? trong ?nh m?u */
+        .hero-section-dark h1 span {
+            color: #00e5ff; /* Màu cyan */
+        }
+
+    .hero-section-dark p.lead {
+        color: #adb5bd; /* Ch? mô t? màu xám nh?t */
+    }
+
+    /* Nút "Tìm hi?u thêm" (secondary) */
+    .hero-section-dark .btn-secondary {
+        background-color: transparent;
+        border-color: #00e5ff; /* Vi?n màu cyan */
+        color: #00e5ff; /* Ch? màu cyan */
+        border-radius: 0.5rem;
+    }
+
+        .hero-section-dark .btn-secondary:hover {
+            background-color: rgba(0, 229, 255, 0.1); /* Hi?u ?ng hover m? */
+            color: #fff;
+        }
+
+
+/* Services Section (Ph?n d?ch v?) */
+.services-section-dark {
+    background: transparent;
+}
+
+    .services-section-dark h2 {
+        color: #ffffff;
+        border-bottom-color: #343a40 !important; /* ???ng vi?n d??i m? h?n */
+    }
+
+    .services-section-dark p.text-secondary {
+        color: #adb5bd !important;
+    }
+
+    /* Icon d?ch v? (gi?ng màu cyan trong ?nh) */
+    .services-section-dark .feature-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 4rem;
+        height: 4rem;
+        border-radius: 0.75rem;
+        background-color: rgba(0, 229, 255, 0.1); /* N?n m? cyan */
+        color: #00e5ff; /* Màu icon cyan */
+        font-size: 2rem;
+        margin-bottom: 1rem;
+    }
+
+    .services-section-dark h4 {
+        color: #ffffff;
+    }
+
+    .services-section-dark p {
+        color: #adb5bd;
+    }
+
+    /* * 3. B?O T?N HI?U ?NG "N?Y N?Y" (HOVER CARD) CHO DARK THEME
+ * ?ây là ph?n b?n yêu c?u gi? l?i:
+*/
+    .services-section-dark .col > div {
+        transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+        padding: 1.5rem;
+        border-radius: 0.75rem;
+        height: 100%;
+        /* Thêm vi?n m? gi?ng trong ?nh m?u */
+        border: 1px solid #343a40;
+        background-color: rgba(13, 17, 23, 0.5); /* N?n h?i m? so v?i wrapper */
+    }
+
+        .services-section-dark .col > div:hover {
+            transform: translateY(-5px); /* V?n gi? hi?u ?ng "n?y" */
+            /* Hi?u ?ng bóng m? và vi?n sáng lên gi?ng ?nh m?u */
+            box-shadow: 0 8px 25px rgba(0, 229, 255, 0.15);
+            border-color: #00e5ff;
+            background-color: #161b22; /* N?n card ??m h?n khi hover */
+        }
+
+/* Why Choose Us Section */
+.why-choose-us-dark {
+    background: transparent;
+}
+
+    .why-choose-us-dark h2 {
+        color: #ffffff;
+    }
+
+    .why-choose-us-dark p.lead {
+        color: #adb5bd;
+    }
+
+    .why-choose-us-dark .list-unstyled li {
+        color: #adb5bd; /* Ch? c?a list item */
+    }
+
+        /* Dùng màu cyan cho icon check */
+        .why-choose-us-dark .list-unstyled li i {
+            color: #00e5ff !important; /* Dùng !important ?? ghi ?è style inline c? */
+        }
+
+/* Final CTA Section */
+.final-cta-dark {
+    background: transparent;
+}
+
+    /* Card CTA cu?i cùng gi?ng m?u */
+    .final-cta-dark .rounded-3 {
+        background-color: #161b22; /* N?n card ??m */
+        border: 1px solid #343a40;
+    }
+
+    .final-cta-dark h2 {
+        color: #ffffff;
+    }
+
+    .final-cta-dark p {
+        color: #adb5bd !important;
+    }
+
+
+/* ======================================================= */
+/* == STYLE HEADER M?I (DARK) CHO TRANG CH? (FIX L?I X?U) == */
+/* ======================================================= */
+
+.public-header-dark {
+    /* S?A: Dùng n?n tr?ng m? 10% (trong su?t h?n) */
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    /* Gi? hi?u ?ng blur (kính m?) */
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    /* S?A: Thêm vi?n tr?ng m? ?? header n?i b?t h?n */
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    /* Gi? các style layout c?a b?n */
     border-radius: 99px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* T?ng nh? bóng ?? cho d? th?y */
     max-width: 1320px;
     margin: 1rem auto;
     padding-top: 0.5rem;
@@ -48,334 +188,65 @@ body {
     z-index: 1020;
 }
 
-    .public-header-light .navbar-brand span {
-        color: var(--text-dark);
+    /* S?A: ??i màu ch? tên brand (EV Service Center) thành TR?NG */
+    .public-header-dark .navbar-brand span {
+        color: #ffffff;
         font-weight: 700;
     }
 
-    /* C?n gi?a các link chính */
-    .public-header-light .navbar-nav.main-nav {
+    /* C?n gi?a các link chính (Gi? nguyên) */
+    .public-header-dark .navbar-nav.main-nav {
         margin-left: auto;
         margin-right: auto;
     }
 
-    .public-header-light .navbar-nav .nav-link {
-        color: var(--text-muted);
+    /* S?A: ??i màu link nav m?c ??nh thành TR?NG M? (?? ??c ???c) */
+    .public-header-dark .navbar-nav .nav-link {
+        color: rgba(255, 255, 255, 0.7); /* Thay vì var(--text-muted) */
         font-weight: 500;
-        padding-left: 1rem;
-        padding-right: 1rem;
+        padding-left: 1.2rem;
+        padding-right: 1.2rem;
         transition: color 0.2s ease-in-out;
     }
 
-        .public-header-light .navbar-nav .nav-link:hover,
-        .public-header-light .navbar-nav .nav-link.active {
-            color: var(--secondary-color); /* Màu vàng cam khi active/hover */
+        /* Gi? màu vàng cam khi active/hover (n?u b?n có ??nh ngh?a var) */
+        .public-header-dark .navbar-nav .nav-link:hover,
+        .public-header-dark .navbar-nav .nav-link.active {
+            color: var(--secondary-color);
+            /* N?u màu vàng cam không ??p, b?n có th? ??i thành màu tr?ng sáng: */
+            /* color: #ffffff; */
         }
 
     /* Style cho nút Login / Register */
-    .public-header-light .auth-buttons .btn {
-        border-radius: 99px; /* Bo tròn */
+    .public-header-dark .auth-buttons .btn {
+        border-radius: 99px;
         padding: 0.5rem 1.5rem;
         font-weight: 600;
         transition: all 0.2s ease-in-out;
+        border: 2px solid transparent;
     }
 
-    .public-header-light .auth-buttons .btn-login {
-        background-color: transparent;
-        border: 1px solid var(--light-border);
-        color: var(--text-dark);
+    /* S?A: Nút Login vi?n tr?ng m?, ch? tr?ng */
+    .public-header-dark .auth-buttons .btn-login {
+        background-color: transparent; /* N?n trong su?t */
+        border-color: rgba(255, 255, 255, 0.5); /* Vi?n tr?ng m? */
+        color: #ffffff; /* Ch? tr?ng */
     }
 
-        .public-header-light .auth-buttons .btn-login:hover {
-            background-color: var(--light-bg);
+        .public-header-dark .auth-buttons .btn-login:hover {
+            background-color: rgba(255, 255, 255, 0.1); /* N?n tr?ng m? nh? khi hover */
+            border-color: #ffffff; /* Vi?n tr?ng rõ khi hover */
         }
 
-    .public-header-light .auth-buttons .btn-register {
+    /* Nút Register (màu vàng cam) ?ã n?i r?i, gi? nguyên */
+    .public-header-dark .auth-buttons .btn-register {
         background-color: var(--secondary-color);
         border-color: var(--secondary-color);
-        color: var(--text-dark);
+        color: var(--text-dark); /* Ch? ?en trên n?n vàng là OK */
     }
 
-        .public-header-light .auth-buttons .btn-register:hover {
+        .public-header-dark .auth-buttons .btn-register:hover {
             background-color: var(--secondary-hover);
             border-color: var(--secondary-hover);
         }
 
-
-/* ============================================= */
-/* == CSS CHO CÁC KH?I N?I DUNG TRANG CH? (LIGHT THEME) == */
-/* ============================================= */
-.hero-section-light {
-    padding-top: 8rem;
-    padding-bottom: 6rem;
-    background-color: #f3f4f6;
-}
-
-    .hero-section-light h1 {
-        color: var(--text-dark);
-    }
-
-    .hero-section-light p.lead {
-        color: var(--text-muted);
-    }
-
-    .hero-section-light .btn-primary {
-        background-color: var(--primary-color);
-        border-color: var(--primary-color);
-        color: var(--text-light);
-        border-radius: 0.5rem;
-    }
-
-        .hero-section-light .btn-primary:hover {
-            background-color: var(--primary-hover);
-            border-color: var(--primary-hover);
-        }
-
-    .hero-section-light .btn-secondary {
-        background-color: transparent;
-        border-color: #d1d5db;
-        color: var(--text-dark);
-        border-radius: 0.5rem;
-    }
-
-        .hero-section-light .btn-secondary:hover {
-            background-color: #e5e7eb;
-        }
-
-/* Section Services (Light) */
-.services-section-light {
-    background-color: var(--light-card);
-}
-
-    .services-section-light .feature-icon {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 4rem;
-        height: 4rem;
-        border-radius: 0.75rem;
-        background-color: #e0e7ff;
-        color: var(--primary-color);
-        font-size: 2rem;
-        margin-bottom: 1rem;
-    }
-
-    .services-section-light h4 {
-        color: var(--text-dark);
-    }
-
-    .services-section-light p {
-        color: var(--text-muted);
-    }
-
-/* Section Why Choose Us (Light) */
-.why-choose-us-light h2 {
-    color: var(--text-dark);
-}
-
-.why-choose-us-light p.lead {
-    color: var(--text-muted);
-}
-
-/* Final CTA (Light) */
-.final-cta-light {
-    background-color: #e0e7ff !important;
-}
-
-    .final-cta-light h2 {
-        color: var(--text-dark);
-    }
-
-    .final-cta-light p {
-        color: var(--text-muted);
-    }
-
-
-/* ============================================= */
-/* == CSS CHO B? C?C APP CÓ SIDEBAR (LOGGED IN - LIGHT THEME) == */
-/* ============================================= */
-.wrapper {
-    display: flex;
-    height: 100vh;
-}
-
-.sidebar {
-    width: 260px;
-    flex-shrink: 0;
-    background-color: var(--light-card);
-    border-right: 1px solid var(--light-border);
-    display: flex;
-    flex-direction: column;
-}
-
-.main-content {
-    flex-grow: 1;
-    overflow-y: auto;
-    padding: 2.5rem;
-    background-color: var(--light-bg);
-}
-
-.sidebar-header {
-    padding: 1.25rem 1.5rem;
-    border-bottom: 1px solid var(--light-border);
-}
-
-.sidebar-nav .nav-link {
-    color: var(--text-muted);
-    padding: 0.85rem 1.5rem;
-    font-weight: 500;
-    border-left: 3px solid transparent;
-    transition: all 0.2s ease-in-out;
-}
-
-    .sidebar-nav .nav-link:hover {
-        color: var(--primary-color);
-    }
-
-    .sidebar-nav .nav-link.active {
-        color: var(--primary-color);
-        background-color: #f1f1ff;
-        border-left-color: var(--primary-color);
-        font-weight: 600;
-    }
-
-    .sidebar-nav .nav-link i {
-        margin-right: 1rem;
-        font-size: 1.1rem;
-        width: 20px;
-        text-align: center;
-        color: #9ca3af;
-        transition: all 0.2s ease-in-out;
-    }
-
-    .sidebar-nav .nav-link:hover i, .sidebar-nav .nav-link.active i {
-        color: var(--primary-color);
-    }
-
-.services-section-light .col > div {
-    /* Thêm transition ?? hi?u ?ng m??t mà */
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    padding: 1.5rem; /* Thêm padding ?? t?o kho?ng cách cho bóng ?? */
-    border-radius: 0.75rem; /* Bo góc nh? */
-    height: 100%; /* ??m b?o các card cao b?ng nhau */
-}
-
-    .services-section-light .col > div:hover {
-        transform: translateY(-5px); /* Hi?u ?ng n?y lên nh? */
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08); /* Thêm bóng ?? nh? */
-        background-color: var(--light-card); /* ??m b?o n?n v?n tr?ng khi hover */
-    }
-
-/* --- Các thành ph?n trong .main-content (Admin/Customer - Light Theme) --- */
-.main-content .page-header {
-    margin-bottom: 2rem;
-}
-
-    .main-content .page-header h1 {
-        color: var(--text-dark);
-        font-weight: 700;
-    }
-
-    .main-content .page-header p {
-        color: var(--text-muted);
-    }
-
-.main-content .btn-add-new {
-    background-color: var(--text-dark);
-    color: var(--text-light);
-    border-radius: 0.5rem;
-}
-
-    .main-content .btn-add-new:hover {
-        background-color: #374151;
-    }
-
-.main-content .data-card {
-    background-color: var(--light-card);
-    border: none;
-    border-radius: 0.75rem;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
-}
-
-.main-content .search-bar {
-    background-color: var(--light-bg);
-    border: 1px solid var(--light-border);
-    border-radius: 0.5rem;
-}
-
-    .main-content .search-bar input {
-        background: transparent;
-        border: none;
-        box-shadow: none !important;
-        color: var(--text-dark);
-    }
-
-.main-content .table-custom {
-    border-collapse: separate;
-    border-spacing: 0 0.5rem;
-}
-
-    .main-content .table-custom thead th {
-        border: none;
-        text-transform: uppercase;
-        font-size: 0.75rem;
-        letter-spacing: 0.05em;
-        color: var(--text-muted);
-    }
-
-    .main-content .table-custom tbody tr {
-        background-color: var(--light-card);
-        border-bottom: 1px solid var(--light-border);
-    }
-
-    .main-content .table-custom td, .main-content .table-custom th {
-        vertical-align: middle;
-    }
-
-.main-content .action-btn {
-    background: var(--light-bg);
-    border-radius: 0.375rem;
-    padding: 0.5rem;
-    color: var(--text-muted);
-    border: 1px solid var(--light-border);
-}
-
-    .main-content .action-btn:hover {
-        color: var(--text-dark);
-    }
-
-.badge-custom {
-    padding: 0.4em 0.8em;
-    border-radius: 99px;
-    font-weight: 600;
-    font-size: 0.75rem;
-}
-
-.badge-active {
-    color: #059669;
-    background-color: #d1fae5;
-}
-
-.badge-locked {
-    color: #dc2626;
-    background-color: #fee2e2;
-}
-
-.main-content .form-label {
-    color: var(--text-muted);
-    font-weight: 500;
-}
-
-.main-content .form-control {
-    color: var(--text-dark);
-    border-color: #d1d5db;
-}
-    /* Thêm border color */
-    .main-content .form-control:focus {
-        border-color: var(--primary-color);
-        box-shadow: 0 0 0 0.25rem rgba(99, 102, 241, 0.25);
-    }
-    /* Thêm focus */
-    .main-content .form-control::placeholder {
-        color: var(--text-muted);
-    }

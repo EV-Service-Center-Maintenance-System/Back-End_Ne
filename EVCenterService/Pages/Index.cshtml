@@ -2,128 +2,157 @@
 @model IndexModel
 @{
     ViewData["Title"] = "Trang chủ";
+    ViewData["BodyClass"] = "body-homepage-dark";
 }
 
-<section class="hero-section-light">
-    <div class="container col-xxl-8 px-4 py-5">
-        <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
-            <div class="col-10 col-sm-8 col-lg-6">
-                <img src="~/images/hero-image.jpg" class="d-block mx-lg-auto img-fluid rounded shadow-sm" alt="Mechanic working on an EV" width="700" height="500" loading="lazy">
+<div class="homepage-dark-wrapper">
+
+    <section class="hero-section-dark">
+        <div class="container col-xxl-8 px-4 py-5">
+            <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
+                <div class="col-10 col-sm-8 col-lg-6">
+                    <img src="~/images/hero-image.png" class="d-block mx-lg-auto img-fluid rounded shadow-sm" alt="Mechanic working on an EV" width="700" height="500" loading="lazy">
+                </div>
+
+                <div class="col-lg-6">
+                    <h1 class="display-4 fw-bold lh-1 mb-3">Trung tâm dịch vụ xe <span>điện</span> hiện đại nhất</h1>
+                    <p class="lead">
+                        Chúng tôi cung cấp dịch vụ bảo dưỡng, sửa chữa chuyên nghiệp cho mọi dòng xe điện.
+                        Đặt lịch online, theo dõi tiến độ real-time, thanh toán tiện lợi.
+                    </p>
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                        @if (User.Identity != null && User.Identity.IsAuthenticated)
+                        {
+
+                            <a asp-page="/Customer/Appointments/Create" class="btn btn-primary btn-lg px-4 me-md-2">Đặt lịch ngay <i class="bi bi-arrow-right ms-2"></i></a>
+                        }
+                        else
+                        {
+                            <a asp-page="/Account/Login" asp-route-returnUrl="/Customer/Appointments/Create" class="btn
+    btn-primary btn-lg px-4 me-md-2">Bắt đầu ngay <i class="bi bi-arrow-right ms-2"></i></a>
+                        }
+                        <button type="button" class="btn btn-secondary btn-lg px-4">Tìm hiểu thêm</button>
+                    </div>
+                </div>
             </div>
-            <div class="col-lg-6">
-                <h1 class="display-4 fw-bold lh-1 mb-3">Trung tâm dịch vụ xe <span style="color: var(--primary-color);">điện</span> hiện đại nhất</h1>
-                <p class="lead">Chúng tôi cung cấp dịch vụ bảo dưỡng, sửa chữa chuyên nghiệp cho mọi dòng xe điện. Đặt lịch online, theo dõi tiến độ real-time, thanh toán tiện lợi.</p>
-                <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+        </div>
+    </section>
+
+    <section class="services-section-dark py-5">
+
+        <div class="container px-4 py-5" id="services">
+            <h2 class="pb-2 border-bottom text-center">Dịch vụ của chúng tôi</h2>
+            <p class="text-center text-secondary mb-5">Chúng tôi cung cấp đầy đủ các dịch vụ chuyên nghiệp cho xe điện của bạn.</p>
+
+            <div class="row g-4 py-5 row-cols-1 row-cols-lg-4">
+                <div class="col d-flex align-items-start">
+                    <div>
+
+                        <div class="feature-icon">
+                            <i class="bi bi-battery-charging"></i>
+                        </div>
+                        <h4 class="fw-semibold mb-2">Bảo dưỡng pin</h4>
+
+                        <p>Kiểm tra và bảo dưỡng định kỳ hệ thống pin và làm mát để đảm bảo hiệu suất tối ưu.</p>
+                    </div>
+                </div>
+                <div class="col d-flex align-items-start">
+                    <div>
+
+                        <div class="feature-icon">
+                            <i class="bi bi-tools"></i>
+                        </div>
+                        <h4 class="fw-semibold mb-2">Sửa chữa chung</h4>
+                        <p>
+                            Xử lý các vấn đề về hệ thống điện,
+                            phanh, và các bộ phận cơ khí khác của xe điện.
+                        </p>
+                    </div>
+                </div>
+                <div class="col d-flex align-items-start">
+                    <div>
+                        <div class="feature-icon">
+
+                            <i class="bi bi-search"></i>
+                        </div>
+                        <h4 class="fw-semibold mb-2">Kiểm tra tổng quát</h4>
+                        <p>Kiểm tra toàn diện hệ thống điện và an toàn của xe bằng thiết bị chẩn đoán hiện đại.</p>
+
+                    </div>
+                </div>
+                <div class="col d-flex align-items-start">
+                    <div>
+                        <div class="feature-icon">
+
+                            <i class="bi bi-shield-check"></i>
+                        </div>
+                        <h4 class="fw-semibold mb-2">Bảo hành & Phụ tùng</h4>
+                        <p>Cam kết bảo hành chính hãng và cung cấp phụ tùng chất lượng cao.</p>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="why-choose-us-dark py-5">
+        <div class="container px-4 py-5">
+            <div class="row align-items-center g-5 py-5">
+                <div class="col-lg-6">
+                    <img src="~/images/feature-image.jpg" class="d-block mx-lg-auto img-fluid rounded shadow-sm" alt="Why choose us" width="700" height="500" loading="lazy">
+                </div>
+
+                <div class="col-lg-6">
+                    <h2 class="fw-bold lh-1 mb-3">Tại sao chọn chúng tôi?</h2>
+                    <p class="lead">Tận hưởng dịch vụ hoàn toàn mới với công nghệ hiện đại và đội ngũ chuyên nghiệp.</p>
+                    <ul class="list-unstyled mt-4">
+                        <li class="d-flex align-items-center mb-2"><i class="bi bi-check-circle-fill me-2"></i> Đặt lịch hẹn trực tuyến dễ dàng</li>
+                        <li class="d-flex align-items-center mb-2"><i class="bi bi-check-circle-fill me-2"></i> Theo dõi tiến độ sửa chữa real-time</li>
+                        <li class="d-flex align-items-center mb-2"><i class="bi bi-check-circle-fill me-2"></i> Lịch sử bảo dưỡng chi tiết</li>
+
+                        <li class="d-flex align-items-center mb-2"><i class="bi bi-check-circle-fill me-2"></i> Kỹ thuật viên chuyên nghiệp</li>
+                        <li class="d-flex align-items-center"><i class="bi bi-check-circle-fill me-2"></i> Phụ tùng chính hãng</li>
+                    </ul>
                     @if (User.Identity != null && User.Identity.IsAuthenticated)
+
                     {
-                        <a asp-page="/Customer/Appointments/Create" class="btn btn-primary btn-lg px-4 me-md-2">Đặt lịch ngay <i class="bi bi-arrow-right ms-2"></i></a>
+                        <a asp-page="/Customer/Appointments/Create" class="btn btn-primary btn-lg px-4 mt-4">Đặt lịch ngay <i class="bi bi-arrow-right ms-2"></i></a>
                     }
                     else
                     {
-                        <a asp-page="/Account/Login" asp-route-returnUrl="/Customer/Appointments/Create" class="btn btn-primary btn-lg px-4 me-md-2">Bắt đầu ngay <i class="bi bi-arrow-right ms-2"></i></a>
+
+                        <a asp-page="/Account/Login" asp-route-returnUrl="/Customer/Appointments/Create" class="btn btn-primary btn-lg px-4 mt-4">Bắt đầu ngay <i class="bi bi-arrow-right ms-2"></i></a>
                     }
-                    <button type="button" class="btn btn-secondary btn-lg px-4">Tìm hiểu thêm</button>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<section class="services-section-light py-5">
-    <div class="container px-4 py-5" id="services">
-        <h2 class="pb-2 border-bottom text-center">Dịch vụ của chúng tôi</h2>
-        <p class="text-center text-secondary mb-5">Chúng tôi cung cấp đầy đủ các dịch vụ chuyên nghiệp cho xe điện của bạn.</p>
-        <div class="row g-4 py-5 row-cols-1 row-cols-lg-4">
-            <div class="col d-flex align-items-start">
-                <div>
-                    <div class="feature-icon">
-                        <i class="bi bi-battery-charging"></i>
-                    </div>
-                    <h4 class="fw-semibold mb-2">Bảo dưỡng pin</h4>
-                    <p>Kiểm tra và bảo dưỡng định kỳ hệ thống pin và làm mát để đảm bảo hiệu suất tối ưu.</p>
-                </div>
-            </div>
-            <div class="col d-flex align-items-start">
-                <div>
-                    <div class="feature-icon">
-                        <i class="bi bi-tools"></i>
-                    </div>
-                    <h4 class="fw-semibold mb-2">Sửa chữa chung</h4>
-                    <p>Xử lý các vấn đề về hệ thống điện, phanh, và các bộ phận cơ khí khác của xe điện.</p>
-                </div>
-            </div>
-            <div class="col d-flex align-items-start">
-                <div>
-                    <div class="feature-icon">
-                        <i class="bi bi-search"></i>
-                    </div>
-                    <h4 class="fw-semibold mb-2">Kiểm tra tổng quát</h4>
-                    <p>Kiểm tra toàn diện hệ thống điện và an toàn của xe bằng thiết bị chẩn đoán hiện đại.</p>
-                </div>
-            </div>
-            <div class="col d-flex align-items-start">
-                <div>
-                    <div class="feature-icon">
-                        <i class="bi bi-shield-check"></i>
-                    </div>
-                    <h4 class="fw-semibold mb-2">Bảo hành & Phụ tùng</h4>
-                    <p>Cam kết bảo hành chính hãng và cung cấp phụ tùng chất lượng cao.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
+    <section class="final-cta-dark py-5">
+        <div class="container py-5">
+            <div class="p-5 text-center bg-body-tertiary rounded-3">
+                <h2 class="fw-bold">Sẵn sàng trải nghiệm dịch vụ tốt nhất?</h2>
 
-<section class="why-choose-us-light py-5">
-    <div class="container px-4 py-5">
-        <div class="row align-items-center g-5 py-5">
-            <div class="col-lg-6">
-                <img src="~/images/feature-image.jpg" class="d-block mx-lg-auto img-fluid rounded shadow-sm" alt="Why choose us" width="700" height="500" loading="lazy">
-            </div>
-            <div class="col-lg-6">
-                <h2 class="fw-bold lh-1 mb-3">Tại sao chọn chúng tôi?</h2>
-                <p class="lead">Tận hưởng dịch vụ hoàn toàn mới với công nghệ hiện đại và đội ngũ chuyên nghiệp.</p>
-                <ul class="list-unstyled mt-4">
-                    <li class="d-flex align-items-center mb-2"><i class="bi bi-check-circle-fill me-2" style="color: var(--primary-color);"></i> Đặt lịch hẹn trực tuyến dễ dàng</li>
-                    <li class="d-flex align-items-center mb-2"><i class="bi bi-check-circle-fill me-2" style="color: var(--primary-color);"></i> Theo dõi tiến độ sửa chữa real-time</li>
-                    <li class="d-flex align-items-center mb-2"><i class="bi bi-check-circle-fill me-2" style="color: var(--primary-color);"></i> Lịch sử bảo dưỡng chi tiết</li>
-                    <li class="d-flex align-items-center mb-2"><i class="bi bi-check-circle-fill me-2" style="color: var(--primary-color);"></i> Kỹ thuật viên chuyên nghiệp</li>
-                    <li class="d-flex align-items-center"><i class="bi bi-check-circle-fill me-2" style="color: var(--primary-color);"></i> Phụ tùng chính hãng</li>
-                </ul>
-                @if (User.Identity != null && User.Identity.IsAuthenticated)
-                {
-                    <a asp-page="/Customer/Appointments/Create" class="btn btn-primary btn-lg px-4 mt-4">Đặt lịch ngay <i class="bi bi-arrow-right ms-2"></i></a>
-                }
-                else
-                {
-                    <a asp-page="/Account/Login" asp-route-returnUrl="/Customer/Appointments/Create" class="btn btn-primary btn-lg px-4 mt-4">Bắt đầu ngay <i class="bi bi-arrow-right ms-2"></i></a>
-                }
-            </div>
-        </div>
-    </div>
-</section>
+                <p class="col-lg-8 mx-auto fs-5 text-secondary">
+                    Đăng ký tài khoản ngay hôm nay để nhận ưu đãi đặc biệt cho lần đầu sử dụng dịch vụ.
+                </p>
+                <div class="d-inline-flex gap-2 mb-5">
+                    @if (User.Identity != null && User.Identity.IsAuthenticated)
+                    {
+                        <a asp-page="/Customer/Appointments/Create" class="d-inline-flex align-items-center btn btn-primary btn-lg px-4 rounded-pill" role="button">
 
-<section class="final-cta-light py-5">
-    <div class="container py-5">
-        <div class="p-5 text-center bg-body-tertiary rounded-3">
-            <h2 class="fw-bold">Sẵn sàng trải nghiệm dịch vụ tốt nhất?</h2>
-            <p class="col-lg-8 mx-auto fs-5 text-secondary">
-                Đăng ký tài khoản ngay hôm nay để nhận ưu đãi đặc biệt cho lần đầu sử dụng dịch vụ.
-            </p>
-            <div class="d-inline-flex gap-2 mb-5">
-                @if (User.Identity != null && User.Identity.IsAuthenticated)
-                {
-                    <a asp-page="/Customer/Appointments/Create" class="d-inline-flex align-items-center btn btn-primary btn-lg px-4 rounded-pill" role="button">
-                        Đặt lịch ngay <i class="bi bi-arrow-right ms-2"></i>
-                    </a>
-                }
-                else
-                {
-                    <a asp-page="/Account/Register" class="d-inline-flex align-items-center btn btn-primary btn-lg px-4 rounded-pill" role="button">
-                        Đăng ký miễn phí <i class="bi bi-arrow-right ms-2"></i>
-                    </a>
-                }
+                            Đặt lịch ngay <i class="bi bi-arrow-right ms-2"></i>
+                        </a>
+                    }
+                    else
+                    {
+                        <a asp-page="/Account/Register" class="d-inline-flex align-items-center btn btn-primary btn-lg px-4 rounded-pill" role="button">
+                            Đăng ký miễn phí <i class="bi bi-arrow-right ms-2"></i>
+                        </a>
+                    }
+                </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
+
+</div> ```
