@@ -19,6 +19,9 @@ public partial class OrderService
     [Column("UserID")]
     public Guid? UserId { get; set; }
 
+    [Column("TechnicianID")]
+    public Guid? TechnicianId { get; set; }
+
     [Column(TypeName = "datetime")]
     public DateTime AppointmentDate { get; set; }
 
@@ -51,4 +54,8 @@ public partial class OrderService
     [ForeignKey("VehicleId")]
     [InverseProperty("OrderServices")]
     public virtual Vehicle? Vehicle { get; set; }
+
+    [ForeignKey("TechnicianId")]
+    [InverseProperty("AssignedOrders")]
+    public virtual Account? Technician { get; set; }
 }

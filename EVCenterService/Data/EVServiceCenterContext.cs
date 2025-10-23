@@ -119,6 +119,7 @@ public partial class EVServiceCenterContext : DbContext
             entity.HasOne(d => d.User).WithMany(p => p.OrderServices).HasConstraintName("FK__OrderServ__UserI__4CA06362");
 
             entity.HasOne(d => d.Vehicle).WithMany(p => p.OrderServices).HasConstraintName("FK__OrderServ__Vehic__4BAC3F29");
+            entity.HasOne(d => d.Technician).WithMany(p => p.AssignedOrders).HasForeignKey(d => d.TechnicianId).HasConstraintName("FK_OrderService_Technician");
         });
 
         modelBuilder.Entity<Part>(entity =>
@@ -205,16 +206,16 @@ public partial class EVServiceCenterContext : DbContext
         #region Data Seeding
 
         // --- KHAI BÁO CÁC ID ĐỂ SỬ DỤNG LẠI (GIỐNG NHƯ BIẾN TRONG SQL) ---
-        var adminId = Guid.NewGuid();
-        var tech1Id = Guid.NewGuid();
-        var tech2Id = Guid.NewGuid();
-        var staffId = Guid.NewGuid();
-        var customer1Id = Guid.NewGuid();
-        var customer2Id = Guid.NewGuid();
+        var adminId = Guid.Parse("A1A1A1A1-AAAA-AAAA-AAAA-AAAAAAAAAAAA");
+        var tech1Id = Guid.Parse("B2B2B2B2-BBBB-BBBB-BBBB-BBBBBBBBBBBB");
+        var tech2Id = Guid.Parse("C3C3C3C3-CCCC-CCCC-CCCC-CCCCCCCCCCCC");
+        var staffId = Guid.Parse("D4D4D4D4-DDDD-DDDD-DDDD-DDDDDDDDDDDD");
+        var customer1Id = Guid.Parse("E5E5E5E5-EEEE-EEEE-EEEE-EEEEEEEEEEEE");
+        var customer2Id = Guid.Parse("F6F6F6F6-FFFF-FFFF-FFFF-FFFFFFFFFFFF");
 
-        var planBasicId = Guid.NewGuid();
-        var planPremiumId = Guid.NewGuid();
-        var subscription1Id = Guid.NewGuid();
+        var planBasicId = Guid.Parse("11111111-1111-1111-1111-111111111111");
+        var planPremiumId = Guid.Parse("22222222-2222-2222-2222-222222222222");
+        var subscription1Id = Guid.Parse("33333333-3333-3333-3333-333333333333");
 
         // --- BẢNG: Account ---
         // LƯU Ý: Trong thực tế, bạn PHẢI HASH mật khẩu này.
