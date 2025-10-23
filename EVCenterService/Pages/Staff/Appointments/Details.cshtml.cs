@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Test.Pages.Staff.Appointments
+namespace EVCenterService.Pages.Staff.Appointments
 {
     public class DetailsModel : PageModel
     {
