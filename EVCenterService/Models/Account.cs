@@ -53,6 +53,9 @@ public partial class Account
     public virtual ICollection<OrderService> OrderServices { get; set; } = new List<OrderService>();
 
     [InverseProperty("Technician")]
+    public virtual ICollection<OrderService> AssignedOrders { get; set; } = new List<OrderService>();
+
+    [InverseProperty("Technician")]
     public virtual ICollection<Slot> Slots { get; set; } = new List<Slot>();
 
     [InverseProperty("User")]

@@ -6,12 +6,16 @@
  * Áp d?ng n?n xám ?en (Solid Color) tr?c ti?p lên BODY
  * khi nó có class .body-homepage-dark
 */
+/* 1. S?A N?N BODY: Áp d?ng ?nh "cát ?en" làm n?n chính cho toàn trang ch? */
 body.body-homepage-dark {
-    /* * Màu xám ?en, thiên v? ?en (#121212 là màu dark mode r?t ph? bi?n)
-     * B?n c?ng có th? dùng #161b22 (gi?ng GitHub) ho?c #0d1117 (r?t t?i)
-    */
-    background-image: none !important; /* Xóa ?nh n?n */
-    background-color: #22272e !important; /* Set màu xám ?en */
+    /* (Hãy ch?c ch?n b?n ?ã l?u ?nh "cát ?en" v?i tên dark-sand-bg.jpg) */
+    background-image: url('../images/dark-sand-bg.jpg') !important;
+    background-color: #22272e !important; /* Màu d? phòng */
+    /* Các thu?c tính quan tr?ng ?? ?nh n?n "??ng yên" */
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    background-attachment: scroll !important;
 }
 
 .header-logo, .footer-logo {
@@ -36,7 +40,7 @@ body.body-homepage-dark {
     /* * S?A: Thêm ?nh n?n s?c chéo vào khu v?c này 
      * (Hãy ch?c ch?n b?n ?ã l?u ?nh v?i tên hero-stripes-bg.jpg)
     */
-    background-image: url('../images/hero-stripes-bg.jpeg');
+    background-image: url('../images/hero-stripes-bg.jpg');
     background-size: cover; /* Ph? kín */
     background-position: center; /* C?n gi?a */
     background-repeat: no-repeat; /* Không l?p l?i */
@@ -74,7 +78,7 @@ body.body-homepage-dark {
 /* Services Section (Ph?n d?ch v?) */
 .services-section-dark {
     /* S?A: Thêm ?nh n?n spotlight vào khu v?c "D?ch v?" */
-    background-image: url('../images/services-spotlight-bg.jpeg');
+    background-image: url('../images/services-spotlight-bg.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -139,13 +143,8 @@ body.body-homepage-dark {
 
 /* Why Choose Us Section */
 .why-choose-us-dark {
-    /* S?A: Thêm ?nh n?n s?c chéo vào khu v?c "T?i sao ch?n chúng tôi" */
-    background-image: url('../images/why-choose-us-bg.jpeg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    /* Màu ?en d? phòng n?u ?nh không t?i ???c */
-    background-color: #121212;
+    /* S?A: Làm trong su?t ?? th?y n?n "cát" c?a body */
+    background: transparent;
 }
 
     .why-choose-us-dark h2 {
@@ -461,3 +460,4 @@ body.app-body {
         .footer-dark a:hover {
             color: #ffffff; /* Sáng lên khi hover */
         }
+
