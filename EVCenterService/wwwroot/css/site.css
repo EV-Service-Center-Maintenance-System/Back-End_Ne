@@ -1,19 +1,17 @@
 /* ======================================================= */
-/* == CSS CHO HOMEPAGE (DARK THEME - ?Ã S?A L?I) == */
+/* == CSS CHO HOMEPAGE (DARK THEME) == */
 /* ======================================================= */
 
 /*
- * B??C S?A L?I: Áp d?ng n?n (?nh xoáy) tr?c ti?p lên BODY
- * khi nó có class .body-homepage-dark (Thêm t? Index.cshtml)
+ * Áp d?ng n?n xám ?en (Solid Color) tr?c ti?p lên BODY
+ * khi nó có class .body-homepage-dark
 */
 body.body-homepage-dark {
-    /* Ghi ?è n?n xám/logo c? b?ng n?n xoáy m?i */
-    background-image: url('../images/homepage-dark-bg.jpg') !important;
-    background-color: #0d1117 !important; /* Màu n?n ?en d? phòng */
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
+    /* * Màu xám ?en, thiên v? ?en (#121212 là màu dark mode r?t ph? bi?n)
+     * B?n c?ng có th? dùng #161b22 (gi?ng GitHub) ho?c #0d1117 (r?t t?i)
+    */
+    background-image: none !important; /* Xóa ?nh n?n */
+    background-color: #22272e !important; /* Set màu xám ?en */
 }
 
 .header-logo, .footer-logo {
@@ -33,9 +31,17 @@ body.body-homepage-dark {
 
 /* Hero Section (Ph?n gi?i thi?u ??u) */
 .hero-section-dark {
-    padding-top: 8rem; /* Gi? padding gi?ng b?n light */
+    padding-top: 8rem; /* Gi? padding c? */
     padding-bottom: 6rem;
-    background: transparent; /* N?n ?ã ???c ??t ? body */
+    /* * S?A: Thêm ?nh n?n s?c chéo vào khu v?c này 
+     * (Hãy ch?c ch?n b?n ?ã l?u ?nh v?i tên hero-stripes-bg.jpg)
+    */
+    background-image: url('../images/hero-stripes-bg.jpeg');
+    background-size: cover; /* Ph? kín */
+    background-position: center; /* C?n gi?a */
+    background-repeat: no-repeat; /* Không l?p l?i */
+    /* Màu ?en d? phòng n?u ?nh không t?i ???c */
+    background-color: #121212;
 }
 
     .hero-section-dark h1 {
@@ -67,7 +73,16 @@ body.body-homepage-dark {
 
 /* Services Section (Ph?n d?ch v?) */
 .services-section-dark {
-    background: transparent;
+    /* S?A: Thêm ?nh n?n spotlight vào khu v?c "D?ch v?" */
+    background-image: url('../images/services-spotlight-bg.jpeg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    /* Màu ?en d? phòng n?u ?nh không t?i ???c */
+    background-color: #121212;
+    /* Gi? padding c? */
+    padding-top: 4rem;
+    padding-bottom: 4rem;
 }
 
     .services-section-dark h2 {
@@ -106,25 +121,31 @@ body.body-homepage-dark {
 */
     .services-section-dark .col > div {
         transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
-        padding: 1.5rem;
+        padding: 2rem; /* T?ng padding cho thoáng */
         border-radius: 0.75rem;
         height: 100%;
-        /* Thêm vi?n m? gi?ng trong ?nh m?u */
-        border: 1px solid #343a40;
-        background-color: rgba(13, 17, 23, 0.5); /* N?n h?i m? so v?i wrapper */
+        /* S?A: B? vi?n c?, dùng n?n và bóng ?? */
+        border: none;
+        /* S?A: Dùng màu n?n c?a body (#22272e) ?? nó "n?i" trên n?n section (#1c2128) */
+        background-color: #22272e;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Thêm bóng ?? */
     }
 
         .services-section-dark .col > div:hover {
-            transform: translateY(-5px); /* V?n gi? hi?u ?ng "n?y" */
-            /* Hi?u ?ng bóng m? và vi?n sáng lên gi?ng ?nh m?u */
-            box-shadow: 0 8px 25px rgba(0, 229, 255, 0.15);
-            border-color: #00e5ff;
-            background-color: #161b22; /* N?n card ??m h?n khi hover */
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            background-color: #30363d; /* ??i màu n?n khi hover */
         }
 
 /* Why Choose Us Section */
 .why-choose-us-dark {
-    background: transparent;
+    /* S?A: Thêm ?nh n?n s?c chéo vào khu v?c "T?i sao ch?n chúng tôi" */
+    background-image: url('../images/why-choose-us-bg.jpeg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    /* Màu ?en d? phòng n?u ?nh không t?i ???c */
+    background-color: #121212;
 }
 
     .why-choose-us-dark h2 {
@@ -149,10 +170,10 @@ body.body-homepage-dark {
     background: transparent;
 }
 
-    /* Card CTA cu?i cùng gi?ng m?u */
     .final-cta-dark .rounded-3 {
-        background-color: #161b22; /* N?n card ??m */
-        border: 1px solid #343a40;
+        /* S?A: Dùng màu n?n c?a section, thêm !important */
+        background-color: #1c2128 !important;
+        border: 1px solid #30363d !important;
     }
 
     .final-cta-dark h2 {
@@ -160,6 +181,7 @@ body.body-homepage-dark {
     }
 
     .final-cta-dark p {
+        /* S?A: ??m b?o ch? mô t? có màu xám nh?t */
         color: #adb5bd !important;
     }
 
@@ -250,3 +272,192 @@ body.body-homepage-dark {
             border-color: var(--secondary-hover);
         }
 
+
+/* ============================================= */
+/* == CSS CHO ADMIN LAYOUT (_AppLayout.cshtml) == */
+/* ==           (DARK MODE CHUYÊN NGHI?P)         == */
+/* ============================================= */
+
+/* 1. Set n?n t?i cho toàn b? trang Admin */
+body.app-body {
+    background-color: #161b22 !important; /* N?n xám ?en (thay vì n?n tr?ng) */
+    color: #adb5bd; /* Màu ch? m?c ??nh (xám nh?t) */
+}
+
+/* 2. Ghi ?è Sidebar (t? tr?ng thành ?en) */
+.sidebar {
+    background-color: #0d1117; /* N?n sidebar ?en k?t */
+    border-right: 1px solid #30363d; /* Vi?n ng?n cách m? */
+}
+
+/* 3. Header c?a Sidebar */
+.sidebar-header {
+    border-bottom: 1px solid #30363d; /* Vi?n chân header m? */
+    padding: 1.25rem 1rem;
+}
+
+/* 4. S?A L?I LOGO TO KH?NG L? */
+.sidebar-logo {
+    height: 36px; /* Gi?i h?n chi?u cao logo */
+    width: auto;
+}
+
+/* 5. Ghi ?è các link trong Sidebar (t? ?en/xám thành tr?ng) */
+.sidebar-nav .nav-link {
+    color: #c9d1d9; /* Màu ch? link (tr?ng m?) */
+    border-left-color: transparent !important;
+    padding: 0.75rem 1.5rem;
+}
+
+    .sidebar-nav .nav-link i {
+        color: #8b949e; /* Màu icon (xám) */
+        margin-right: 0.75rem;
+        font-size: 1rem;
+        width: 20px;
+    }
+
+    /* 6. Style khi Hover và Active */
+    .sidebar-nav .nav-link:hover {
+        color: #ffffff;
+        background-color: #22272e; /* N?n khi hover */
+    }
+
+    .sidebar-nav .nav-link.active {
+        color: #ffffff;
+        font-weight: 600;
+        background-color: #1f6feb; /* Màu xanh active */
+        border-left-color: #1f6feb !important;
+    }
+
+        .sidebar-nav .nav-link.active i {
+            color: #ffffff; /* Icon active màu tr?ng */
+        }
+
+/* 7. Khu v?c n?i dung chính (Dashboard) */
+.main-content {
+    background-color: #161b22; /* ??ng b? n?n xám ?en */
+    padding: 2rem;
+}
+
+    /* 8. Style ch? (h1, p) trong n?i dung chính */
+    .main-content h1, .main-content h2, .main-content h5 {
+        color: #f0f6fc; /* Ch? tiêu ?? màu tr?ng */
+    }
+
+    .main-content p, .main-content .text-muted {
+        color: #8b949e !important; /* Ch? mô t? (xám) */
+    }
+
+    /* 9. Style cho Card (Dark Mode) */
+    .main-content .card {
+        background-color: #0d1117; /* N?n card ?en k?t */
+        border: 1px solid #30363d; /* Vi?n card m? */
+        color: #f0f6fc;
+        border-radius: 0.5rem;
+    }
+
+    .main-content .card-header {
+        background-color: #161b22; /* N?n header c?a card */
+        border-bottom: 1px solid #30363d;
+    }
+
+    /* 10. Style cho B?ng (Dark Mode) */
+    .main-content .table {
+        color: #f0f6fc; /* Ch? trong b?ng màu tr?ng */
+    }
+
+        .main-content .table thead th {
+            border-bottom: 2px solid #30363d;
+            color: #8b949e;
+        }
+
+        .main-content .table tbody tr {
+            border-bottom: 1px solid #22272e;
+        }
+
+    .main-content .table-hover tbody tr:hover {
+        background-color: #161b22; /* Màu khi hover vào hàng */
+    }
+
+    /* 11. S?a các chi ti?t nh? */
+    /* (N?n icon "New Appointments") */
+    .main-content .bg-light {
+        background-color: #22272e !important;
+    }
+    /* (Nút "Details" trong b?ng) */
+    .main-content .btn-light {
+        background-color: #22272e;
+        border-color: #30363d;
+        color: #f0f6fc;
+    }
+
+        .main-content .btn-light:hover {
+            background-color: #30363d;
+            border-color: #8b949e;
+            color: #f0f6fc;
+        }
+
+/* ============================================= */
+/* == S?A L?I B? C?C ADMIN (FIX SIDEBAR VÀ CONTENT) == */
+/* ============================================= */
+
+/* 1. Thi?t l?p Flexbox cho .wrapper */
+.wrapper {
+    display: flex;
+    min-height: 100vh; /* ??m b?o layout cao h?t màn hình */
+}
+
+/* 2. Set kích th??c c? ??nh cho sidebar */
+.sidebar {
+    width: 260px; /* Chi?u r?ng c? ??nh c?a sidebar */
+    flex-shrink: 0; /* Không cho phép sidebar b? co l?i */
+}
+
+/* 3. Cho phép n?i dung chính co giãn và cu?n */
+.main-content {
+    flex-grow: 1; /* Cho phép .main-content chi?m h?t ph?n còn l?i */
+    overflow-y: auto; /* Cho phép cu?n n?i dung chính n?u nó quá dài */
+}
+
+/* ============================================= */
+/* == STYLE CHO FOOTER (SÁNG VÀ T?I) == */
+/* ============================================= */
+
+/* 1. Class cho footer sáng (các trang bình th??ng) */
+.footer-light {
+    background-color: #ffffff;
+    border-top: 1px solid #e5e5e5;
+    padding-top: 3rem;
+    padding-bottom: 2rem;
+    margin-top: 3rem;
+    /* (Nó s? dùng màu ch? m?c ??nh là màu ?en) */
+}
+
+    .footer-light span, .footer-light h6 {
+        color: #111827; /* Ch? ?en */
+    }
+
+    .footer-light p, .footer-light a, .footer-light li, .footer-light .small {
+        color: #6b7280; /* Ch? xám */
+    }
+
+/* 2. Class cho footer t?i (trang ch?) */
+.footer-dark {
+    background-color: #0d1117; /* N?n ?en (??m h?n body) */
+    border-top: 1px solid #30363d; /* Vi?n m? */
+    padding-top: 3rem;
+    padding-bottom: 2rem;
+    margin-top: 3rem;
+}
+
+    .footer-dark span, .footer-dark h6 {
+        color: #f0f6fc; /* Ch? tr?ng */
+    }
+
+    .footer-dark p, .footer-dark a, .footer-dark li, .footer-dark .small {
+        color: #8b949e; /* Ch? xám m? */
+    }
+
+        .footer-dark a:hover {
+            color: #ffffff; /* Sáng lên khi hover */
+        }
