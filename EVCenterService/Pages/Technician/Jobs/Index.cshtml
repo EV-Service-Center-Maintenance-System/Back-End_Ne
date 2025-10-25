@@ -1,0 +1,69 @@
+﻿@page
+@model EVCenterService.Pages.Technician.Jobs.IndexModel
+@{
+    Layout = "_AppLayout";
+    ViewData["Title"] = "My Assigned Jobs";
+}
+
+<h2 class="mb-4">My Assigned Jobs</h2>
+
+@if (Model.AssignedJobs == null || !Model.AssignedJobs.Any())
+{
+    <div class="alert alert-info text-center">Hiện tại bạn chưa có công việc nào được phân công.</div>
+}
+else
+{
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Vehicle</th>
+                        <th>Services</th>
+                        <th>Customer</th>
+                        <th>Appointment</th>
+                        <th>Status</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int index = 1;
+                    }
+
+                    @foreach (var job in Model.AssignedJobs)
+                    {
+                        var serviceNames = string.Join(", ", job.OrderDetails.Select(d => d.Service?.Name));
+
+                        <tr>
+                            <td>@index</td>
+                            <td>@job.Vehicle?.Model</td>
+                            <td>@serviceNames</td>
+                            <td>@job.User?.FullName</td>
+                            <td>@job.AppointmentDate.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td>
+                                <span class="badge bg-@(job.Status?.ToLower() switch
+                                      {
+                                          "completed" => "success",
+                                          "cancelled" => "danger",
+                                          "inprogress" => "info text-dark",
+                                          _ => "secondary"
+                                      })">
+                            @job.Status
+                        </span>
+                    </td>
+                    <td class="text-end">
+                        <a asp-page="Details" asp-route-id="@job.OrderId" class="btn btn-sm btn-outline-primary">
+                            View Details
+                        </a>
+                    </td>
+                </tr>
+
+                                index++;
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}

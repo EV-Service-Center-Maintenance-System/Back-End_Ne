@@ -2,7 +2,7 @@
 @model EVCenterService.Pages.Customer.Appointments.IndexModel
 @{
     Layout = "_AppLayout";
-    ViewData["Title"] = "Order Service List";
+    ViewData["Title"] = "Customer Order List";
 }
 
 <h2 class="mb-3">Customer Order List</h2>
@@ -47,12 +47,27 @@ else
                     _ => "bg-secondary"
                 };
 
+                string displayNote = string.Empty;
+
+                if (!string.IsNullOrEmpty(order.ChecklistNote))
+                {
+                    displayNote += order.ChecklistNote;
+                }
+
+                if (order.Technician != null)
+                {
+                    if (!string.IsNullOrEmpty(displayNote))
+                        displayNote += " — ";
+
+                    displayNote += $"👨‍🔧 Technician: {order.Technician.FullName}";
+                }
+
                 <tr>
                     <td>@index</td>
                     <td>@order.Vehicle?.Model</td>
                     <td>@serviceNames</td>
                     <td>@order.AppointmentDate.ToString("dd/MM/yyyy HH:mm")</td>
-                    <td>@(CleanChecklist(order.ChecklistNote))</td>
+                    <td>@displayNote</td>
                     <td>
                         <span class="badge @badgeClass">
                             @(order.Status?.ToUpperInvariant() ?? "UNKNOWN")
@@ -73,15 +88,3 @@ else
 }
 
 <a asp-page="Create" class="btn btn-success mt-3">+ Đặt lịch mới</a>
-
-@functions {
-    private string CleanChecklist(string? note)
-    {
-        if (string.IsNullOrWhiteSpace(note))
-            return "Không có ghi chú";
-        int index = note.IndexOf("[Technician Assigned:", StringComparison.OrdinalIgnoreCase);
-        if (index >= 0)
-            note = note[..index].Trim();
-        return string.IsNullOrWhiteSpace(note) ? "Không có ghi chú" : note;
-    }
-}

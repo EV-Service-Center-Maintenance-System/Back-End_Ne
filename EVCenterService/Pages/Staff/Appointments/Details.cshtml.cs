@@ -1,8 +1,11 @@
-﻿using EVCenterService.Models;
+﻿using EVCenterService.Data;
+using EVCenterService.Models;
 using EVCenterService.Service.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 
 namespace EVCenterService.Pages.Staff.Appointments
 {
@@ -10,13 +13,17 @@ namespace EVCenterService.Pages.Staff.Appointments
     public class DetailsModel : PageModel
     {
         private readonly IStaffAppointmentService _staffService;
+        private readonly EVServiceCenterContext _context;
 
-        public DetailsModel(IStaffAppointmentService staffService)
+        public DetailsModel(IStaffAppointmentService staffService, EVServiceCenterContext context)
         {
             _staffService = staffService;
+            _context = context;
         }
 
         public OrderService Appointment { get; set; }
+
+        public List<SelectListItem> TechnicianList { get; set; } = new();
 
         [BindProperty]
         public Guid SelectedTechnicianId { get; set; }
@@ -24,9 +31,17 @@ namespace EVCenterService.Pages.Staff.Appointments
         public async Task<IActionResult> OnGetAsync(int id)
         {
             Appointment = await _staffService.GetAppointmentWithDetailsAsync(id);
-
             if (Appointment == null)
                 return NotFound();
+
+            TechnicianList = await _context.Accounts
+                .Where(a => a.Role == "Technician")
+                .Select(a => new SelectListItem
+                {
+                    Value = a.UserId.ToString(),
+                    Text = a.FullName
+                })
+                .ToListAsync();
 
             return Page();
         }
@@ -47,6 +62,12 @@ namespace EVCenterService.Pages.Staff.Appointments
 
         public async Task<IActionResult> OnPostAssignAsync(int id, Guid technicianId)
         {
+            if (technicianId == Guid.Empty)
+            {
+                TempData["Message"] = "⚠️ Please select a technician before assigning.";
+                return RedirectToPage(new { id });
+            }
+
             await _staffService.AssignTechnicianAsync(id, technicianId);
             TempData["Message"] = "👷 Technician assigned successfully.";
             return RedirectToPage("Manage");

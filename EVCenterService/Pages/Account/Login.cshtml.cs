@@ -63,7 +63,7 @@ namespace EVCenterService.Pages.Account
             {
                 case "Admin": return RedirectToPage("/Admin/Index");
                 case "Staff": return RedirectToPage("/Staff/Index");
-                case "Technician": return RedirectToPage("/Technician/Index");
+                case "Technician": return RedirectToPage("/Technician/Jobs/Index");
                 default: return RedirectToPage("/Customer/Index");
             }
         }

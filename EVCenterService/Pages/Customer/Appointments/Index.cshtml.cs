@@ -29,7 +29,7 @@ namespace EVCenterService.Pages.Customer.Appointments
             Bookings = await _context.OrderServices
                 .Include(o => o.Vehicle)
                 .Include(o => o.OrderDetails)
-                    .ThenInclude(od => od.Service)
+                    .ThenInclude(od => od.Service).Include(o => o.Technician)
                 .Where(o => o.UserId == userId)
                 .OrderByDescending(o => o.AppointmentDate)
                 .ToListAsync();

@@ -51,11 +51,31 @@ namespace EVCenterService.Service.Services
         public async Task AssignTechnicianAsync(int orderId, Guid technicianId)
         {
             var appointment = await _repository.GetByIdAsync(orderId)
-                ?? throw new Exception("Không tìm thấy lịch hẹn.");
+        ?? throw new Exception("Không tìm thấy lịch hẹn.");
 
+            appointment.TechnicianId = technicianId;
             appointment.Status = "InProgress";
-            appointment.ChecklistNote += $"\n[Technician Assigned: {technicianId}]";
+
+            var technician = await _context.Accounts
+                .FirstOrDefaultAsync(a => a.UserId == technicianId);
+
+            if (technician == null)
+                throw new Exception("Không tìm thấy kỹ thuật viên.");
+
+            var note = (appointment.ChecklistNote ?? "").Trim();
+
+            if (note.Contains("Technician Assigned:"))
+            {
+                var index = note.IndexOf("Technician Assigned:");
+                note = note[..index].TrimEnd();
+            }
+
+            appointment.ChecklistNote = string.IsNullOrWhiteSpace(note)
+                ? $"Technician Assigned: {technician.FullName}"
+                : $"{note}\nTechnician Assigned: {technician.FullName}";
+
             await _repository.UpdateAsync(appointment);
+            await _context.SaveChangesAsync();
         }
 
         public async Task<OrderService?> GetByIdAsync(int orderId)
