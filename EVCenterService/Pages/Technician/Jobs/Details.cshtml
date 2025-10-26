@@ -1,40 +1,240 @@
 ﻿@page "{id:int}"
 @model EVCenterService.Pages.Technician.Jobs.DetailsModel
+@using EVCenterService.Pages.Staff.Appointments
 @{
     Layout = "_AppLayout";
     ViewData["Title"] = "Job Details";
 }
 
-<h2 class="mb-4">Job Details #@Model.Job.OrderId</h2>
+<h2 class="mb-4 text-white">Job Details #@Model.Job.OrderId</h2>
 
-<div class="card shadow-sm">
-    <div class="card-body">
-        <p><strong>Khách hàng:</strong> @Model.Job.User?.FullName (@Model.Job.User?.Email)</p>
-        <p><strong>Xe:</strong> @Model.Job.Vehicle?.Model</p>
-        <p><strong>Dịch vụ:</strong> @string.Join(", ", Model.Job.OrderDetails.Select(d => d.Service?.Name))</p>
-        <p><strong>Ngày hẹn:</strong> @Model.Job.AppointmentDate.ToString("dd/MM/yyyy HH:mm")</p>
-        <p><strong>Ghi chú từ khách hàng:</strong> @Model.Job.ChecklistNote</p>
-
-        <div class="mt-3 mb-3">
-            <a asp-page="ManageParts"
-               asp-route-orderId="@Model.Job.OrderId"
-               asp-route-centerId="@Model.Job.Slot?.CenterId"
-               class="btn btn-outline-primary">
-                ⚙️ Quản lý vật tư
-            </a>
-        </div>
-
-        <form method="post">
-            <div class="mb-3">
-                <label class="form-label">Ghi chú của kỹ thuật viên</label>
-                <textarea class="form-control" rows="3" name="TechnicianNote"></textarea>
+@if (Model.Job.Status == "InProgress")
+{
+    <p class="text-muted">
+        Xe: @Model.Job.Vehicle?.Model (@Model.Job.Vehicle?.Vin) - Khách hàng: @Model.Job.User?.FullName
+    </p>
+    <form method="post">
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="card data-card border-0 mb-4">
+                    <div class="card-header bg-dark d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0 text-white">Chọn phụ tùng cần thiết (Báo giá)</h5>
+                        <button type="button" class="btn btn-sm btn-outline-light" id="addPartButton">
+                            <i class="bi bi-plus-circle me-1"></i> Thêm phụ tùng
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div id="partsUsedContainer">
+                            <div class="row g-2 mb-2 part-row align-items-center" style="display: none;">
+                                <div class="col-md-5">
+                                    <select class="form-select part-select" data-name-template="PartsUsedInput[index].PartId">
+                                        <option value="0">-- Chọn phụ tùng --</option>
+                                        @foreach (var part in Model.AvailableParts)
+                                        {
+                                            <option value="@part.Value">@part.Text</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <input type="number" class="form-control part-quantity" placeholder="SL" min="1" value="1" data-name-template="PartsUsedInput[index].Quantity" />
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="text" class="form-control part-note" placeholder="Ghi chú (nếu có)" data-name-template="PartsUsedInput[index].Note" />
+                                </div>
+                                <div class="col-md-1 text-end">
+                                    <button type="button" class="btn btn-sm btn-outline-danger remove-part-button"><i class="bi bi-trash"></i></button>
+                                </div>
+                            </div>
+                            @for (int i = 0; i < Model.PartsUsedInput.Count; i++)
+                            {
+                                <div class="row g-2 mb-2 part-row align-items-center">
+                                    <div class="col-md-5">
+                                        <select asp-for="PartsUsedInput[i].PartId" class="form-select part-select" asp-items="Model.AvailableParts">
+                                            <option value="0">-- Chọn phụ tùng --</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input asp-for="PartsUsedInput[i].Quantity" class="form-control part-quantity" placeholder="SL" min="1" />
+                                    </div>
+                                    <div class="col-md-4">
+                                        <input asp-for="PartsUsedInput[i].Note" class="form-control part-note" placeholder="Ghi chú (nếu có)" />
+                                    </div>
+                                    <div class="col-md-1 text-end">
+                                        <button type="button" class="btn btn-sm btn-outline-danger remove-part-button"><i class="bi bi-trash"></i></button>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <em class="text-muted small" id="noPartsMessage">Chưa có phụ tùng nào được thêm.</em>
+                    </div>
+                </div>
             </div>
-            <button type="submit" asp-page-handler="Complete" asp-route-id="@Model.Job.OrderId" class="btn btn-success me-2">
-                ✅ Đánh Dấu Hoàn Thành
-            </button>
-            <button type="submit" asp-page-handler="Cancel" asp-route-id="@Model.Job.OrderId" class="btn btn-danger">
-                ❌ Hủy Công Việc
-            </button>
-        </form>
+            <div class="col-lg-4">
+                <div class="card data-card border-0 sticky-top" style="top: 2rem;">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0">Tóm tắt Chi phí (Báo giá)</h5>
+                    </div>
+                    <div class="card-body">
+                        <dl class="row mb-2">
+                            <dt class="col-sm-7">Phí dịch vụ:</dt>
+                            <dd class="col-sm-5 text-end text-white">@Model.ServiceTotalCost.ToString("N0") đ</dd>
+                        </dl>
+                        <dl class="row mb-2">
+                            <dt class="col-sm-7">Phí phụ tùng (ước tính):</dt>
+                            <dd class="col-sm-5 text-end text-white"><span id="totalPartsCost">0</span> đ</dd>
+                        </dl>
+                        <hr class="border-secondary my-3" />
+                        <dl class="row fw-bold fs-5 text-white">
+                            <dt class="col-sm-7">TỔNG CỘNG:</dt>
+                            <dd class="col-sm-5 text-end"><span id="grandTotal">@Model.ServiceTotalCost.ToString("N0")</span> đ</dd>
+                        </dl>
+                        <div class="d-grid mt-4">
+                            <button type="submit" asp-page-handler="SubmitQuote" asp-route-id="@Model.Job.OrderId" class="btn btn-primary btn-lg">
+                                <i class="bi bi-send-check-fill me-2"></i> Gửi Báo Giá cho Staff
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+}
+else if (Model.Job.Status == "ReadyForRepair" || Model.Job.Status == "RepairInProgress")
+{
+    <div class="card data-card border-0">
+        <div class="card-body">
+            <h5 class="card-title text-success">Khách hàng đã thanh toán. Sẵn sàng sửa chữa.</h5>
+            <p><strong>Khách hàng:</strong> @Model.Job.User?.FullName (@Model.Job.User?.Email)</p>
+            <p><strong>Xe:</strong> @Model.Job.Vehicle?.Model</p>
+            <p><strong>Dịch vụ:</strong> @string.Join(", ", Model.Job.OrderDetails.Select(d => d.Service?.Name))</p>
+
+            <h6 class="mt-3 text-white">Phụ tùng đã duyệt (đã trừ kho):</h6>
+            @if (Model.Job.PartsUseds.Any())
+            {
+                <ul>
+                    @foreach (var part in Model.Job.PartsUseds)
+                    {
+                        <li>@part.Part?.Name (SL: @part.Quantity)</li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <p class="text-muted">Không có phụ tùng nào.</p>
+            }
+
+
+            <form method="post" class="mt-4">
+                <div class="mb-3">
+                    <label class="form-label text-white">Ghi chú của kỹ thuật viên</label>
+                    <textarea asp-for="TechnicianNote" class="form-control" rows="3"></textarea>
+                </div>
+                <button type="submit" asp-page-handler="Complete" asp-route-id="@Model.Job.OrderId" class="btn btn-success me-2">
+                    ✅ Đánh Dấu Hoàn Thành
+                </button>
+                <button type="submit" asp-page-handler="Cancel" asp-route-id="@Model.Job.OrderId" class="btn btn-danger">
+                    ❌ Hủy Công Việc
+                </button>
+            </form>
+        </div>
     </div>
-</div>
+}
+else
+{
+    <div class="alert alert-info">
+        Trạng thái hiện tại của công việc là: <strong>@Model.Job.Status</strong>.
+        @if (Model.Job.Status == "PendingQuote")
+        {
+            <span>Đang chờ Staff duyệt báo giá.</span>
+        }
+        else if (Model.Job.Status == "PendingPayment")
+        {
+            <span>Đang chờ Khách hàng thanh toán.</span>
+        }
+        else if (Model.Job.Status == "Completed")
+        {
+            <span>Công việc đã hoàn thành.</span>
+        }
+    </div>
+}
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Kiểm tra xem các phần tử có tồn tại không (chỉ chạy khi ở chế độ báo giá)
+            const container = document.getElementById('partsUsedContainer');
+            if (!container) return; // Thoát nếu không ở chế độ báo giá
+
+            const addButton = document.getElementById('addPartButton');
+            const noPartsMessage = document.getElementById('noPartsMessage');
+            let partIndex = container.querySelectorAll('.part-row:not([style*="display: none"])').length;
+
+            function addPartRow() {
+                const templateRow = container.querySelector('.part-row[style*="display: none"]');
+                if (!templateRow) return;
+                const newRow = templateRow.cloneNode(true);
+                newRow.style.display = '';
+                newRow.classList.remove('d-none');
+                newRow.querySelectorAll('[data-name-template]').forEach(el => {
+                    const nameTemplate = el.getAttribute('data-name-template');
+                    el.name = nameTemplate.replace('index', partIndex);
+                    el.id = el.name.replace(/\[|\]|\./g, '_');
+                });
+                newRow.querySelector('.remove-part-button').addEventListener('click', function() {
+                    newRow.remove();
+                    updateTotals();
+                    toggleNoPartsMessage();
+                });
+                newRow.querySelector('.part-select').addEventListener('change', updateTotals);
+                newRow.querySelector('.part-quantity').addEventListener('input', updateTotals);
+                container.appendChild(newRow);
+                partIndex++;
+                updateTotals();
+                toggleNoPartsMessage();
+            }
+
+             function updateTotals() {
+                let currentPartsCost = 0;
+                container.querySelectorAll('.part-row:not([style*="display: none"])').forEach(row => {
+                    const select = row.querySelector('.part-select');
+                    const quantityInput = row.querySelector('.part-quantity');
+                    const selectedOption = select.options[select.selectedIndex];
+                    const quantity = parseInt(quantityInput.value) || 0;
+                    if (selectedOption && selectedOption.value !== "0" && quantity > 0) {
+                        const priceText = selectedOption.text.split(' - ')[1];
+                        if (priceText) {
+                            const price = parseInt(priceText.replace(/[^0-9]/g, '')) || 0;
+                            currentPartsCost += price * quantity;
+                        }
+                    }
+                });
+
+                // Chú ý: Cần đảm bảo @Model.ServiceTotalCost có giá trị
+                const serviceCost = @(Model.ServiceTotalCost.ToString(System.Globalization.CultureInfo.InvariantCulture));
+                const grandTotal = serviceCost + currentPartsCost;
+                document.getElementById('totalPartsCost').textContent = currentPartsCost.toLocaleString('vi-VN');
+                document.getElementById('grandTotal').textContent = grandTotal.toLocaleString('vi-VN');
+            }
+
+            function toggleNoPartsMessage() {
+                 const visibleRows = container.querySelectorAll('.part-row:not([style*="display: none"])').length;
+                 noPartsMessage.style.display = visibleRows > 0 ? 'none' : 'block';
+            }
+
+            addButton.addEventListener('click', addPartRow);
+            container.querySelectorAll('.part-row:not([style*="display: none"]) .remove-part-button').forEach(button => {
+                 button.addEventListener('click', function(event) {
+                    event.target.closest('.part-row').remove();
+                    updateTotals();
+                    toggleNoPartsMessage();
+                 });
+            });
+            container.querySelectorAll('.part-row:not([style*="display: none"]) .part-select').forEach(select => select.addEventListener('change', updateTotals));
+            container.querySelectorAll('.part-row:not([style*a="display: none"]) .part-quantity').forEach(input => input.addEventListener('input', updateTotals));
+
+            updateTotals();
+            toggleNoPartsMessage();
+        });
+    </script>
+}

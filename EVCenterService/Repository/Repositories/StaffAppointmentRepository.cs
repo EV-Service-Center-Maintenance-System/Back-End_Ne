@@ -23,16 +23,25 @@ namespace EVCenterService.Repository.Repositories
 
         public async Task<OrderService?> GetByIdAsync(int orderId)
         {
+            return await _context.OrderServices.FindAsync(orderId);
+        }
+
+        public async Task<OrderService?> GetByIdWithDetailsAsync(int orderId)
+        {
+            // Lấy đầy đủ chi tiết cần thiết cho trang Details/Finalize
             return await _context.OrderServices
-                .Include(o => o.Vehicle)
                 .Include(o => o.User)
+                .Include(o => o.Vehicle)
                 .Include(o => o.OrderDetails)
+                    .ThenInclude(d => d.Service)
                 .FirstOrDefaultAsync(o => o.OrderId == orderId);
         }
 
         public async Task UpdateAsync(OrderService order)
         {
-            _context.OrderServices.Update(order);
+            // Update nên dùng Attach để hiệu quả hơn nếu đối tượng đã được theo dõi
+            _context.Attach(order).State = EntityState.Modified;
+            // _context.OrderServices.Update(order); // Hoặc dùng Update nếu chắc chắn nó chưa được theo dõi
             await _context.SaveChangesAsync();
         }
     }

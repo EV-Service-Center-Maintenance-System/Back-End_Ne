@@ -1,0 +1,12 @@
+﻿@page
+@model EVCenterService.Pages.Customer.Invoices.PaymentCallbackModel
+@{
+    ViewData["Title"] = "Đang xử lý thanh toán...";
+}
+<div class="text-center">
+    <h1 class="h3 mb-3">@ViewData["Title"]</h1>
+    <p>Vui lòng chờ trong giây lát...</p>
+    <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>

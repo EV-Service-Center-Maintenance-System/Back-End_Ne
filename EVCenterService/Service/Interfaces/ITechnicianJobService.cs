@@ -8,5 +8,6 @@ namespace EVCenterService.Service.Interfaces
         Task<OrderService?> GetJobDetailAsync(int orderId);
         Task CompleteJobAsync(int orderId, string? note);
         Task CancelJobAsync(int orderId, string? note);
+        Task UpdateJobAsync(OrderService job);
     }
 }

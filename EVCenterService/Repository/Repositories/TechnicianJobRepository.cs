@@ -17,18 +17,22 @@ namespace EVCenterService.Repository.Repositories
                 .Include(o => o.User)
                 .Include(o => o.OrderDetails)
                     .ThenInclude(d => d.Service)
-                    .Include(o => o.Slot)
+                .Include(o => o.Slot)
+                .Include(o => o.PartsUseds)
+                    .ThenInclude(pu => pu.Part)
                 .FirstOrDefaultAsync(o => o.OrderId == orderId);
         }
 
         public async Task<List<OrderService>> GetJobsByTechnicianIdAsync(Guid technicianId)
         {
+            var statuses = new[] { "InProgress", "ReadyForRepair", "RepairInProgress" };
+
             return await _context.OrderServices
                 .Include(o => o.Vehicle)
                 .Include(o => o.OrderDetails)
                     .ThenInclude(d => d.Service)
                 .Include(o => o.User)
-                .Where(o => o.TechnicianId == technicianId)
+                .Where(o => o.TechnicianId == technicianId && statuses.Contains(o.Status))
                 .OrderByDescending(o => o.AppointmentDate)
                 .ToListAsync();
         }

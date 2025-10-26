@@ -30,6 +30,14 @@ builder.Services.AddScoped<IStaffAppointmentService, StaffAppointmentService>();
 builder.Services.AddScoped<ITechnicianJobRepository, TechnicianJobRepository>();
 builder.Services.AddScoped<ITechnicianJobService, TechnicianJobService>();
 
+builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+
+builder.Services.AddScoped<IVnPayService, VnPayService>();
+
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+builder.Services.AddMemoryCache();
+
 // DI for migrationcd EVCenterService
 builder.Services.AddDbContext<EVServiceCenterContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));

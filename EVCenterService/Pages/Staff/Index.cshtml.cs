@@ -9,7 +9,7 @@ namespace EVCenterService.Pages.Staff
     {
         public IActionResult OnGet()
         {
-            return RedirectToPage("/Staff/Appointments/Manage");
+            return RedirectToPage("/Staff/Appointments/Index");
         }
     }
 }

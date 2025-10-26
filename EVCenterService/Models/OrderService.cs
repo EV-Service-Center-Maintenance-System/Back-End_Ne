@@ -58,4 +58,5 @@ public partial class OrderService
     [ForeignKey("TechnicianId")]
     [InverseProperty("AssignedOrders")]
     public virtual Account? Technician { get; set; }
+    public virtual ICollection<Invoice> Invoices { get; set; } = new List<Invoice>();
 }

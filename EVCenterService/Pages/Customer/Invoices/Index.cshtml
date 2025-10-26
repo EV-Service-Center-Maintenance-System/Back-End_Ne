@@ -1,0 +1,60 @@
+﻿@page
+@model EVCenterService.Pages.Customer.Invoices.IndexModel
+@{
+    ViewData["Title"] = "Hóa Đơn Của Tôi";
+    Layout = "_AppLayout"; 
+}
+
+<h1 class="h2 mb-4">@ViewData["Title"]</h1>
+
+<div class="card data-card border-0">
+    <div class="card-body">
+        @if (Model.InvoiceList == null || !Model.InvoiceList.Any())
+        {
+            <div class="alert alert-info text-center mb-0">Bạn chưa có hóa đơn nào.</div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Mã HĐ</th>
+                            <th>Xe</th>
+                            <th>Ngày tạo</th>
+                            <th class="text-end">Tổng tiền</th>
+                            <th>Trạng thái</th>
+                            <th></th> 
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var invoice in Model.InvoiceList)
+                        {
+                            <tr>
+                                <td>#HD-@invoice.InvoiceId</td>
+                                <td>@(invoice.Order?.Vehicle?.Model)</td>
+                                <td>@invoice.IssueDate?.ToString("dd/MM/yyyy")</td>
+                                <td class="text-end">@invoice.Amount?.ToString("N0") đ</td>
+                                <td>
+                                    @if (invoice.Status == "Paid")
+                                    {
+                                        <span class="badge bg-success">Đã thanh toán</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">Chưa thanh toán</span>
+                                    }
+                                </td>
+                                <td class="text-end">
+                                    <a asp-page="./Details" asp-route-id="@invoice.InvoiceId" class="btn btn-sm btn-primary">
+                                        <i class="bi bi-eye-fill me-1"></i> Xem chi tiết
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

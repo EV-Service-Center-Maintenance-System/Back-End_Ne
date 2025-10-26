@@ -1,0 +1,61 @@
+﻿@page
+@model EVCenterService.Pages.Admin.Invoices.IndexModel
+@{
+    ViewData["Title"] = "Quản lý Hóa đơn";
+    Layout = "_AppLayout"; // Đảm bảo bạn dùng đúng Layout
+}
+
+<h1 class="h2 mb-4">@ViewData["Title"]</h1>
+
+<div class="card data-card border-0">
+    <div class="card-header bg-dark text-white">
+        <h5 class="mb-0">Danh sách hóa đơn</h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Mã HĐ</th>
+                        <th>Khách hàng</th>
+                        <th>Tổng tiền</th>
+                        <th>Ngày tạo</th>
+                        <th>Trạng thái</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.InvoiceList)
+                    {
+                        <tr>
+                            <td>@item.InvoiceId</td>
+                            <td>@item.Subscription?.User?.FullName</td>
+                            <td>@item.Amount?.ToString("N0") đ</td>
+                            <td>@item.IssueDate?.ToString("dd/MM/yyyy")</td>
+                            <td>
+                                @if (item.Status == "Paid")
+                                {
+                                    <span class="badge bg-success">Đã thanh toán</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">Chưa thanh toán</span>
+                                }
+                            </td>
+                            <td>
+                                <a href="#" class="btn btn-sm btn-primary">Xem</a>
+                                <a href="#" class="btn btn-sm btn-success">Ghi nhận TT</a>
+                            </td>
+                        </tr>
+                    }
+                    @if (!Model.InvoiceList.Any())
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center">Không tìm thấy hóa đơn nào.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

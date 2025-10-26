@@ -29,7 +29,7 @@ namespace EVCenterService.Service.Services
             var job = await _repo.GetJobByIdAsync(orderId)
                 ?? throw new Exception("Không tìm thấy công việc.");
 
-            job.Status = "Completed";
+            job.Status = "TechnicianCompleted";
             if (!string.IsNullOrWhiteSpace(note))
             {
                 job.ChecklistNote += $"\nTechnician note: {note}";
@@ -46,6 +46,11 @@ namespace EVCenterService.Service.Services
         public async Task<OrderService?> GetJobDetailAsync(int orderId)
         {
             return await _repo.GetJobByIdAsync(orderId);
+        }
+
+        public async Task UpdateJobAsync(OrderService job)
+        {
+            await _repo.UpdateJobAsync(job);
         }
     }
 }

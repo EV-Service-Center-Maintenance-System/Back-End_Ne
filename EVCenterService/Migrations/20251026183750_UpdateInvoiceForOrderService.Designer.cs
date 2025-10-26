@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EVCenterService.Migrations
 {
     [DbContext(typeof(EVServiceCenterContext))]
-    [Migration("20251023150955_InitialCreateWithHardcodedGuids")]
-    partial class InitialCreateWithHardcodedGuids
+    [Migration("20251026183750_UpdateInvoiceForOrderService")]
+    partial class UpdateInvoiceForOrderService
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -90,7 +90,7 @@ namespace EVCenterService.Migrations
                             UserId = new Guid("a1a1a1a1-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
                             Email = "admin@gmail.com",
                             FullName = "Admin",
-                            Password = "AQAAAAIAAYagAAAAEOhI9HkONa2Y7S8IZ/NsCV5PyDzDFOZB6Ejhk1g5m2fzvrPL9ZSwJXrc0PerUXsS4Q==",
+                            Password = "AQAAAAIAAYagAAAAEIwBiZnBkEBCuszMyMHAB1Vs32bNkoMPV174FXbG7movCBEnczuCmaiw++qoEgzy5A==",
                             Phone = "0901000001",
                             Role = "Admin",
                             Status = "Active"
@@ -101,7 +101,7 @@ namespace EVCenterService.Migrations
                             Certification = "EV Maintenance Level 1",
                             Email = "tech1@gmail.com",
                             FullName = "Tran Van B",
-                            Password = "AQAAAAIAAYagAAAAECEp7Emp5aUtM9ZSUQ58UX5bhTiPHEqvuA7gioTdUmKjWc0i+PpWswewKRQK80wdrA==",
+                            Password = "AQAAAAIAAYagAAAAEDcCXBRDTdzjYX8eSHKyWdVjXMWMBBj0av2AmBixXvuZRbIBegZdFEwtIyUNaog0Lw==",
                             Phone = "0902000002",
                             Role = "Technician",
                             Status = "Active"
@@ -112,7 +112,7 @@ namespace EVCenterService.Migrations
                             Certification = "EV Battery Specialist",
                             Email = "tech2@gmail.com",
                             FullName = "Le Thi C",
-                            Password = "AQAAAAIAAYagAAAAEE0MscICY6SvTIQqso2nyach72LHW4NHII7590S55gsM/M/oUqEQzR6XyPozoU8Prw==",
+                            Password = "AQAAAAIAAYagAAAAEOQsSOh+BlNb/xrY46RTbg1uDkOjs2jwDJqT7EgdBrpkBS/oiLCMFK9kZWFrme+1Og==",
                             Phone = "0903000003",
                             Role = "Technician",
                             Status = "Active"
@@ -122,7 +122,7 @@ namespace EVCenterService.Migrations
                             UserId = new Guid("d4d4d4d4-dddd-dddd-dddd-dddddddddddd"),
                             Email = "staff@gmail.com",
                             FullName = "Phan Anh C",
-                            Password = "AQAAAAIAAYagAAAAEMxeKLR7QO28XsrsFztigHft8AETuXNTVL698VFAh91y6q2R2x92R/HGrwejKoRwfA==",
+                            Password = "AQAAAAIAAYagAAAAEEKkKERd7vGD/n7ufQbVuwpCTEwNmV98WQVnKveMTKvUOgXDFuGIM5I3YJn7oilxCA==",
                             Phone = "0906000006",
                             Role = "Staff",
                             Status = "Active"
@@ -132,7 +132,7 @@ namespace EVCenterService.Migrations
                             UserId = new Guid("e5e5e5e5-eeee-eeee-eeee-eeeeeeeeeeee"),
                             Email = "user1@gmail.com",
                             FullName = "Pham Van D",
-                            Password = "AQAAAAIAAYagAAAAEPqrRPZ3iAK6Gi4wZreA9m7AkT10G/IM5pggpnoSvgKQDirLIMITMZln4kCVol4biA==",
+                            Password = "AQAAAAIAAYagAAAAEPaVeOAdLhtRsFTh+DsHs2MqZErkNO6BKtX/QZiPu8XYw5ra9a7gTsqdSp/tR5/22w==",
                             Phone = "0904000004",
                             Role = "Customer",
                             Status = "Active"
@@ -142,7 +142,7 @@ namespace EVCenterService.Migrations
                             UserId = new Guid("f6f6f6f6-ffff-ffff-ffff-ffffffffffff"),
                             Email = "user2@gmail.com",
                             FullName = "Do Thi E",
-                            Password = "AQAAAAIAAYagAAAAEFBr2z5E8WLnVPHOlxQPSrvA7GiNu1tV5SrPFuc83n8UgOW09MqlHbLLt6U12cxpzA==",
+                            Password = "AQAAAAIAAYagAAAAEJKDMj0YseZDOZ+vIejVKbdZFkYCtSF8hEcPPBnsUnOQHYFhwRDPF7cjOsrjtW0nWg==",
                             Phone = "0905000005",
                             Role = "Customer",
                             Status = "Active"
@@ -191,7 +191,7 @@ namespace EVCenterService.Migrations
                         {
                             FeedbackId = 1,
                             Comment = "Excellent service! Technician was professional.",
-                            CreatedAt = new DateTime(2025, 10, 23, 22, 9, 54, 748, DateTimeKind.Local).AddTicks(3920),
+                            CreatedAt = new DateTime(2025, 10, 27, 1, 37, 50, 10, DateTimeKind.Local).AddTicks(4752),
                             OrderId = 1,
                             Rating = 5,
                             UserId = new Guid("e5e5e5e5-eeee-eeee-eeee-eeeeeeeeeeee")
@@ -216,6 +216,10 @@ namespace EVCenterService.Migrations
                     b.Property<DateTime?>("IssueDate")
                         .HasColumnType("datetime");
 
+                    b.Property<int?>("OrderId")
+                        .HasColumnType("int")
+                        .HasColumnName("OrderID");
+
                     b.Property<string>("Status")
                         .HasMaxLength(50)
                         .IsUnicode(false)
@@ -227,6 +231,8 @@ namespace EVCenterService.Migrations
 
                     b.HasKey("InvoiceId")
                         .HasName("PK__Invoice__D796AAD5F01DE521");
+
+                    b.HasIndex("OrderId");
 
                     b.HasIndex("SubscriptionId");
 
@@ -294,16 +300,6 @@ namespace EVCenterService.Migrations
                             Name = "EV Center - District 1",
                             OpenTime = new TimeOnly(8, 0, 0),
                             Phone = "0281111111"
-                        },
-                        new
-                        {
-                            CenterId = 2,
-                            Address = "22 Vo Van Ngan, Thu Duc, HCM",
-                            CloseTime = new TimeOnly(17, 30, 0),
-                            Email = "center2@evcenter.vn",
-                            Name = "EV Center - Thu Duc",
-                            OpenTime = new TimeOnly(8, 0, 0),
-                            Phone = "0282222222"
                         });
                 });
 
@@ -351,7 +347,7 @@ namespace EVCenterService.Migrations
                             Content = "Your vehicle maintenance is completed.",
                             IsRead = false,
                             ReceiverId = new Guid("e5e5e5e5-eeee-eeee-eeee-eeeeeeeeeeee"),
-                            TriggerDate = new DateTime(2025, 10, 23, 22, 9, 54, 748, DateTimeKind.Local).AddTicks(3787),
+                            TriggerDate = new DateTime(2025, 10, 27, 1, 37, 50, 10, DateTimeKind.Local).AddTicks(4728),
                             Type = "StatusUpdate"
                         },
                         new
@@ -360,7 +356,7 @@ namespace EVCenterService.Migrations
                             Content = "Your appointment is scheduled for tomorrow.",
                             IsRead = false,
                             ReceiverId = new Guid("f6f6f6f6-ffff-ffff-ffff-ffffffffffff"),
-                            TriggerDate = new DateTime(2025, 10, 23, 22, 9, 54, 748, DateTimeKind.Local).AddTicks(3790),
+                            TriggerDate = new DateTime(2025, 10, 27, 1, 37, 50, 10, DateTimeKind.Local).AddTicks(4731),
                             Type = "MaintenanceReminder"
                         });
                 });
@@ -479,6 +475,7 @@ namespace EVCenterService.Migrations
                             AppointmentDate = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ChecklistNote = "Replaced brake pads, coolant check",
                             Status = "Completed",
+                            TechnicianId = new Guid("b2b2b2b2-bbbb-bbbb-bbbb-bbbbbbbbbbbb"),
                             TotalCost = 2500000m,
                             UserId = new Guid("e5e5e5e5-eeee-eeee-eeee-eeeeeeeeeeee"),
                             VehicleId = 1
@@ -731,7 +728,7 @@ namespace EVCenterService.Migrations
                         new
                         {
                             SlotId = 2,
-                            CenterId = 2,
+                            CenterId = 1,
                             EndTime = new DateTime(2025, 10, 9, 17, 0, 0, 0, DateTimeKind.Unspecified),
                             StartTime = new DateTime(2025, 10, 9, 13, 0, 0, 0, DateTimeKind.Unspecified),
                             TechnicianId = new Guid("c3c3c3c3-cccc-cccc-cccc-cccccccccccc")
@@ -792,7 +789,7 @@ namespace EVCenterService.Migrations
                         new
                         {
                             StorageId = 3,
-                            CenterId = 2,
+                            CenterId = 1,
                             MinThreshold = 3,
                             PartId = 3,
                             Quantity = 8
@@ -800,7 +797,7 @@ namespace EVCenterService.Migrations
                         new
                         {
                             StorageId = 4,
-                            CenterId = 2,
+                            CenterId = 1,
                             MinThreshold = 5,
                             PartId = 4,
                             Quantity = 15
@@ -859,7 +856,7 @@ namespace EVCenterService.Migrations
                         {
                             SubscriptionId = new Guid("33333333-3333-3333-3333-333333333333"),
                             AutoRenew = true,
-                            CreatedAt = new DateTime(2025, 10, 23, 22, 9, 54, 748, DateTimeKind.Local).AddTicks(3728),
+                            CreatedAt = new DateTime(2025, 10, 27, 1, 37, 50, 10, DateTimeKind.Local).AddTicks(4667),
                             EndDate = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             PlanId = new Guid("22222222-2222-2222-2222-222222222222"),
                             StartDate = new DateTime(2025, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1018,10 +1015,16 @@ namespace EVCenterService.Migrations
 
             modelBuilder.Entity("EVCenterService.Models.Invoice", b =>
                 {
+                    b.HasOne("EVCenterService.Models.OrderService", "Order")
+                        .WithMany("Invoices")
+                        .HasForeignKey("OrderId")
+                        .HasConstraintName("FK_Invoice_OrderService");
+
                     b.HasOne("EVCenterService.Models.Subscription", "Subscription")
                         .WithMany("Invoices")
-                        .HasForeignKey("SubscriptionId")
-                        .HasConstraintName("FK__Invoice__Subscri__68487DD7");
+                        .HasForeignKey("SubscriptionId");
+
+                    b.Navigation("Order");
 
                     b.Navigation("Subscription");
                 });
@@ -1189,6 +1192,8 @@ namespace EVCenterService.Migrations
             modelBuilder.Entity("EVCenterService.Models.OrderService", b =>
                 {
                     b.Navigation("Feedbacks");
+
+                    b.Navigation("Invoices");
 
                     b.Navigation("OrderDetails");
 

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace EVCenterService.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreateWithHardcodedGuids : Migration
+    public partial class UpdateInvoiceForOrderService : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -232,28 +232,6 @@ namespace EVCenterService.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Invoice",
-                columns: table => new
-                {
-                    InvoiceID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    SubscriptionID = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    Amount = table.Column<decimal>(type: "decimal(12,2)", nullable: true),
-                    Status = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: true),
-                    IssueDate = table.Column<DateTime>(type: "datetime", nullable: true),
-                    DueDate = table.Column<DateTime>(type: "datetime", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK__Invoice__D796AAD5F01DE521", x => x.InvoiceID);
-                    table.ForeignKey(
-                        name: "FK__Invoice__Subscri__68487DD7",
-                        column: x => x.SubscriptionID,
-                        principalTable: "Subscription",
-                        principalColumn: "SubscriptionID");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Feedback",
                 columns: table => new
                 {
@@ -278,6 +256,34 @@ namespace EVCenterService.Migrations
                         column: x => x.UserID,
                         principalTable: "Account",
                         principalColumn: "UserID");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Invoice",
+                columns: table => new
+                {
+                    InvoiceID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    SubscriptionID = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    OrderID = table.Column<int>(type: "int", nullable: true),
+                    Amount = table.Column<decimal>(type: "decimal(12,2)", nullable: true),
+                    Status = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: true),
+                    IssueDate = table.Column<DateTime>(type: "datetime", nullable: true),
+                    DueDate = table.Column<DateTime>(type: "datetime", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK__Invoice__D796AAD5F01DE521", x => x.InvoiceID);
+                    table.ForeignKey(
+                        name: "FK_Invoice_OrderService",
+                        column: x => x.OrderID,
+                        principalTable: "OrderService",
+                        principalColumn: "OrderID");
+                    table.ForeignKey(
+                        name: "FK_Invoice_Subscription_SubscriptionID",
+                        column: x => x.SubscriptionID,
+                        principalTable: "Subscription",
+                        principalColumn: "SubscriptionID");
                 });
 
             migrationBuilder.CreateTable(
@@ -369,22 +375,18 @@ namespace EVCenterService.Migrations
                 columns: new[] { "UserID", "Certification", "Email", "FullName", "Password", "Phone", "Role", "Status" },
                 values: new object[,]
                 {
-                    { new Guid("a1a1a1a1-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), null, "admin@gmail.com", "Admin", "AQAAAAIAAYagAAAAEOhI9HkONa2Y7S8IZ/NsCV5PyDzDFOZB6Ejhk1g5m2fzvrPL9ZSwJXrc0PerUXsS4Q==", "0901000001", "Admin", "Active" },
-                    { new Guid("b2b2b2b2-bbbb-bbbb-bbbb-bbbbbbbbbbbb"), "EV Maintenance Level 1", "tech1@gmail.com", "Tran Van B", "AQAAAAIAAYagAAAAECEp7Emp5aUtM9ZSUQ58UX5bhTiPHEqvuA7gioTdUmKjWc0i+PpWswewKRQK80wdrA==", "0902000002", "Technician", "Active" },
-                    { new Guid("c3c3c3c3-cccc-cccc-cccc-cccccccccccc"), "EV Battery Specialist", "tech2@gmail.com", "Le Thi C", "AQAAAAIAAYagAAAAEE0MscICY6SvTIQqso2nyach72LHW4NHII7590S55gsM/M/oUqEQzR6XyPozoU8Prw==", "0903000003", "Technician", "Active" },
-                    { new Guid("d4d4d4d4-dddd-dddd-dddd-dddddddddddd"), null, "staff@gmail.com", "Phan Anh C", "AQAAAAIAAYagAAAAEMxeKLR7QO28XsrsFztigHft8AETuXNTVL698VFAh91y6q2R2x92R/HGrwejKoRwfA==", "0906000006", "Staff", "Active" },
-                    { new Guid("e5e5e5e5-eeee-eeee-eeee-eeeeeeeeeeee"), null, "user1@gmail.com", "Pham Van D", "AQAAAAIAAYagAAAAEPqrRPZ3iAK6Gi4wZreA9m7AkT10G/IM5pggpnoSvgKQDirLIMITMZln4kCVol4biA==", "0904000004", "Customer", "Active" },
-                    { new Guid("f6f6f6f6-ffff-ffff-ffff-ffffffffffff"), null, "user2@gmail.com", "Do Thi E", "AQAAAAIAAYagAAAAEFBr2z5E8WLnVPHOlxQPSrvA7GiNu1tV5SrPFuc83n8UgOW09MqlHbLLt6U12cxpzA==", "0905000005", "Customer", "Active" }
+                    { new Guid("a1a1a1a1-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), null, "admin@gmail.com", "Admin", "AQAAAAIAAYagAAAAEIwBiZnBkEBCuszMyMHAB1Vs32bNkoMPV174FXbG7movCBEnczuCmaiw++qoEgzy5A==", "0901000001", "Admin", "Active" },
+                    { new Guid("b2b2b2b2-bbbb-bbbb-bbbb-bbbbbbbbbbbb"), "EV Maintenance Level 1", "tech1@gmail.com", "Tran Van B", "AQAAAAIAAYagAAAAEDcCXBRDTdzjYX8eSHKyWdVjXMWMBBj0av2AmBixXvuZRbIBegZdFEwtIyUNaog0Lw==", "0902000002", "Technician", "Active" },
+                    { new Guid("c3c3c3c3-cccc-cccc-cccc-cccccccccccc"), "EV Battery Specialist", "tech2@gmail.com", "Le Thi C", "AQAAAAIAAYagAAAAEOQsSOh+BlNb/xrY46RTbg1uDkOjs2jwDJqT7EgdBrpkBS/oiLCMFK9kZWFrme+1Og==", "0903000003", "Technician", "Active" },
+                    { new Guid("d4d4d4d4-dddd-dddd-dddd-dddddddddddd"), null, "staff@gmail.com", "Phan Anh C", "AQAAAAIAAYagAAAAEEKkKERd7vGD/n7ufQbVuwpCTEwNmV98WQVnKveMTKvUOgXDFuGIM5I3YJn7oilxCA==", "0906000006", "Staff", "Active" },
+                    { new Guid("e5e5e5e5-eeee-eeee-eeee-eeeeeeeeeeee"), null, "user1@gmail.com", "Pham Van D", "AQAAAAIAAYagAAAAEPaVeOAdLhtRsFTh+DsHs2MqZErkNO6BKtX/QZiPu8XYw5ra9a7gTsqdSp/tR5/22w==", "0904000004", "Customer", "Active" },
+                    { new Guid("f6f6f6f6-ffff-ffff-ffff-ffffffffffff"), null, "user2@gmail.com", "Do Thi E", "AQAAAAIAAYagAAAAEJKDMj0YseZDOZ+vIejVKbdZFkYCtSF8hEcPPBnsUnOQHYFhwRDPF7cjOsrjtW0nWg==", "0905000005", "Customer", "Active" }
                 });
 
             migrationBuilder.InsertData(
                 table: "MaintenanceCenter",
                 columns: new[] { "CenterID", "Address", "CloseTime", "Email", "Name", "OpenTime", "Phone" },
-                values: new object[,]
-                {
-                    { 1, "12 Le Loi, Q1, HCM", new TimeOnly(18, 0, 0), "center1@evcenter.vn", "EV Center - District 1", new TimeOnly(8, 0, 0), "0281111111" },
-                    { 2, "22 Vo Van Ngan, Thu Duc, HCM", new TimeOnly(17, 30, 0), "center2@evcenter.vn", "EV Center - Thu Duc", new TimeOnly(8, 0, 0), "0282222222" }
-                });
+                values: new object[] { 1, "12 Le Loi, Q1, HCM", new TimeOnly(18, 0, 0), "center1@evcenter.vn", "EV Center - District 1", new TimeOnly(8, 0, 0), "0281111111" });
 
             migrationBuilder.InsertData(
                 table: "Part",
@@ -422,14 +424,14 @@ namespace EVCenterService.Migrations
                 columns: new[] { "NotificationID", "Content", "IsRead", "ReceiverID", "TriggerDate", "Type" },
                 values: new object[,]
                 {
-                    { 1, "Your vehicle maintenance is completed.", false, new Guid("e5e5e5e5-eeee-eeee-eeee-eeeeeeeeeeee"), new DateTime(2025, 10, 23, 22, 9, 54, 748, DateTimeKind.Local).AddTicks(3787), "StatusUpdate" },
-                    { 2, "Your appointment is scheduled for tomorrow.", false, new Guid("f6f6f6f6-ffff-ffff-ffff-ffffffffffff"), new DateTime(2025, 10, 23, 22, 9, 54, 748, DateTimeKind.Local).AddTicks(3790), "MaintenanceReminder" }
+                    { 1, "Your vehicle maintenance is completed.", false, new Guid("e5e5e5e5-eeee-eeee-eeee-eeeeeeeeeeee"), new DateTime(2025, 10, 27, 1, 37, 50, 10, DateTimeKind.Local).AddTicks(4728), "StatusUpdate" },
+                    { 2, "Your appointment is scheduled for tomorrow.", false, new Guid("f6f6f6f6-ffff-ffff-ffff-ffffffffffff"), new DateTime(2025, 10, 27, 1, 37, 50, 10, DateTimeKind.Local).AddTicks(4731), "MaintenanceReminder" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Slot",
                 columns: new[] { "SlotID", "CenterID", "EndTime", "OrderID", "StartTime", "TechnicianID" },
-                values: new object[] { 2, 2, new DateTime(2025, 10, 9, 17, 0, 0, 0, DateTimeKind.Unspecified), null, new DateTime(2025, 10, 9, 13, 0, 0, 0, DateTimeKind.Unspecified), new Guid("c3c3c3c3-cccc-cccc-cccc-cccccccccccc") });
+                values: new object[] { 2, 1, new DateTime(2025, 10, 9, 17, 0, 0, 0, DateTimeKind.Unspecified), null, new DateTime(2025, 10, 9, 13, 0, 0, 0, DateTimeKind.Unspecified), new Guid("c3c3c3c3-cccc-cccc-cccc-cccccccccccc") });
 
             migrationBuilder.InsertData(
                 table: "Storage",
@@ -438,14 +440,14 @@ namespace EVCenterService.Migrations
                 {
                     { 1, 1, 3, 1, 10 },
                     { 2, 1, 2, 2, 5 },
-                    { 3, 2, 3, 3, 8 },
-                    { 4, 2, 5, 4, 15 }
+                    { 3, 1, 3, 3, 8 },
+                    { 4, 1, 5, 4, 15 }
                 });
 
             migrationBuilder.InsertData(
                 table: "Subscription",
                 columns: new[] { "SubscriptionID", "AutoRenew", "CreatedAt", "EndDate", "PlanID", "StartDate", "Status", "UserID" },
-                values: new object[] { new Guid("33333333-3333-3333-3333-333333333333"), true, new DateTime(2025, 10, 23, 22, 9, 54, 748, DateTimeKind.Local).AddTicks(3728), new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new Guid("22222222-2222-2222-2222-222222222222"), new DateTime(2025, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "active", new Guid("e5e5e5e5-eeee-eeee-eeee-eeeeeeeeeeee") });
+                values: new object[] { new Guid("33333333-3333-3333-3333-333333333333"), true, new DateTime(2025, 10, 27, 1, 37, 50, 10, DateTimeKind.Local).AddTicks(4667), new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new Guid("22222222-2222-2222-2222-222222222222"), new DateTime(2025, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "active", new Guid("e5e5e5e5-eeee-eeee-eeee-eeeeeeeeeeee") });
 
             migrationBuilder.InsertData(
                 table: "Vehicle",
@@ -458,22 +460,22 @@ namespace EVCenterService.Migrations
 
             migrationBuilder.InsertData(
                 table: "Invoice",
-                columns: new[] { "InvoiceID", "Amount", "DueDate", "IssueDate", "Status", "SubscriptionID" },
-                values: new object[] { 1, 999000m, new DateTime(2025, 9, 7, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Paid", new Guid("33333333-3333-3333-3333-333333333333") });
+                columns: new[] { "InvoiceID", "Amount", "DueDate", "IssueDate", "OrderID", "Status", "SubscriptionID" },
+                values: new object[] { 1, 999000m, new DateTime(2025, 9, 7, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, "Paid", new Guid("33333333-3333-3333-3333-333333333333") });
 
             migrationBuilder.InsertData(
                 table: "OrderService",
                 columns: new[] { "OrderID", "AppointmentDate", "ChecklistNote", "Status", "TechnicianID", "TotalCost", "UserID", "VehicleID" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), "Replaced brake pads, coolant check", "Completed", null, 2500000m, new Guid("e5e5e5e5-eeee-eeee-eeee-eeeeeeeeeeee"), 1 },
+                    { 1, new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), "Replaced brake pads, coolant check", "Completed", new Guid("b2b2b2b2-bbbb-bbbb-bbbb-bbbbbbbbbbbb"), 2500000m, new Guid("e5e5e5e5-eeee-eeee-eeee-eeeeeeeeeeee"), 1 },
                     { 2, new DateTime(2025, 10, 7, 0, 0, 0, 0, DateTimeKind.Unspecified), "General checkup", "Pending", null, 1000000m, new Guid("f6f6f6f6-ffff-ffff-ffff-ffffffffffff"), 2 }
                 });
 
             migrationBuilder.InsertData(
                 table: "Feedback",
                 columns: new[] { "FeedbackID", "Comment", "CreatedAt", "OrderID", "Rating", "UserID" },
-                values: new object[] { 1, "Excellent service! Technician was professional.", new DateTime(2025, 10, 23, 22, 9, 54, 748, DateTimeKind.Local).AddTicks(3920), 1, 5, new Guid("e5e5e5e5-eeee-eeee-eeee-eeeeeeeeeeee") });
+                values: new object[] { 1, "Excellent service! Technician was professional.", new DateTime(2025, 10, 27, 1, 37, 50, 10, DateTimeKind.Local).AddTicks(4752), 1, 5, new Guid("e5e5e5e5-eeee-eeee-eeee-eeeeeeeeeeee") });
 
             migrationBuilder.InsertData(
                 table: "OrderDetail",
@@ -521,6 +523,11 @@ namespace EVCenterService.Migrations
                 name: "IX_Feedback_UserID",
                 table: "Feedback",
                 column: "UserID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Invoice_OrderID",
+                table: "Invoice",
+                column: "OrderID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Invoice_SubscriptionID",

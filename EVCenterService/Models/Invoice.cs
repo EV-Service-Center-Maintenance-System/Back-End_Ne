@@ -16,6 +16,9 @@ public partial class Invoice
     [Column("SubscriptionID")]
     public Guid? SubscriptionId { get; set; }
 
+    [Column("OrderID")]
+    public int? OrderId { get; set; }
+
     [Column(TypeName = "decimal(12, 2)")]
     public decimal? Amount { get; set; }
 
@@ -28,6 +31,10 @@ public partial class Invoice
 
     [Column(TypeName = "datetime")]
     public DateTime? DueDate { get; set; }
+
+    [ForeignKey("OrderId")]
+    [InverseProperty("Invoices")]
+    public virtual OrderService? Order { get; set; }
 
     [ForeignKey("SubscriptionId")]
     [InverseProperty("Invoices")]

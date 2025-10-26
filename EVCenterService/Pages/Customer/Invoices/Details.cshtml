@@ -1,7 +1,8 @@
-﻿@page
+﻿@page "{id:int}"
 @model EVCenterService.Pages.Customer.Invoices.DetailsModel
 @{
     ViewData["Title"] = "Hóa Đơn Dịch Vụ";
+    Layout = "_AppLayout";
 }
 
 <div class="row justify-content-center">
@@ -9,17 +10,34 @@
         <div class="card">
             <div class="card-header text-center bg-white py-4">
                 <h2 class="mb-0">HÓA ĐƠN DỊCH VỤ</h2>
-                <p class="text-muted mb-0">Mã hóa đơn: #HD-00123</p>
+                <p class="text-muted mb-0">Mã hóa đơn: #HD-@Model.Invoice.InvoiceId</p>
             </div>
             <div class="card-body p-5">
+
+                @if (TempData["StatusMessage"] != null)
+                {
+                    <div class="alert alert-success">@TempData["StatusMessage"]</div>
+                }
+                @if (TempData["ErrorMessage"] != null)
+                {
+                    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+                }
+
                 <div class="row mb-4">
                     <div class="col-md-6">
-                        <strong>Khách hàng:</strong> Lê Thị D<br>
-                        <strong>Xe:</strong> VinFast VF8 - 51K-123.45<br>
-                        <strong>Ngày hoàn thành:</strong> 15/10/2025
+                        <strong>Khách hàng:</strong> @Model.Invoice.Order?.User?.FullName<br>
+                        <strong>Xe:</strong> @Model.Invoice.Order?.Vehicle?.Model - @Model.Invoice.Order?.Vehicle?.Vin<br>
+                        <strong>Ngày tạo:</strong> @Model.Invoice.IssueDate?.ToString("dd/MM/yyyy")
                     </div>
                     <div class="col-md-6 text-md-end">
-                        <span class="badge bg-danger fs-6">CHƯA THANH TOÁN</span>
+                        @if (Model.Invoice.Status == "Paid")
+                        {
+                            <span class="badge bg-success fs-6">ĐÃ THANH TOÁN</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger fs-6">CHƯA THANH TOÁN</span>
+                        }
                     </div>
                 </div>
 
@@ -33,39 +51,51 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td>
-                                    <strong>Dịch vụ:</strong> Bảo dưỡng pin định kỳ
-                                </td>
-                                <td class="text-end">2.000.000đ</td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>
-                                    <strong>Phụ tùng:</strong> Dầu làm mát động cơ (SL: 1)
-                                </td>
-                                <td class="text-end">800.000đ</td>
-                            </tr>
+                            @foreach (var (detail, index) in Model.Invoice.Order.OrderDetails.Select((v, i) => (v, i + 1)))
+                            {
+                                <tr>
+                                    <td>@index</td>
+                                    <td>
+                                        <strong>Dịch vụ:</strong> @detail.Service?.Name
+                                    </td>
+                                    <td class="text-end">@detail.UnitPrice?.ToString("N0")đ</td>
+                                </tr>
+                            }
+
+                            @foreach (var (part, index) in Model.Invoice.Order.PartsUseds.Select((v, i) => (v, i + 1 + Model.Invoice.Order.OrderDetails.Count)))
+                            {
+                                <tr>
+                                    <td>@index</td>
+                                    <td>
+                                        <strong>Phụ tùng:</strong> @part.Part?.Name (SL: @part.Quantity)
+                                    </td>
+                                    <td class="text-end">@((part.Part?.UnitPrice * part.Quantity)?.ToString("N0"))đ</td>
+                                </tr>
+                            }
                         </tbody>
                         <tfoot>
                             <tr>
                                 <td colspan="2" class="text-end fw-bold">Tổng cộng</td>
-                                <td class="text-end fw-bold fs-5">2.800.000đ</td>
+                                <td class="text-end fw-bold fs-5">@Model.Invoice.Amount?.ToString("N0")đ</td>
                             </tr>
                         </tfoot>
                     </table>
                 </div>
 
-                <div class="text-center">
-                    <h5 class="mb-3">Thanh toán ngay</h5>
-                    <p>Quét mã VietQR dưới đây để thanh toán nhanh chóng</p>
-
-                    <p class="mt-2 text-muted">Nội dung chuyển khoản: <strong class="text-dark">HD00123 Le Thi D</strong></p>
-                </div>
+                @if (Model.Invoice.Status == "Unpaid")
+                {
+                    <div class="text-center">
+                        <h5 class="mb-3">Thanh toán ngay</h5>
+                        <form method="post">
+                            <button type="submit" asp-page-handler="PayWithVnPay" asp-route-id="@Model.Invoice.InvoiceId" class="btn btn-primary btn-lg">
+                                <i class="bi bi-credit-card-fill me-2"></i> Thanh toán bằng VNPay
+                            </button>
+                        </form>
+                    </div>
+                }
             </div>
             <div class="card-footer text-center">
-                <button class="btn btn-secondary"><i class="bi bi-printer me-2"></i>In Hóa Đơn</button>
+                <button class="btn btn-secondary" onclick="window.print();"><i class="bi bi-printer me-2"></i>In Hóa Đơn</button>
             </div>
         </div>
     </div>

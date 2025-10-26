@@ -1,0 +1,83 @@
+﻿@page "{id:int}"
+@model EVCenterService.Pages.Staff.Appointments.FinalizeModel
+@{
+    ViewData["Title"] = $"Duyệt Báo Giá - Đơn hàng #{Model.Appointment.OrderId}";
+    Layout = "_AppLayout";
+}
+
+<h2 class="mb-4 text-white">@ViewData["Title"]</h2>
+<p class="text-muted">
+    Xe: @Model.Appointment.Vehicle?.Model (@Model.Appointment.Vehicle?.Vin) - Khách hàng: @Model.Appointment.User?.FullName
+</p>
+
+<form method="post">
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="card data-card border-0 mb-4">
+                <div class="card-header bg-dark">
+                    <h5 class="mb-0 text-white">Phụ tùng Kỹ thuật viên báo giá</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.PartsToReview.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-dark table-striped mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Tên Phụ tùng</th>
+                                        <th>Số lượng</th>
+                                        <th>Ghi chú (Tech)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var part in Model.PartsToReview)
+                                    {
+                                        <tr>
+                                            <td>@(part.Part?.Name) (@(part.Part?.Brand))</td>
+                                            <td>@part.Quantity</td>
+                                            <td>@part.Note</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted mb-0">Không có phụ tùng nào được báo giá cho dịch vụ này.</p>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card data-card border-0 sticky-top" style="top: 2rem;">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">Tóm tắt Chi phí</h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row mb-2">
+                        <dt class="col-sm-7">Phí dịch vụ:</dt>
+                        <dd class="col-sm-5 text-end text-white">@Model.ServiceTotalCost.ToString("N0") đ</dd>
+                    </dl>
+                    <dl class="row mb-2">
+                        <dt class="col-sm-7">Phí phụ tùng:</dt>
+                        <dd class="col-sm-5 text-end text-white">@((Model.Appointment.TotalCost - Model.ServiceTotalCost)?.ToString("N0") ?? "0") đ</dd>
+                    </dl>
+                    <hr class="border-secondary my-3" />
+                    <dl class="row fw-bold fs-5 text-white">
+                        <dt class="col-sm-7">TỔNG CỘNG:</dt>
+                        <dd class="col-sm-5 text-end"><span id="grandTotal">@Model.Appointment.TotalCost?.ToString("N0")</span> đ</dd>
+                    </dl>
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="bi bi-check-circle-fill me-2"></i> Xác nhận, Trừ kho & Gửi Hóa đơn
+                        </button>
+                        <a asp-page="./Index" class="btn btn-secondary mt-2">Quay lại</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

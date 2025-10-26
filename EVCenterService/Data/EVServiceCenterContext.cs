@@ -78,7 +78,11 @@ public partial class EVServiceCenterContext : DbContext
 
             entity.Property(e => e.InvoiceId).ValueGeneratedOnAdd();
 
-            entity.HasOne(d => d.Subscription).WithMany(p => p.Invoices).HasConstraintName("FK__Invoice__Subscri__68487DD7");
+            // Giữ nguyên liên kết cũ (giờ là tùy chọn)
+            entity.HasOne(d => d.Subscription).WithMany(p => p.Invoices).HasForeignKey(d => d.SubscriptionId) .IsRequired(false); 
+
+            // THÊM MỚI: Liên kết đến OrderService (tùy chọn)
+            entity.HasOne(d => d.Order).WithMany(p => p.Invoices).HasForeignKey(d => d.OrderId).HasConstraintName("FK_Invoice_OrderService").IsRequired(false);
         });
 
         modelBuilder.Entity<MaintenanceCenter>(entity =>
@@ -290,8 +294,7 @@ public partial class EVServiceCenterContext : DbContext
 
         // --- BẢNG: MaintenanceCenter ---
         modelBuilder.Entity<MaintenanceCenter>().HasData(
-            new MaintenanceCenter { CenterId = 1, Name = "EV Center - District 1", Address = "12 Le Loi, Q1, HCM", Phone = "0281111111", Email = "center1@evcenter.vn", OpenTime = new TimeOnly(8, 0, 0), CloseTime = new TimeOnly(18, 0, 0) },
-            new MaintenanceCenter { CenterId = 2, Name = "EV Center - Thu Duc", Address = "22 Vo Van Ngan, Thu Duc, HCM", Phone = "0282222222", Email = "center2@evcenter.vn", OpenTime = new TimeOnly(8, 0, 0), CloseTime = new TimeOnly(17, 30, 0) }
+            new MaintenanceCenter { CenterId = 1, Name = "EV Center - District 1", Address = "12 Le Loi, Q1, HCM", Phone = "0281111111", Email = "center1@evcenter.vn", OpenTime = new TimeOnly(8, 0, 0), CloseTime = new TimeOnly(18, 0, 0) }
         );
 
         // --- BẢNG: Part ---
@@ -306,8 +309,8 @@ public partial class EVServiceCenterContext : DbContext
         modelBuilder.Entity<Storage>().HasData(
             new Storage { StorageId = 1, CenterId = 1, PartId = 1, Quantity = 10, MinThreshold = 3 },
             new Storage { StorageId = 2, CenterId = 1, PartId = 2, Quantity = 5, MinThreshold = 2 },
-            new Storage { StorageId = 3, CenterId = 2, PartId = 3, Quantity = 8, MinThreshold = 3 },
-            new Storage { StorageId = 4, CenterId = 2, PartId = 4, Quantity = 15, MinThreshold = 5 }
+            new Storage { StorageId = 3, CenterId = 1, PartId = 3, Quantity = 8, MinThreshold = 3 },
+            new Storage { StorageId = 4, CenterId = 1, PartId = 4, Quantity = 15, MinThreshold = 5 }
         );
 
         // --- BẢNG: ServiceCatalog ---
@@ -326,8 +329,8 @@ public partial class EVServiceCenterContext : DbContext
 
         // --- BẢNG: OrderService ---
         modelBuilder.Entity<OrderService>().HasData(
-            new OrderService { OrderId = 1, VehicleId = 1, UserId = customer1Id, AppointmentDate = new DateTime(2025, 10, 5), Status = "Completed", ChecklistNote = "Replaced brake pads, coolant check", TotalCost = 2500000m },
-            new OrderService { OrderId = 2, VehicleId = 2, UserId = customer2Id, AppointmentDate = new DateTime(2025, 10, 7), Status = "Pending", ChecklistNote = "General checkup", TotalCost = 1000000m }
+            new OrderService { OrderId = 1, VehicleId = 1, UserId = customer1Id, TechnicianId = tech1Id, AppointmentDate = new DateTime(2025, 10, 5), Status = "Completed", ChecklistNote = "Replaced brake pads, coolant check", TotalCost = 2500000m },
+            new OrderService { OrderId = 2, VehicleId = 2, UserId = customer2Id, TechnicianId = null, AppointmentDate = new DateTime(2025, 10, 7), Status = "Pending", ChecklistNote = "General checkup", TotalCost = 1000000m }
         );
 
         // --- BẢNG: OrderDetail ---
@@ -350,7 +353,7 @@ public partial class EVServiceCenterContext : DbContext
         // Giả định bạn đã đổi cột StartTime / EndTime thành DateTime trong Model.
         modelBuilder.Entity<Slot>().HasData(
             new Slot { SlotId = 1, CenterId = 1, TechnicianId = tech1Id, OrderId = 1, StartTime = new DateTime(2025, 10, 5, 8, 0, 0), EndTime = new DateTime(2025, 10, 5, 12, 0, 0) },
-            new Slot { SlotId = 2, CenterId = 2, TechnicianId = tech2Id, OrderId = null, StartTime = new DateTime(2025, 10, 9, 13, 0, 0), EndTime = new DateTime(2025, 10, 9, 17, 0, 0) }
+            new Slot { SlotId = 2, CenterId = 1, TechnicianId = tech2Id, OrderId = null, StartTime = new DateTime(2025, 10, 9, 13, 0, 0), EndTime = new DateTime(2025, 10, 9, 17, 0, 0) }
         );
 
         // --- BẢNG: SubscriptionPlan ---
