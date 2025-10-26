@@ -1,32 +1,40 @@
-﻿@page
-@model Technician.Jobs.DetailsModel
+﻿@page "{id:int}"
+@model EVCenterService.Pages.Technician.Jobs.DetailsModel
 @{
-    ViewData["Title"] = "Chi tiết Công việc";
+    Layout = "_AppLayout";
+    ViewData["Title"] = "Job Details";
 }
 
-<h2 class="mb-4">Chi Tiết Công Việc #APM-00123</h2>
+<h2 class="mb-4">Job Details #@Model.Job.OrderId</h2>
 
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card text-center">
-            <div class="card-header">
-                Xe: VinFast VF8 - 51K-123.45
-            </div>
-            <div class="card-body">
-                <h5 class="card-title">Dịch vụ: Bảo dưỡng pin định kỳ</h5>
-                <p class="card-text text-muted"><strong>Ghi chú từ Staff:</strong> Khách hàng yêu cầu kiểm tra kỹ hệ thống làm mát pin.</p>
-                <p><strong>Trạng thái hiện tại:</strong> <span class="badge bg-info fs-6">Đang tiến hành</span></p>
+<div class="card shadow-sm">
+    <div class="card-body">
+        <p><strong>Khách hàng:</strong> @Model.Job.User?.FullName (@Model.Job.User?.Email)</p>
+        <p><strong>Xe:</strong> @Model.Job.Vehicle?.Model</p>
+        <p><strong>Dịch vụ:</strong> @string.Join(", ", Model.Job.OrderDetails.Select(d => d.Service?.Name))</p>
+        <p><strong>Ngày hẹn:</strong> @Model.Job.AppointmentDate.ToString("dd/MM/yyyy HH:mm")</p>
+        <p><strong>Ghi chú từ khách hàng:</strong> @Model.Job.ChecklistNote</p>
 
-                <form method="post">
-                    <input type="hidden" name="jobId" value="123" />
-                    <button type="submit" asp-page-handler="Complete" class="btn btn-lg btn-primary">
-                        <i class="bi bi-flag-fill me-2"></i>Đánh Dấu Hoàn Thành
-                    </button>
-                </form>
-            </div>
-            <div class="card-footer text-muted">
-                Bắt đầu lúc: 14:30 15/10/2025
-            </div>
+        <div class="mt-3 mb-3">
+            <a asp-page="ManageParts"
+               asp-route-orderId="@Model.Job.OrderId"
+               asp-route-centerId="@Model.Job.Slot?.CenterId"
+               class="btn btn-outline-primary">
+                ⚙️ Quản lý vật tư
+            </a>
         </div>
+
+        <form method="post">
+            <div class="mb-3">
+                <label class="form-label">Ghi chú của kỹ thuật viên</label>
+                <textarea class="form-control" rows="3" name="TechnicianNote"></textarea>
+            </div>
+            <button type="submit" asp-page-handler="Complete" asp-route-id="@Model.Job.OrderId" class="btn btn-success me-2">
+                ✅ Đánh Dấu Hoàn Thành
+            </button>
+            <button type="submit" asp-page-handler="Cancel" asp-route-id="@Model.Job.OrderId" class="btn btn-danger">
+                ❌ Hủy Công Việc
+            </button>
+        </form>
     </div>
 </div>

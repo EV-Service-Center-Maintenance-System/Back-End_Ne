@@ -1,4 +1,75 @@
 ﻿@page
 @model EVCenterService.Pages.Staff.Appointments.ManageModel
 @{
+    Layout = "_AppLayout";
+    ViewData["Title"] = "Appointment List";
+}
+
+<h1 class="h2 mb-4">Appointment List</h1>
+
+@if (Model.Appointments == null || !Model.Appointments.Any())
+{
+    <div class="alert alert-info text-center">Hiện không có lịch hẹn nào.</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-hover align-middle text-center">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Xe</th>
+                    <th>Dịch vụ</th>
+                    <th>Khách hàng</th>
+                    <th>Ngày hẹn</th>
+                    <th>Ghi chú</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    int index = 1;
+                }
+                @foreach (var order in Model.Appointments)
+                {
+                    var serviceNames = string.Join(", ", order.OrderDetails.Select(d => d.Service?.Name));
+
+                    <tr>
+                        <td>@(index++)</td>
+                        <td>@order.Vehicle?.Model</td>
+                        <td>@serviceNames</td>
+                        <td>@order.User?.FullName</td>
+                        <td>@order.AppointmentDate.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>@order.ChecklistNote</td>
+                        <td>
+                            <form method="post" asp-page-handler="Confirm" asp-route-id="@order.OrderId" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-success me-1">
+                                    <i class="bi bi-check-circle"></i> Confirm
+                                </button>
+                            </form>
+
+                            <form method="post" asp-page-handler="Reject" asp-route-id="@order.OrderId" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-danger me-1">
+                                    <i class="bi bi-x-circle"></i> Reject
+                                </button>
+                            </form>
+
+                            <form method="post" asp-page-handler="Assign" asp-route-id="@order.OrderId" class="d-inline">
+                                <select name="technicianId" class="form-select form-select-sm d-inline-block w-auto me-1">
+                                    <option value="">--Chọn kỹ thuật viên--</option>
+                                    @foreach (var tech in Model.TechnicianList)
+                                    {
+                                        <option value="@tech.Value">@tech.Text</option>
+                                    }
+                                </select>
+                                <button type="submit" class="btn btn-sm btn-warning">
+                                    <i class="bi bi-person-gear"></i> Phân công
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 }
