@@ -11,7 +11,7 @@ namespace EVCenterService.Pages.Account
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
-            return RedirectToPage("/Index");
+            return RedirectToPage("/Index"); 
         }
     }
 }
