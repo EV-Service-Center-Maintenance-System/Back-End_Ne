@@ -56,7 +56,12 @@
 
     <div class="form-group mb-3">
         <label class="fw-bold">Giờ hẹn:</label>
-        <input asp-for="SelectedTime" type="time" class="form-control" value="09:00" required />
+        <input asp-for="SelectedTime"
+               id="SelectedTime"
+               type="time"
+               class="form-control"
+               required />
+        <small class="text-muted">Khung giờ làm việc: 07:00 – 19:00</small>
     </div>
 
     <div class="form-group mb-3">
@@ -73,7 +78,7 @@
     </div>
 </form>
 
-@section Scripts {
+@* @section Scripts {
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             const checkboxes = document.querySelectorAll(".service-checkbox");
@@ -94,6 +99,76 @@
                     }
                 });
             });
+        });
+    </script>
+} *@
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // ====== Logic tổng giá ======
+            const checkboxes = document.querySelectorAll(".service-checkbox");
+            const totalPriceInput = document.getElementById("totalPrice");
+            const priceSection = document.getElementById("priceSection");
+
+            checkboxes.forEach(chk => {
+                chk.addEventListener("change", () => {
+                    let total = 0;
+                    checkboxes.forEach(cb => {
+                        if (cb.checked) total += parseFloat(cb.dataset.price || 0);
+                    });
+                    if (total > 0) {
+                        totalPriceInput.value = total.toLocaleString("vi-VN") + " đ";
+                        priceSection.style.display = "block";
+                    } else {
+                        priceSection.style.display = "none";
+                    }
+                });
+            });
+
+            // ====== Logic chọn giờ ======
+            const timeInput = document.getElementById("SelectedTime");
+            const dateInput = document.querySelector('input[name="Booking.AppointmentDate"]');
+            const workStart = 7;
+            const workEnd = 19;
+
+            const now = new Date();
+            const currentHour = now.getHours();
+            const currentMinute = now.getMinutes();
+
+            // Giới hạn khung giờ
+            timeInput.min = `${String(workStart).padStart(2, "0")}:00`;
+            timeInput.max = `${String(workEnd).padStart(2, "0")}:00`;
+
+            // Giờ mặc định
+            let defaultHour = currentHour;
+            if (currentHour < workStart) defaultHour = workStart;
+            else if (currentHour >= workEnd) defaultHour = workEnd - 1;
+            const defaultTime = `${String(defaultHour).padStart(2, "0")}:${String(currentMinute).padStart(2, "0")}`;
+            timeInput.value = defaultTime;
+
+            // Khi người dùng đổi ngày hoặc giờ, kiểm tra hợp lệ
+            function validateTime() {
+                const selectedDate = dateInput.value;
+                const today = new Date().toISOString().split("T")[0];
+                const [hour, minute] = timeInput.value.split(":").map(Number);
+
+                // Ngoài khung giờ
+                if (hour < workStart || hour > workEnd) {
+                    alert("Vui lòng chọn giờ trong khung 07:00 – 19:00.");
+                    timeInput.value = defaultTime;
+                    return;
+                }
+
+                // Nếu hôm nay, không được chọn giờ đã qua
+                if (selectedDate === today && hour < currentHour) {
+                    alert("Không thể chọn giờ đã qua trong hôm nay!");
+                    timeInput.value = defaultTime;
+                    return;
+                }
+            }
+
+            timeInput.addEventListener("change", validateTime);
+            dateInput.addEventListener("change", validateTime);
         });
     </script>
 }
