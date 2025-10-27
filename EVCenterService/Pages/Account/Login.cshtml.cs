@@ -32,7 +32,7 @@ namespace EVCenterService.Pages.Account
         public class InputModel
         {
             [Required(ErrorMessage = "Vui lòng nh?p Email.")]
-            [EmailAddress(ErrorMessage = "??nh d?ng email không h?p l?.")]
+            [EmailAddress(ErrorMessage = "Email không h?p l?.")]
             public string Email { get; set; } = string.Empty;
 
             [Required(ErrorMessage = "Vui lòng nh?p m?t kh?u.")]
@@ -108,7 +108,7 @@ namespace EVCenterService.Pages.Account
             }
 
             var email = info.Principal.FindFirstValue(ClaimTypes.Email);
-            var name = info.Principal.FindFirstValue(ClaimTypes.Name); // Google th??ng tr? v? Tên ??y ??
+            var name = info.Principal.FindFirstValue(ClaimTypes.Name); 
 
             if (string.IsNullOrEmpty(email))
             {

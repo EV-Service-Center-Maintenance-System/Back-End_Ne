@@ -1,40 +1,39 @@
 using EVCenterService.Data;
 using EVCenterService.Models;
-using EVCenterService.Service.Interfaces; // <-- Thêm using IEmailSender
+using EVCenterService.Service.Interfaces; 
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Identity; // <-- Ch? dùng IPasswordHasher
+using Microsoft.AspNetCore.Identity; 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
-using AccountEntity = EVCenterService.Models.Account; // Gi? alias
+using AccountEntity = EVCenterService.Models.Account; 
 
 namespace EVCenterService.Pages.Account
 {
     public class RegisterModel : PageModel
     {
         private readonly EVServiceCenterContext _context;
-        private readonly IPasswordHasher<AccountEntity> _passwordHasher; // Dùng l?i Hasher
-        private readonly IEmailSender _emailSender; // <-- Thêm Mailjet sender
+        private readonly IPasswordHasher<AccountEntity> _passwordHasher; 
+        private readonly IEmailSender _emailSender; 
 
         public RegisterModel(
             EVServiceCenterContext context,
             IPasswordHasher<AccountEntity> passwordHasher,
-            IEmailSender emailSender) // <-- Thêm vào constructor
+            IEmailSender emailSender) 
         {
             _context = context;
             _passwordHasher = passwordHasher;
-            _emailSender = emailSender; // <-- Gán
+            _emailSender = emailSender; 
         }
 
         [BindProperty]
         public InputModel Input { get; set; } = new();
 
-        // InputModel gi? nguyên validation
         public class InputModel
-        { /* ... gi?ng file b?n cung c?p ... */
+        { 
             [Required(ErrorMessage = "H? và tên là b?t bu?c.")][StringLength(100)] public string FullName { get; set; } = "";
             [Required(ErrorMessage = "Email là b?t bu?c.")][EmailAddress][StringLength(255)] public string Email { get; set; } = "";
             [Required(ErrorMessage = "S? ?i?n tho?i là b?t bu?c.")][RegularExpression(@"^(\+?84|0)\d{9,10}$", ErrorMessage = "S?T không h?p l?.")] public string PhoneNumber { get; set; } = "";
@@ -61,17 +60,16 @@ namespace EVCenterService.Pages.Account
                 return Page();
             }
 
-            // T?o tài kho?n m?i
             var newAccount = new AccountEntity
             {
                 UserId = Guid.NewGuid(),
                 FullName = Input.FullName,
                 Email = Input.Email,
                 Phone = Input.PhoneNumber,
-                Role = "Customer", // M?c ??nh
-                Status = "Active" // M?c ??nh Active (không c?n xác th?c email n?a)
+                Role = "Customer", 
+                Status = "Active" 
             };
-            // Hash m?t kh?u
+
             newAccount.Password = _passwordHasher.HashPassword(newAccount, Input.Password);
 
             _context.Accounts.Add(newAccount);
@@ -84,7 +82,7 @@ namespace EVCenterService.Pages.Account
                 var message = $"Chào {newAccount.FullName},<br><br>" +
                               "C?m ?n b?n ?ã ??ng ký tài kho?n thành công t?i EV Service Center.<br>" +
                               "Chúc b?n có nh?ng tr?i nghi?m d?ch v? t?t nh?t!<br><br>" +
-                              "Trân tr?ng,<br>??i ng? EV Service Center";
+                              "Trân tr?ng,<br> EV Service Center";
                 await _emailSender.SendEmailAsync(newAccount.Email, subject, message);
             }
             catch (Exception ex)
