@@ -1,16 +1,17 @@
 ﻿@page
 @model EVCenterService.Pages.Account.LoginModel
 @{
-    Layout = null;
+    Layout = null; // Trang login thường không có layout chung
 }
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login - EV Service Center</title>
+    <title>Đăng nhập - EV Service Center</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
 <body class="bg-light">
     <div class="container vh-100 d-flex align-items-center justify-content-center">
@@ -18,32 +19,42 @@
             <div class="card-body p-5">
                 <div class="text-center mb-4">
                     <img src="~/images/evolve-auto-logo.png" alt="EV Service Center Logo" style="height: 60px;" class="mb-3">
-                    <h2 class="fw-bold mb-1">Welcome Back!</h2>
-                    <p class="text-secondary">Sign in to continue to your account.</p>
+                    <h2 class="fw-bold mb-1">Chào mừng quay trở lại!</h2>
+                    <p class="text-secondary">Đăng nhập để tiếp tục.</p>
                 </div>
 
-                <form method="post">
-                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert" style="display: @(ModelState.IsValid ? "none" : "block");"></div>
-
+                <form method="post" asp-route-returnUrl="@Model.ReturnUrl">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert" style="display: @(ModelState.Any(m => m.Key == string.Empty) ? "block" : "none");">
+                        @Html.ValidationMessage(string.Empty)
+                    </div>
                     <div class="form-floating mb-3">
-                        <input asp-for="Input.Email" class="form-control" placeholder="name@example.com" />
-                        <label asp-for="Input.Email">Email address</label>
+                        <input asp-for="Input.Email" class="form-control" placeholder="name@example.com" required />
+                        <label asp-for="Input.Email">Địa chỉ Email</label>
                         <span asp-validation-for="Input.Email" class="text-danger small"></span>
                     </div>
                     <div class="form-floating mb-4">
-                        <input asp-for="Input.Password" class="form-control" placeholder="Password" type="password" />
-                        <label asp-for="Input.Password">Password</label>
+                        <input asp-for="Input.Password" class="form-control" placeholder="Password" type="password" required />
+                        <label asp-for="Input.Password">Mật khẩu</label>
                         <span asp-validation-for="Input.Password" class="text-danger small"></span>
                     </div>
-                    <div class="d-grid">
-                        <button type="submit" class="btn btn-primary btn-lg">Sign In</button>
+                    <div class="d-grid mb-3">
+                        <button type="submit" class="btn btn-primary btn-lg">Đăng nhập</button>
                     </div>
-
-                    <p class="text-center small text-secondary mt-4">
-                        Don't have an account?
-                        <a asp-page="/Account/Register" class="fw-bold text-decoration-none" style="color: var(--primary-color);">Register Now</a>
-                    </p>
                 </form>
+
+                <div class="text-center mb-3">
+                    <span class="text-secondary small">HOẶC</span>
+                </div>
+                <form method="post" asp-page-handler="GoogleLogin" asp-route-returnUrl="@Model.ReturnUrl">
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-outline-secondary btn-lg d-flex align-items-center justify-content-center">
+                            <i class="bi bi-google me-2"></i> Đăng nhập với Google
+                        </button>
+                    </div>
+                </form>
+                <p class="text-center small text-secondary mt-4">
+                    Chưa có tài khoản? <a asp-page="/Account/Register" class="fw-bold text-decoration-none" style="color: var(--primary-color);">Đăng ký ngay</a>
+                </p>
             </div>
         </div>
     </div>
