@@ -37,6 +37,9 @@ builder.Services.AddScoped<IServiceCatalogService, ServiceCatalogService>();
 builder.Services.AddScoped<IAdminDashboardRepository, AdminDashboardRepository>();
 builder.Services.AddScoped<IAdminDashboardService, AdminDashboardService>();
 
+builder.Services.AddScoped<IAdminEmployeeRepository, AdminEmployeeRepository>();
+builder.Services.AddScoped<IAdminEmployeeService, AdminEmployeeService>();
+
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 
 builder.Services.AddScoped<IVnPayService, VnPayService>();

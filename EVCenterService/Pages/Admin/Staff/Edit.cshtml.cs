@@ -1,4 +1,5 @@
-using EVCenterService.Data;
+﻿using EVCenterService.Data;
+using EVCenterService.Service.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -11,17 +12,15 @@ namespace EVCenterService.Pages.Admin.Staff
     [Authorize(Roles = "Admin")]
     public class EditModel : PageModel
     {
-        private readonly EVServiceCenterContext _context;
-        private readonly IPasswordHasher<AccountEntity> _passwordHasher;
+        private readonly IAdminEmployeeService _employeeService;
 
-        public EditModel(EVServiceCenterContext context, IPasswordHasher<AccountEntity> passwordHasher)
+        public EditModel(IAdminEmployeeService employeeService)
         {
-            _context = context;
-            _passwordHasher = passwordHasher;
+            _employeeService = employeeService;
         }
 
         [BindProperty]
-        public AccountEntity StaffAccount { get; set; } = default!;
+        public AccountEntity EmployeeAccount { get; set; } = new();
 
         [BindProperty]
         public string? NewPassword { get; set; }
@@ -30,11 +29,10 @@ namespace EVCenterService.Pages.Admin.Staff
         {
             if (id == null) return NotFound();
 
-            var account = await _context.Accounts.FirstOrDefaultAsync(m => m.UserId == id);
+            var employee = await _employeeService.GetByIdAsync(id.Value);
+            if (employee == null) return NotFound();
 
-            if (account == null) return NotFound();
-
-            StaffAccount = account;
+            EmployeeAccount = employee;
             return Page();
         }
 
@@ -42,22 +40,8 @@ namespace EVCenterService.Pages.Admin.Staff
         {
             if (!ModelState.IsValid) return Page();
 
-            var accountToUpdate = await _context.Accounts.FindAsync(StaffAccount.UserId);
-            if (accountToUpdate == null) return NotFound();
-
-            accountToUpdate.FullName = StaffAccount.FullName;
-            accountToUpdate.Email = StaffAccount.Email;
-            accountToUpdate.Phone = StaffAccount.Phone;
-            accountToUpdate.Role = StaffAccount.Role;
-
-            if (!string.IsNullOrWhiteSpace(NewPassword))
-            {
-                accountToUpdate.Password = _passwordHasher.HashPassword(accountToUpdate, NewPassword);
-            }
-
-            await _context.SaveChangesAsync();
-
-            TempData["StatusMessage"] = $"Th�ng tin c?a {accountToUpdate.FullName} ?� ???c c?p nh?t.";
+            await _employeeService.UpdateAsync(EmployeeAccount, NewPassword);
+            TempData["StatusMessage"] = $"Cập nhật thông tin nhân viên '{EmployeeAccount.FullName}' thành công.";
             return RedirectToPage("./Index");
         }
     }

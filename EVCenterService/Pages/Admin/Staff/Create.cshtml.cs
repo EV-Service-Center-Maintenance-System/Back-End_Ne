@@ -1,5 +1,6 @@
-using EVCenterService.Data;
+ï»¿using EVCenterService.Data;
 using EVCenterService.Models;
+using EVCenterService.Service.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -11,36 +12,26 @@ namespace EVCenterService.Pages.Admin.Staff
     [Authorize(Roles = "Admin")]
     public class CreateModel : PageModel
     {
-        private readonly EVServiceCenterContext _context;
-        private readonly IPasswordHasher<AccountEntity> _passwordHasher;
+        private readonly IAdminEmployeeService _employeeService;
 
-        public CreateModel(EVServiceCenterContext context, IPasswordHasher<AccountEntity> passwordHasher)
+        public CreateModel(IAdminEmployeeService employeeService)
         {
-            _context = context;
-            _passwordHasher = passwordHasher;
+            _employeeService = employeeService;
         }
 
         [BindProperty]
-        public AccountEntity StaffAccount { get; set; } = new();
+        public AccountEntity EmployeeAccount { get; set; } = new();
 
-        public void OnGet()
-        {
-        }
+        public void OnGet() { }
 
         public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)
-            {
                 return Page();
-            }
 
-            StaffAccount.Password = _passwordHasher.HashPassword(StaffAccount, StaffAccount.Password);
-            StaffAccount.Status = "Active";
+            await _employeeService.CreateAsync(EmployeeAccount);
 
-            _context.Accounts.Add(StaffAccount);
-            await _context.SaveChangesAsync();
-
-            TempData["StatusMessage"] = $"T?o nhân viên m?i '{StaffAccount.FullName}' thành công.";
+            TempData["StatusMessage"] = $"Táº¡o nhÃ¢n viÃªn '{EmployeeAccount.FullName}' thÃ nh cÃ´ng.";
             return RedirectToPage("./Index");
         }
     }

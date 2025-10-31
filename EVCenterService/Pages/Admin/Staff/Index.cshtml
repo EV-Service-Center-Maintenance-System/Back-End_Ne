@@ -5,34 +5,23 @@
     Layout = "_AppLayout";
 }
 
-<div class="page-header d-flex justify-content-between align-items-center">
+<div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-        <h1>@ViewData["Title"]</h1>
-        <p class="lead mb-0 text-muted">Thêm, sửa, khóa và phân quyền cho nhân viên.</p>
+        <h1 class="h2 text-white"><i class="bi bi-people-fill me-2"></i>@ViewData["Title"]</h1>
+        <p class="text-muted mb-0">Thêm, sửa, khóa và xóa tài khoản nhân viên hành chính.</p>
     </div>
-    <a asp-page="Create" class="btn btn-add-new">
-        <i class="bi bi-plus-lg me-2"></i>Thêm nhân viên mới
+    <a asp-page="Create" class="btn btn-success shadow-sm">
+        <i class="bi bi-plus-lg me-2"></i>Thêm nhân viên
     </a>
 </div>
 
-<div class="card data-card border-0">
+<div class="card shadow-sm border-0">
     <div class="card-body">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <div>
-                <h5 class="card-title mb-0">Danh sách nhân viên</h5>
-                <p class="text-muted small mb-0">Tổng số: @Model.StaffList.Count nhân viên</p>
-            </div>
-            <div class="search-bar px-3 py-1 d-flex align-items-center">
-                <i class="bi bi-search me-2 text-muted"></i>
-                <input type="text" class="form-control" placeholder="Tìm theo tên hoặc email...">
-            </div>
-        </div>
-
         <div class="table-responsive">
-            <table class="table table-borderless table-custom">
-                <thead>
+            <table class="table table-hover align-middle">
+                <thead class="table-dark">
                     <tr>
-                        <th>Tên nhân viên</th>
+                        <th>Họ tên</th>
                         <th>Email</th>
                         <th>Số điện thoại</th>
                         <th>Vai trò</th>
@@ -41,42 +30,45 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var user in Model.StaffList)
+                    @if (Model.EmployeeList.Any())
+                    {
+                        @foreach (var emp in Model.EmployeeList)
+                        {
+                            <tr>
+                                <td>@emp.FullName</td>
+                                <td>@emp.Email</td>
+                                <td>@emp.Phone</td>
+                                <td>
+                                    <span class="badge bg-@(emp.Role == "Technician" ? "info" : "primary")">@emp.Role</span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-@(emp.Status == "Active" ? "success" : "secondary")">
+                                        @(emp.Status == "Active" ? "Hoạt động" : "Bị khóa")
+                                    </span>
+                                </td>
+                                <td class="text-end">
+                                    <a asp-page="./Edit" asp-route-id="@emp.UserId" class="btn btn-sm btn-outline-primary me-1">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+                                    <form method="post" asp-page-handler="ToggleStatus" asp-route-id="@emp.UserId" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-outline-warning me-1">
+                                            <i class="bi @(emp.Status == "Active" ? "bi-lock-fill" : "bi-unlock-fill")"></i>
+                                        </button>
+                                    </form>
+                                    <form method="post" asp-page-handler="Delete" asp-route-id="@emp.UserId" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger"
+                                                onclick="return confirm('Xác nhận xóa nhân viên này?')">
+                                            <i class="bi bi-trash3"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
                     {
                         <tr>
-                            <td><span class="fw-bold">@user.FullName</span></td>
-                            <td class="text-muted">@user.Email</td>
-                            <td class="text-muted">@user.Phone</td>
-                            <td>
-                                @if (user.Role == "Technician")
-                                {
-                                    <span class="badge" style="background-color: #374151; color: #d1d5db;">@user.Role</span>
-                                }
-                                else
-                                {
-                                    <span class="badge" style="background-color: rgba(99, 102, 241, 0.2); color: #c7d2fe;">@user.Role</span>
-                                }
-                            </td>
-                            <td>
-                                <span class="badge-custom @(user.Status == "Active" ? "badge-active" : "badge-locked")">
-                                    @(user.Status == "Active" ? "Hoạt động" : "Bị khóa")
-                                </span>
-                            </td>
-                            <td class="text-end">
-                                <a asp-page="./Edit" asp-route-id="@user.UserId" class="btn action-btn me-1"><i class="bi bi-pencil-square"></i></a>
-                                <form method="post" asp-page-handler="ToggleStatus" asp-route-id="@user.UserId" class="d-inline">
-                                    <button type="submit" class="btn action-btn">
-                                        @if (user.Status == "Active")
-                                        {
-                                            <i class="bi bi-lock-fill text-danger"></i>
-                                        }
-                                        else
-                                        {
-                                            <i class="bi bi-unlock-fill text-success"></i>
-                                        }
-                                    </button>
-                                </form>
-                            </td>
+                            <td colspan="6" class="text-center text-muted py-3">Chưa có nhân viên nào.</td>
                         </tr>
                     }
                 </tbody>
