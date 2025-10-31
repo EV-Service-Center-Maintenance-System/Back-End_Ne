@@ -31,6 +31,12 @@ builder.Services.AddScoped<IStaffAppointmentService, StaffAppointmentService>();
 builder.Services.AddScoped<ITechnicianJobRepository, TechnicianJobRepository>();
 builder.Services.AddScoped<ITechnicianJobService, TechnicianJobService>();
 
+builder.Services.AddScoped<IServiceCatalogRepository, ServiceCatalogRepository>();
+builder.Services.AddScoped<IServiceCatalogService, ServiceCatalogService>();
+
+builder.Services.AddScoped<IAdminDashboardRepository, AdminDashboardRepository>();
+builder.Services.AddScoped<IAdminDashboardService, AdminDashboardService>();
+
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 
 builder.Services.AddScoped<IVnPayService, VnPayService>();

@@ -1,5 +1,6 @@
 using EVCenterService.Data;
 using EVCenterService.Models;
+using EVCenterService.Service.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -10,18 +11,18 @@ namespace EVCenterService.Pages.Admin.Services
     [Authorize(Roles = "Admin")]
     public class IndexModel : PageModel
     {
-        private readonly EVServiceCenterContext _context;
+        private readonly IServiceCatalogService _service;
 
-        public IndexModel(EVServiceCenterContext context)
+        public IndexModel(IServiceCatalogService service)
         {
-            _context = context;
+            _service = service;
         }
 
         public IList<ServiceCatalog> ServiceList { get; set; } = new List<ServiceCatalog>();
 
         public async Task OnGetAsync()
         {
-            ServiceList = await _context.ServiceCatalogs.ToListAsync();
+            ServiceList = await _service.GetAllServicesAsync();
         }
     }
 }

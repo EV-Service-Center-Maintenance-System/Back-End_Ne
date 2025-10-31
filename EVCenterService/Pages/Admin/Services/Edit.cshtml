@@ -20,24 +20,30 @@
                         <input asp-for="Service.Name" class="form-control" />
                         <span asp-validation-for="Service.Name" class="text-danger"></span>
                     </div>
+
                     <div class="mb-3">
                         <label asp-for="Service.Description" class="form-label">Mô Tả</label>
                         <textarea asp-for="Service.Description" class="form-control" rows="3"></textarea>
                         <span asp-validation-for="Service.Description" class="text-danger"></span>
                     </div>
+
                     <div class="mb-3">
                         <label asp-for="Service.BasePrice" class="form-label">Giá Cơ Bản (VNĐ)</label>
-                        <input asp-for="Service.BasePrice" class="form-control" type="number" />
+                        <input asp-for="Service.BasePrice" type="number" class="form-control" />
                         <span asp-validation-for="Service.BasePrice" class="text-danger"></span>
                     </div>
+
                     <div class="mb-3">
                         <label asp-for="Service.DurationMinutes" class="form-label">Thời Gian Thực Hiện (phút)</label>
-                        <input asp-for="Service.DurationMinutes" class="form-control" type="number" />
+                        <input asp-for="Service.DurationMinutes" type="number" class="form-control" />
                         <span asp-validation-for="Service.DurationMinutes" class="text-danger"></span>
                     </div>
+
                     <hr class="my-4" />
-                    <button type="submit" class="btn btn-primary">Lưu Thay Đổi</button>
-                    <a asp-page="./Index" class="btn btn-secondary">Hủy</a>
+                    <div class="d-flex justify-content-between">
+                        <a asp-page="./Index" class="btn btn-secondary">← Quay lại Danh sách</a>
+                        <button type="submit" class="btn btn-primary">💾 Lưu Thay Đổi</button>
+                    </div>
                 </form>
             </div>
         </div>
