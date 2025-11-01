@@ -213,7 +213,10 @@ public partial class EVServiceCenterContext : DbContext
         var adminId = Guid.Parse("A1A1A1A1-AAAA-AAAA-AAAA-AAAAAAAAAAAA");
         var tech1Id = Guid.Parse("B2B2B2B2-BBBB-BBBB-BBBB-BBBBBBBBBBBB");
         var tech2Id = Guid.Parse("C3C3C3C3-CCCC-CCCC-CCCC-CCCCCCCCCCCC");
+        var tech3Id = Guid.Parse("A3A3A3A3-AAAA-AAAA-AAAA-AAAAAAAAAAAA");
+        var tech4Id = Guid.Parse("C5C5C5C5-CCCC-CCCC-CCCC-CCCCCCCCCCCC");
         var staffId = Guid.Parse("D4D4D4D4-DDDD-DDDD-DDDD-DDDDDDDDDDDD");
+        var staff2Id = Guid.Parse("B4B4B4B4-BBBB-BBBB-BBBB-BBBBBBBBBBBB");
         var customer1Id = Guid.Parse("E5E5E5E5-EEEE-EEEE-EEEE-EEEEEEEEEEEE");
         var customer2Id = Guid.Parse("F6F6F6F6-FFFF-FFFF-FFFF-FFFFFFFFFFFF");
 
@@ -245,7 +248,7 @@ public partial class EVServiceCenterContext : DbContext
                 Email = "tech1@gmail.com",
                 Phone = "0902000002",
                 Role = "Technician",
-                Certification = "EV Maintenance Level 1",
+                Certification = "Brake System Certified",
                 Status = "Active",
                 Password = passwordHasher.HashPassword(null, "123456")
             },
@@ -256,7 +259,7 @@ public partial class EVServiceCenterContext : DbContext
                 Email = "tech2@gmail.com",
                 Phone = "0903000003",
                 Role = "Technician",
-                Certification = "EV Battery Specialist",
+                Certification = "Battery System Certified",
                 Status = "Active",
                 Password = passwordHasher.HashPassword(null, "123456")
             },
@@ -287,6 +290,38 @@ public partial class EVServiceCenterContext : DbContext
                 Email = "user2@gmail.com",
                 Phone = "0905000005",
                 Role = "Customer",
+                Status = "Active",
+                Password = passwordHasher.HashPassword(null, "123456")
+            },
+            new Account
+            {
+                UserId = tech3Id,
+                FullName = "Nguyen Van F",
+                Email = "tech3@gmail.com",
+                Phone = "0908000008",
+                Role = "Technician",
+                Certification = "Thermal & Cooling System Certified", 
+                Status = "Active",
+                Password = passwordHasher.HashPassword(null, "123456") 
+            },
+            new Account
+            {
+                UserId = tech4Id,
+                FullName = "Vu Dinh H", 
+                Email = "tech4@gmail.com",
+                Phone = "0910000010",
+                Role = "Technician",
+                Certification = "General Inspection Certified", 
+                Status = "Active",
+                Password = passwordHasher.HashPassword(null, "123456")
+            },
+            new Account
+            {
+                UserId = staff2Id,
+                FullName = "Hoang Thi G",
+                Email = "staff2@gmail.com",
+                Phone = "0909000009",
+                Role = "Staff",
                 Status = "Active",
                 Password = passwordHasher.HashPassword(null, "123456")
             }

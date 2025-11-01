@@ -11,9 +11,7 @@
     <form method="post">
         <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
         <input type="hidden" asp-for="EmployeeAccount.UserId" />
-        <input type="hidden" asp-for="EmployeeAccount.Password" />
-
-        <div class="mb-3">
+        <input type="hidden" asp-for="EmployeeAccount.Password" /> <div class="mb-3">
             <label asp-for="EmployeeAccount.FullName" class="form-label">Họ và tên</label>
             <input asp-for="EmployeeAccount.FullName" class="form-control" />
         </div>
@@ -35,13 +33,45 @@
 
         <div class="mb-3">
             <label asp-for="EmployeeAccount.Role" class="form-label">Vai trò</label>
-            <select asp-for="EmployeeAccount.Role" class="form-select">
+            <select asp-for="EmployeeAccount.Role" class="form-select" id="roleSelect">
                 <option value="Staff">Nhân viên</option>
                 <option value="Technician">Kỹ thuật viên</option>
             </select>
+        </div>
+
+        <div class="mb-3" id="certificationGroup" style="display: none;">
+            <label asp-for="EmployeeAccount.Certification" class="form-label">Chứng chỉ chuyên môn</label>
+            <input asp-for="EmployeeAccount.Certification" class="form-control" />
+            <span class="form-text text-muted">Chỉ yêu cầu đối với Kỹ thuật viên.</span>
         </div>
 
         <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
         <a asp-page="./Index" class="btn btn-secondary">Hủy</a>
     </form>
 </div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const roleSelect = document.getElementById("roleSelect");
+            const certificationGroup = document.getElementById("certificationGroup");
+
+            function toggleCertificationField() {
+                if (roleSelect.value === "Technician") {
+                    certificationGroup.style.display = "block";
+                } else {
+                    certificationGroup.style.display = "none";
+                }
+            }
+
+            // Gọi khi thay đổi lựa chọn
+            roleSelect.addEventListener("change", toggleCertificationField);
+
+            // Gọi ngay khi tải trang (quan trọng cho trang Edit)
+            toggleCertificationField();
+        });
+    </script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

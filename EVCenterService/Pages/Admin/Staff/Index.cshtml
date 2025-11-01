@@ -25,6 +25,7 @@
                         <th>Email</th>
                         <th>Số điện thoại</th>
                         <th>Vai trò</th>
+                        <th>Chứng chỉ</th>
                         <th>Trạng thái</th>
                         <th class="text-end">Hành động</th>
                     </tr>
@@ -40,6 +41,9 @@
                                 <td>@emp.Phone</td>
                                 <td>
                                     <span class="badge bg-@(emp.Role == "Technician" ? "info" : "primary")">@emp.Role</span>
+                                </td>
+                                <td class="text-muted small">
+                                    @emp.Certification
                                 </td>
                                 <td>
                                     <span class="badge bg-@(emp.Status == "Active" ? "success" : "secondary")">
