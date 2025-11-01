@@ -1,5 +1,6 @@
-using EVCenterService.Data;
+﻿using EVCenterService.Data;
 using EVCenterService.Models;
+using EVCenterService.Service.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -9,11 +10,11 @@ namespace EVCenterService.Pages.Admin.Services
     [Authorize(Roles = "Admin")]
     public class CreateModel : PageModel
     {
-        private readonly EVServiceCenterContext _context;
+        private readonly IServiceCatalogService _service;
 
-        public CreateModel(EVServiceCenterContext context)
+        public CreateModel(IServiceCatalogService service)
         {
-            _context = context;
+            _service = service;
         }
 
         [BindProperty]
@@ -27,14 +28,11 @@ namespace EVCenterService.Pages.Admin.Services
         public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)
-            {
                 return Page();
-            }
 
-            _context.ServiceCatalogs.Add(Service);
-            await _context.SaveChangesAsync();
+            await _service.CreateServiceAsync(Service);
 
-            TempData["StatusMessage"] = $"D?ch v? '{Service.Name}' ?� ???c t?o th�nh c�ng.";
+            TempData["StatusMessage"] = $"✅ Dịch vụ '{Service.Name}' đã được tạo thành công.";
             return RedirectToPage("./Index");
         }
     }

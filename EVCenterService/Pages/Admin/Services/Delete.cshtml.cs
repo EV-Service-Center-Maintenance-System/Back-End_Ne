@@ -1,5 +1,6 @@
-using EVCenterService.Data;
+Ôªøusing EVCenterService.Data;
 using EVCenterService.Models;
+using EVCenterService.Service.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -10,47 +11,53 @@ namespace EVCenterService.Pages.Admin.Services
     [Authorize(Roles = "Admin")]
     public class DeleteModel : PageModel
     {
-        private readonly EVServiceCenterContext _context;
+        private readonly IServiceCatalogService _service;
 
-        public DeleteModel(EVServiceCenterContext context)
+        public DeleteModel(IServiceCatalogService service)
         {
-            _context = context;
+            _service = service;
         }
 
         [BindProperty]
         public ServiceCatalog Service { get; set; } = default!;
-        public string ErrorMessage { get; set; }
+
+        public string ErrorMessage { get; set; } = string.Empty;
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
-            if (id == null) return NotFound();
-            var service = await _context.ServiceCatalogs.FirstOrDefaultAsync(m => m.ServiceId == id);
-            if (service == null) return NotFound();
+            if (id == null)
+                return NotFound();
 
-            Service = service;
+            var serviceItem = await _service.GetServiceByIdAsync(id.Value);
+            if (serviceItem == null)
+                return NotFound();
+
+            Service = serviceItem;
             return Page();
         }
 
         public async Task<IActionResult> OnPostAsync(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null)
+                return NotFound();
 
-            var serviceToDelete = await _context.ServiceCatalogs.FindAsync(id);
-            if (serviceToDelete == null) return NotFound();
-
-            var isServiceInUse = await _context.OrderDetails.AnyAsync(od => od.ServiceId == id);
-            if (isServiceInUse)
+            try
             {
-                ErrorMessage = $"KhÙng th? xÛa d?ch v? '{serviceToDelete.Name}' vÏ nÛ ?„ ???c s? d?ng trong c·c ??n h‡ng. H„y xem xÈt vi?c ch?nh s?a ho?c vÙ hi?u hÛa d?ch v? n‡y.";
-                Service = serviceToDelete;
+                await _service.DeleteServiceAsync(id.Value);
+                TempData["StatusMessage"] = $"üóëÔ∏è D·ªãch v·ª• '{Service.Name}' ƒë√£ ƒë∆∞·ª£c x√≥a th√†nh c√¥ng.";
+                return RedirectToPage("./Index");
+            }
+            catch (InvalidOperationException ex)
+            {
+                ErrorMessage = ex.Message;
+                var serviceItem = await _service.GetServiceByIdAsync(id.Value);
+                if (serviceItem != null) Service = serviceItem;
                 return Page();
             }
-
-            _context.ServiceCatalogs.Remove(serviceToDelete);
-            await _context.SaveChangesAsync();
-
-            TempData["StatusMessage"] = $"D?ch v? '{serviceToDelete.Name}' ?„ ???c xÛa th‡nh cÙng.";
-            return RedirectToPage("./Index");
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
         }
     }
 }

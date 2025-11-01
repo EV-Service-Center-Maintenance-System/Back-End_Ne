@@ -60,16 +60,6 @@
                                     <td>@order.AppointmentDate.ToString("dd/MM/yyyy HH:mm")</td>
                                     <td>@order.ChecklistNote</td>
                                     <td>
-                                        <form method="post" asp-page-handler="Confirm" asp-route-id="@order.OrderId" class="d-inline">
-                                            <button type="submit" class="btn btn-sm btn-success me-1" title="Confirm">
-                                                <i class="bi bi-check-circle"></i>
-                                            </button>
-                                        </form>
-                                        <form method="post" asp-page-handler="Reject" asp-route-id="@order.OrderId" class="d-inline">
-                                            <button type="submit" class="btn btn-sm btn-danger me-1" title="Reject">
-                                                <i class="bi bi-x-circle"></i>
-                                            </button>
-                                        </form>
                                         <form method="post" asp-page-handler="Assign" asp-route-id="@order.OrderId" class="d-inline-flex">
                                             <select name="technicianId" class="form-select form-select-sm d-inline-block w-auto me-1">
                                                 <option value="">--Chọn KTV--</option>

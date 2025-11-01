@@ -1,5 +1,6 @@
-using EVCenterService.Data;
+﻿using EVCenterService.Data;
 using EVCenterService.Models;
+using EVCenterService.Service.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -10,11 +11,11 @@ namespace EVCenterService.Pages.Admin.Services
     [Authorize(Roles = "Admin")]
     public class EditModel : PageModel
     {
-        private readonly EVServiceCenterContext _context;
+        private readonly IServiceCatalogService _service;
 
-        public EditModel(EVServiceCenterContext context)
+        public EditModel(IServiceCatalogService service)
         {
-            _context = context;
+            _service = service;
         }
 
         [BindProperty]
@@ -23,51 +24,37 @@ namespace EVCenterService.Pages.Admin.Services
         public async Task<IActionResult> OnGetAsync(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
-            var service = await _context.ServiceCatalogs.FirstOrDefaultAsync(m => m.ServiceId == id);
-            if (service == null)
-            {
+            var serviceItem = await _service.GetServiceByIdAsync(id.Value);
+            if (serviceItem == null)
                 return NotFound();
-            }
-            Service = service;
+
+            Service = serviceItem;
             return Page();
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)
-            {
                 return Page();
-            }
-
-            _context.Attach(Service).State = EntityState.Modified;
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _service.UpdateServiceAsync(Service);
+                TempData["StatusMessage"] = $"✅ Dịch vụ '{Service.Name}' đã được cập nhật thành công.";
             }
-            catch (DbUpdateConcurrencyException)
+            catch (KeyNotFoundException)
             {
-                if (!ServiceExists(Service.ServiceId))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return NotFound();
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"Lỗi: {ex.Message}");
+                return Page();
             }
 
-            TempData["StatusMessage"] = $"D?ch v? '{Service.Name}' ?� ???c c?p nh?t.";
             return RedirectToPage("./Index");
-        }
-
-        private bool ServiceExists(int id)
-        {
-            return _context.ServiceCatalogs.Any(e => e.ServiceId == id);
         }
     }
 }

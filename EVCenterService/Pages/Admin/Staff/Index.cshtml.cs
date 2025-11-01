@@ -1,6 +1,7 @@
-using EVCenterService.Data;
+﻿using EVCenterService.Data;
 using EVCenterService.Models;
 using EVCenterService.Models.Enum;
+using EVCenterService.Service.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -12,38 +13,31 @@ namespace EVCenterService.Pages.Admin.Staff
     [Authorize(Roles = "Admin")]
     public class IndexModel : PageModel
     {
-        private readonly EVServiceCenterContext _context;
+        private readonly IAdminEmployeeService _employeeService;
 
-        public IndexModel(EVServiceCenterContext context)
+        public IndexModel(IAdminEmployeeService employeeService)
         {
-            _context = context;
+            _employeeService = employeeService;
         }
 
-        // S?A 3: D�ng b� danh AccountEntity
-        public IList<AccountEntity> StaffList { get; set; } = new List<AccountEntity>();
+        public IList<AccountEntity> EmployeeList { get; set; } = new List<AccountEntity>();
 
         public async Task OnGetAsync()
         {
-            string staffRole = RoleEnum.Staff.ToString();
-            string technicianRole = RoleEnum.Technican.ToString();
-
-            StaffList = await _context.Accounts
-                .Where(a => a.Role == staffRole || a.Role == technicianRole)
-                .OrderBy(a => a.FullName)
-                .ToListAsync();
+            EmployeeList = await _employeeService.GetAllAsync();
         }
 
         public async Task<IActionResult> OnPostToggleStatusAsync(Guid id)
         {
-            var account = await _context.Accounts.FindAsync(id);
+            await _employeeService.ToggleStatusAsync(id);
+            TempData["StatusMessage"] = "Cập nhật trạng thái tài khoản thành công.";
+            return RedirectToPage();
+        }
 
-            if (account != null)
-            {
-                account.Status = (account.Status == "Active") ? "Locked" : "Active";
-                await _context.SaveChangesAsync();
-                TempData["StatusMessage"] = $"Tr?ng th�i c?a t�i kho?n {account.FullName} ?� ???c c?p nh?t.";
-            }
-
+        public async Task<IActionResult> OnPostDeleteAsync(Guid id)
+        {
+            await _employeeService.DeleteAsync(id);
+            TempData["StatusMessage"] = "Đã xóa nhân viên khỏi hệ thống.";
             return RedirectToPage();
         }
     }

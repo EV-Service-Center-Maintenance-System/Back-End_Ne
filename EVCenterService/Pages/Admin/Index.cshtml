@@ -1,70 +1,136 @@
 ﻿@page
+@model EVCenterService.Pages.Admin.IndexModel
 @{
     Layout = "_AppLayout";
+    ViewData["Title"] = "Admin Dashboard";
 }
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-        <h1 class="h2">Dashboard</h1>
-        <p class="text-muted">Welcome back, Admin! Here's what's happening today.</p>
+        <h1 class="h2 text-white">Dashboard</h1>
+        <p class="text-muted">Tổng quan hoạt động của trung tâm bảo dưỡng xe điện.</p>
     </div>
 </div>
 
 <div class="row">
-    <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card h-100">
+    <div class="col-md-3 mb-4">
+        <div class="card text-center shadow-sm border-success">
             <div class="card-body">
-                <div class="d-flex align-items-center">
-                    <div class="flex-shrink-0 me-3">
-                        <div class="p-3 bg-light rounded-circle">
-                            <i class="bi bi-calendar-check fs-4 text-success"></i>
-                        </div>
-                    </div>
-                    <div class="flex-grow-1">
-                        <h6 class="text-muted">New Appointments</h6>
-                        <h3 class="fw-bold mb-0">12</h3>
-                    </div>
-                </div>
+                <h6 class="text-muted">Doanh thu (VNĐ)</h6>
+                <h3 class="fw-bold text-success">@Model.TotalRevenue.ToString("N0")</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="card text-center shadow-sm border-primary">
+            <div class="card-body">
+                <h6 class="text-muted">Tổng Hóa Đơn</h6>
+                <h3 class="fw-bold text-primary">@Model.TotalInvoices</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="card text-center shadow-sm border-warning">
+            <div class="card-body">
+                <h6 class="text-muted">Tổng Dịch Vụ</h6>
+                <h3 class="fw-bold text-warning">@Model.TotalServices</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="card text-center shadow-sm border-info">
+            <div class="card-body">
+                <h6 class="text-muted">Nhân Viên & Kỹ Thuật Viên</h6>
+                <h3 class="fw-bold text-info">@Model.TotalStaff</h3>
             </div>
         </div>
     </div>
 </div>
 
-<div class="card mt-4">
-    <div class="card-header d-flex justify-content-between">
-        <h5 class="mb-0">Upcoming Appointments</h5>
+<!-- 🔹 Biểu đồ doanh thu -->
+<div class="card mt-4 shadow-sm">
+    <div class="card-header bg-dark text-white">
+        <h5 class="mb-0">Biểu đồ doanh thu 6 tháng gần nhất</h5>
+    </div>
+    <div class="card-body">
+        <canvas id="revenueChart" height="100"></canvas>
+    </div>
+</div>
+
+<!-- 🔹 Danh sách cuộc hẹn sắp tới -->
+<div class="card mt-4 shadow-sm">
+    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Lịch hẹn sắp tới</h5>
     </div>
     <div class="table-responsive">
         <table class="table table-hover align-middle mb-0">
-            <thead>
+            <thead class="table-light">
                 <tr>
-                    <th>Customer</th>
-                    <th>Vehicle</th>
-                    <th>Status</th>
-                    <th>Scheduled For</th>
-                    <th class="text-end">Actions</th>
+                    <th>Khách hàng</th>
+                    <th>Xe</th>
+                    <th>Trạng thái</th>
+                    <th>Thời gian</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>Johnathan Doe</td>
-                    <td>Tesla Model Y</td>
-                    <td><span class="badge fw-semibold bg-warning">Pending</span></td>
-                    <td>2025-10-16 10:00 AM</td>
-                    <td class="text-end">
-                        <button class="btn btn-sm btn-light border">Details</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Jane Smith</td>
-                    <td>Ford Mustang Mach-E</td>
-                    <td><span class="badge fw-semibold bg-success">Confirmed</span></td>
-                    <td>2025-10-16 02:00 PM</td>
-                    <td class="text-end">
-                        <button class="btn btn-sm btn-light border">Details</button>
-                    </td>
-                </tr>
+                @if (Model.UpcomingAppointments.Any())
+                {
+                    @foreach (var a in Model.UpcomingAppointments)
+                    {
+                        <tr>
+                            <td>@a.CustomerName</td>
+                            <td>@a.VehicleModel</td>
+                            <td>
+                                <span class="badge bg-@(a.Status == "Completed" ? "success" : a.Status == "Pending" ? "warning" : "secondary")">
+                                    @a.Status
+                                </span>
+                            </td>
+                            <td>@a.ScheduleTime.ToString("dd/MM/yyyy HH:mm")</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="4" class="text-center text-muted">Không có cuộc hẹn nào sắp tới.</td>
+                    </tr>
+                }
             </tbody>
         </table>
     </div>
 </div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const labels = [
+            @string.Join(",", Model.MonthlyRevenue.Select(m => $"'{m.Month:MM/yyyy}'"))
+        ];
+        const data = [
+            @string.Join(",", Model.MonthlyRevenue.Select(m => m.TotalRevenue.ToString().Replace(',', '.')))
+        ];
+
+        const ctx = document.getElementById('revenueChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Doanh thu (VNĐ)',
+                    data: data,
+                    borderColor: '#00FF7F',
+                    backgroundColor: 'rgba(0,255,127,0.1)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                scales: {
+                    y: { beginAtZero: true, ticks: { color: '#fff' } },
+                    x: { ticks: { color: '#fff' } }
+                },
+                plugins: { legend: { labels: { color: '#fff' } } }
+            }
+        });
+    </script>
+}

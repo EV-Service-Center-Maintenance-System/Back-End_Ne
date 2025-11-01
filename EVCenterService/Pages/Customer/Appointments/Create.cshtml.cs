@@ -53,6 +53,20 @@ namespace EVCenterService.Pages.Customer.Appointments
             Booking.AppointmentDate = Booking.AppointmentDate.Date + SelectedTime;
             Booking.Status = "pending";
 
+            // Validate giờ hẹn
+            var workStart = new TimeSpan(7, 0, 0);
+            var workEnd = new TimeSpan(19, 0, 0);
+            var now = DateTime.Now;
+
+            if (SelectedTime < workStart || SelectedTime > workEnd)
+            {
+                ModelState.AddModelError("SelectedTime", "Giờ hẹn phải nằm trong khung 07:00 – 19:00.");
+            }
+            else if (Booking.AppointmentDate.Date == now.Date && SelectedTime < now.TimeOfDay)
+            {
+                ModelState.AddModelError("SelectedTime", "Không thể chọn giờ đã qua trong hôm nay.");
+            }
+
             if (!ModelState.IsValid)
             {
                 await OnGetAsync();

@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic; // Thêm
-using System.Linq; // Thêm
+using System.Collections.Generic;
+using System.Linq;
 
 namespace EVCenterService.Pages.Staff.Appointments
 {
@@ -29,24 +29,20 @@ namespace EVCenterService.Pages.Staff.Appointments
 
         public async Task OnGetAsync()
         {
-            // Tải dữ liệu cho Tab 1 (Manage) - Giữ nguyên
             PendingAppointments = (await _staffService.GetPendingAppointmentsAsync()).ToList();
 
-            // SỬA TAB 2 (TRƯỚC LÀ FINALIZE)
-            // Giờ đây nó sẽ tìm các báo giá "PendingQuote"
-            var statusesToReview = new[] { "PendingQuote" }; // <-- SỬA Ở ĐÂY
+            var statusesToReview = new[] { "PendingQuote" };
 
             ReadyToFinalizeAppointments = await _context.OrderServices
                 .Include(o => o.Vehicle)
                 .Include(o => o.User)
                 .Include(o => o.OrderDetails)
                     .ThenInclude(od => od.Service)
-                .Where(o => statusesToReview.Contains(o.Status)) // <-- SỬA Ở ĐÂY
+                .Where(o => statusesToReview.Contains(o.Status))
                 .OrderBy(o => o.AppointmentDate)
                 .AsNoTracking()
                 .ToListAsync();
 
-            // Tải danh sách KTV (giữ nguyên)
             TechnicianList = _context.Accounts
                 .AsNoTracking()
                 .Where(a => a.Role == "Technician")
@@ -58,20 +54,19 @@ namespace EVCenterService.Pages.Staff.Appointments
                 .ToList();
         }
 
-        // Các hàm OnPost... (giữ nguyên)
-        public async Task<IActionResult> OnPostConfirmAsync(int id)
-        {
-            await _staffService.ConfirmAppointmentAsync(id);
-            TempData["Message"] = "✅ Appointment confirmed.";
-            return RedirectToPage();
-        }
+        //public async Task<IActionResult> OnPostConfirmAsync(int id)
+        //{
+        //    await _staffService.ConfirmAppointmentAsync(id);
+        //    TempData["Message"] = "✅ Appointment confirmed.";
+        //    return RedirectToPage();
+        //}
 
-        public async Task<IActionResult> OnPostRejectAsync(int id)
-        {
-            await _staffService.RejectAppointmentAsync(id);
-            TempData["Message"] = "❌ Appointment rejected.";
-            return RedirectToPage();
-        }
+        //public async Task<IActionResult> OnPostRejectAsync(int id)
+        //{
+        //    await _staffService.RejectAppointmentAsync(id);
+        //    TempData["Message"] = "❌ Appointment rejected.";
+        //    return RedirectToPage();
+        //}
 
         public async Task<IActionResult> OnPostAssignAsync(int id, Guid technicianId)
         {
