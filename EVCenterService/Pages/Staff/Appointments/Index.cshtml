@@ -2,21 +2,37 @@
 @model EVCenterService.Pages.Staff.Appointments.IndexModel
 @{
     Layout = "_AppLayout";
-    ViewData["Title"] = "Quản lý Dịch Vụ";
+    ViewData["Title"] = "Quản lý Lịch hẹn";
 }
 
-<h1 class="h2 mb-4">@ViewData["Title"]</h1>
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="text-white">@ViewData["Title"]</h1>
+        <p class="lead mb-0 text-muted">Xử lý các lịch hẹn của khách hàng theo quy trình.</p>
+    </div>
+</div>
 
-<ul class="nav nav-tabs" id="appointmentTabs" role="tablist">
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success mt-3">@TempData["Message"]</div>
+}
+
+<ul class="nav nav-tabs mt-4" id="appointmentTabs" role="tablist">
     <li class="nav-item" role="presentation">
-        <button class="nav-link active" id="manage-tab" data-bs-toggle="tab" data-bs-target="#manage-tab-pane" type="button" role="tab" aria-controls="manage-tab-pane" aria-selected="true">
-            Cần xử lý (Manage)
-            <span class="badge bg-danger ms-1">@Model.PendingAppointments.Count</span>
+        <button class="nav-link active" id="pending-tab" data-bs-toggle="tab" data-bs-target="#pending-tab-pane" type="button" role="tab">
+            Chờ duyệt đơn
+            <span class="badge bg-danger ms-1">@Model.PendingApprovalAppointments.Count</span>
         </button>
     </li>
     <li class="nav-item" role="presentation">
-        <button class="nav-link" id="finalize-tab" data-bs-toggle="tab" data-bs-target="#finalize-tab-pane" type="button" role="tab" aria-controls="finalize-tab-pane" aria-selected="false">
-            Chờ duyệt báo giá (Review)
+        <button class="nav-link" id="assign-tab" data-bs-toggle="tab" data-bs-target="#assign-tab-pane" type="button" role="tab">
+            Cần phân công
+            <span class="badge bg-info ms-1">@Model.PendingAssignmentAppointments.Count</span>
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="finalize-tab" data-bs-toggle="tab" data-bs-target="#finalize-tab-pane" type="button" role="tab">
+            Chờ duyệt báo giá
             <span class="badge bg-warning text-dark ms-1">@Model.ReadyToFinalizeAppointments.Count</span>
         </button>
     </li>
@@ -24,53 +40,39 @@
 
 <div class="tab-content" id="appointmentTabsContent">
 
-    <div class="tab-pane fade show active" id="manage-tab-pane" role="tabpanel" aria-labelledby="manage-tab" tabindex="0">
-        <div class="card card-body border-top-0 rounded-bottom">
-            @if (Model.PendingAppointments == null || !Model.PendingAppointments.Any())
+    <div class="tab-pane fade show active" id="pending-tab-pane" role="tabpanel">
+        <div class="card data-card border-top-0 rounded-bottom">
+            @if (!Model.PendingApprovalAppointments.Any())
             {
-                <div class="alert alert-info text-center mb-0">Hiện không có lịch hẹn nào "Chờ xác nhận".</div>
+                <div class="card-body text-center text-muted">Không có lịch hẹn nào chờ duyệt.</div>
             }
             else
             {
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle text-center">
-                        <thead class="table-dark">
+                    <table class="table table-borderless table-custom">
+                        <thead>
                             <tr>
-                                <th>#</th>
+                                <th>Khách hàng</th>
                                 <th>Xe</th>
                                 <th>Dịch vụ</th>
-                                <th>Khách hàng</th>
                                 <th>Ngày hẹn</th>
-                                <th>Ghi chú</th>
-                                <th>Thao tác</th>
+                                <th class="text-center">Hành động</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @{
-                                int index = 1;
-                            }
-                            @foreach (var order in Model.PendingAppointments)
+                            @foreach (var order in Model.PendingApprovalAppointments)
                             {
-                                var serviceNames = string.Join(", ", order.OrderDetails.Select(d => d.Service?.Name));
                                 <tr>
-                                    <td>@(index++)</td>
-                                    <td>@order.Vehicle?.Model</td>
-                                    <td>@serviceNames</td>
                                     <td>@order.User?.FullName</td>
-                                    <td>@order.AppointmentDate.ToString("dd/MM/yyyy HH:mm")</td>
-                                    <td>@order.ChecklistNote</td>
-                                    <td>
-                                        <form method="post" asp-page-handler="Assign" asp-route-id="@order.OrderId" class="d-inline-flex">
-                                            <select name="technicianId" class="form-select form-select-sm d-inline-block w-auto me-1">
-                                                <option value="">--Chọn KTV--</option>
-                                                @foreach (var tech in Model.TechnicianList)
-                                                {
-                                                    <option value="@tech.Value">@tech.Text</option>
-                                                }
-                                            </select>
-                                            <button type="submit" class="btn btn-sm btn-warning" title="Phân công">
-                                                <i class="bi bi-person-gear"></i>
-                                            </button>
+                                    <td class="text-muted">@order.Vehicle?.Model</td>
+                                    <td class="text-muted">@string.Join(", ", order.OrderDetails.Select(d => d.Service?.Name))</td>
+                                    <td class="text-muted">@order.AppointmentDate.ToString("dd/MM/yyyy HH:mm")</td>
+                                    <td class="text-center">
+                                        <form method="post" asp-page-handler="Confirm" asp-route-id="@order.OrderId" class="d-inline">
+                                            <button type="submit" class="btn btn-sm btn-success" title="Xác nhận"><i class="bi bi-check-circle"></i></button>
+                                        </form>
+                                        <form method="post" asp-page-handler="Reject" asp-route-id="@order.OrderId" class="d-inline">
+                                            <button type="submit" class="btn btn-sm btn-danger" title="Từ chối"><i class="bi bi-x-circle"></i></button>
                                         </form>
                                     </td>
                                 </tr>
@@ -82,42 +84,82 @@
         </div>
     </div>
 
-    <div class="tab-pane fade" id="finalize-tab-pane" role="tabpanel" aria-labelledby="finalize-tab" tabindex="0">
-        <div class="card card-body border-top-0 rounded-bottom">
-            @if (Model.ReadyToFinalizeAppointments == null || !Model.ReadyToFinalizeAppointments.Any())
+    <div class="tab-pane fade" id="assign-tab-pane" role="tabpanel">
+        <div class="card data-card border-top-0 rounded-bottom">
+            @if (!Model.PendingAssignmentAppointments.Any())
             {
-                <div class="alert alert-info text-center mb-0">Không có báo giá nào chờ duyệt.</div>
+                <div class="card-body text-center text-muted">Không có lịch hẹn nào chờ phân công.</div>
             }
             else
             {
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle">
-                        <thead class="table-dark">
+                    <table class="table table-borderless table-custom">
+                        <thead>
                             <tr>
-                                <th>#</th>
+                                <th>Khách hàng</th>
                                 <th>Xe</th>
                                 <th>Dịch vụ</th>
-                                <th>Khách hàng</th>
-                                <th>Trạng thái</th>
-                                <th>Thao tác</th>
+                                <th>Ngày hẹn</th>
+                                <th class="text-center" style="min-width: 250px;">Phân công KTV</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @{
-                                int indexFinalize = 1;
+                            @foreach (var order in Model.PendingAssignmentAppointments)
+                            {
+                                <tr>
+                                    <td>@order.User?.FullName</td>
+                                    <td class="text-muted">@order.Vehicle?.Model</td>
+                                    <td class="text-muted">@string.Join(", ", order.OrderDetails.Select(d => d.Service?.Name))</td>
+                                    <td class="text-muted">@order.AppointmentDate.ToString("dd/MM/yyyy HH:mm")</td>
+                                    <td class="text-center">
+                                        <form method="post" asp-page-handler="Assign" asp-route-id="@order.OrderId" class="d-flex">
+                                            <select name="technicianId" class="form-select form-select-sm me-2">
+                                                <option value="">-- Chọn KTV --</option>
+                                                @foreach (var tech in Model.TechnicianList)
+                                                {
+                                                    <option value="@tech.Value">@tech.Text</option>
+                                                }
+                                            </select>
+                                            <button type="submit" class="btn btn-sm btn-warning" title="Phân công"><i class="bi bi-person-gear"></i></button>
+                                        </form>
+                                    </td>
+                                </tr>
                             }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="tab-pane fade" id="finalize-tab-pane" role="tabpanel">
+        <div class="card data-card border-top-0 rounded-bottom">
+            @if (!Model.ReadyToFinalizeAppointments.Any())
+            {
+                <div class="card-body text-center text-muted">Không có báo giá nào chờ duyệt.</div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-borderless table-custom">
+                        <thead>
+                            <tr>
+                                <th>Khách hàng</th>
+                                <th>Xe</th>
+                                <th>Dịch vụ</th>
+                                <th class="text-center">Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
                             @foreach (var order in Model.ReadyToFinalizeAppointments)
                             {
-                                var serviceNames = string.Join(", ", order.OrderDetails.Select(d => d.Service?.Name));
                                 <tr>
-                                    <td>@(indexFinalize++)</td>
-                                    <td>@order.Vehicle?.Model</td>
-                                    <td>@serviceNames</td>
                                     <td>@order.User?.FullName</td>
-                                    <td><span class="badge bg-warning text-dark">@order.Status</span></td>
-                                    <td>
-                                        <a asp-page="./Finalize" asp-route-id="@order.OrderId" class="btn btn-sm btn-primary">
-                                            <i class="bi bi-card-checklist me-1"></i> Duyệt Báo Giá & Gửi Hóa Đơn
+                                    <td class="text-muted">@order.Vehicle?.Model</td>
+                                    <td class="text-muted">@string.Join(", ", order.OrderDetails.Select(d => d.Service?.Name))</td>
+                                    <td class="text-center">
+                                        <a asp-page="./Finalize" asp-route-id="@order.OrderId" class="btn btn-sm btn-info">
+                                            <i class="bi bi-receipt"></i> Duyệt Báo Giá
                                         </a>
                                     </td>
                                 </tr>

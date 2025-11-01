@@ -125,14 +125,13 @@ namespace EVCenterService.Pages.Staff.Appointments
 
                 TempData["StatusMessage"] = $"?ã duy?t báo giá, tr? kho và t?o hóa ??n cho khách hàng.";
 
-                // Chuy?n h??ng ??n trang qu?n lý hóa ??n (gi?ng logic c?)
-                return RedirectToPage("/Admin/Invoices/Index");
+                return RedirectToPage("./Index");
             }
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
                 ModelState.AddModelError(string.Empty, $"L?i khi duy?t báo giá: {ex.Message}");
-                return await ReloadPageDataOnErrorAsync(id); // T?i l?i d? li?u khi l?i
+                return await ReloadPageDataOnErrorAsync(id); 
             }
         }
 

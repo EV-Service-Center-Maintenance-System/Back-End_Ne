@@ -403,6 +403,7 @@ body.app-body {
 /* 1. Thi?t l?p Flexbox cho .wrapper */
 .wrapper {
     display: flex;
+    flex-direction: column;
     min-height: 100vh; /* ??m b?o layout cao h?t màn hình */
 }
 
@@ -461,3 +462,19 @@ body.app-body {
             color: #ffffff; /* Sáng lên khi hover */
         }
 
+
+/* ============================================= */
+/* == STYLE CHO HEADER TOP-NAV (CUSTOMER PORTAL) == */
+/* ============================================= */
+
+.top-navbar {
+    background-color: #0d1117; /* L?y màu n?n t?i t? sidebar */
+    border-bottom: 1px solid #30363d; /* L?y màu vi?n t? sidebar */
+    padding: 0.75rem 1.5rem;
+    flex-shrink: 0; /* ??m b?o header không b? co l?i */
+}
+
+.top-logo {
+    height: 36px; /* L?y chi?u cao logo t? sidebar */
+    width: auto;
+}

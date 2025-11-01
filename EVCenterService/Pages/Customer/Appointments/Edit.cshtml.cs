@@ -40,8 +40,15 @@ namespace EVCenterService.Pages.Customer.Appointments
                 .ThenInclude(od => od.Service)
                 .FirstOrDefaultAsync(o => o.OrderId == id && o.UserId == userId);
 
-            if (Booking == null)
-                return NotFound();
+            if (Booking == null) return NotFound();
+
+            // SỬA: Thêm kiểm tra trạng thái
+            if (Booking.Status != "Pending")
+            {
+                TempData["ErrorMessage"] = "Bạn không thể sửa lịch hẹn đã được xác nhận hoặc đang xử lý.";
+                return RedirectToPage("Index");
+            }
+            // --- Kết thúc sửa ---
 
             VehicleList = new SelectList(
                 await _context.Vehicles.Where(v => v.UserId == userId).ToListAsync(),
@@ -66,19 +73,26 @@ namespace EVCenterService.Pages.Customer.Appointments
                 .Include(o => o.OrderDetails)
                 .FirstOrDefaultAsync(o => o.OrderId == id && o.UserId == userId);
 
-            if (existingOrder == null)
-                return NotFound();
+            if (existingOrder == null) return NotFound();
+
+            // SỬA: Thêm kiểm tra trạng thái
+            if (existingOrder.Status != "Pending")
+            {
+                TempData["ErrorMessage"] = "Bạn không thể sửa lịch hẹn đã được xác nhận hoặc đang xử lý.";
+                return RedirectToPage("Index");
+            }
+            // --- Kết thúc sửa ---
 
             if (!ModelState.IsValid)
             {
-                await OnGetAsync(id);
+                await OnGetAsync(id); // Tải lại dữ liệu cho form
                 return Page();
             }
 
             existingOrder.VehicleId = Booking.VehicleId;
             existingOrder.ChecklistNote = Booking.ChecklistNote;
             existingOrder.AppointmentDate = Booking.AppointmentDate.Date + SelectedTime;
-            existingOrder.Status = "Pending";
+            existingOrder.Status = "Pending"; // Giữ nguyên trạng thái Pending
 
             _context.OrderDetails.RemoveRange(existingOrder.OrderDetails);
 
@@ -101,7 +115,7 @@ namespace EVCenterService.Pages.Customer.Appointments
 
             await _context.SaveChangesAsync();
 
-            TempData["Message"] = "Update Successfull!";
+            TempData["StatusMessage"] = "Cập nhật lịch hẹn thành công!"; // Sửa lại thông báo
             return RedirectToPage("Index");
         }
     }

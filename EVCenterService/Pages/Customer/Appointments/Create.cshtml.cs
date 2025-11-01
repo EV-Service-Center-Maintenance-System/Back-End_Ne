@@ -51,7 +51,7 @@ namespace EVCenterService.Pages.Customer.Appointments
             var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             Booking.UserId = userId;
             Booking.AppointmentDate = Booking.AppointmentDate.Date + SelectedTime;
-            Booking.Status = "pending";
+            Booking.Status = "Pending";
 
             // Validate giờ hẹn
             var workStart = new TimeSpan(7, 0, 0);

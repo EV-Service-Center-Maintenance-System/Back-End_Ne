@@ -1,7 +1,7 @@
 ﻿@page
 @model EVCenterService.Pages.Customer.Appointments.IndexModel
 @{
-    Layout = "_AppLayout";
+    Layout = "_CustomerLayout";
     ViewData["Title"] = "Lịch sử Lịch hẹn";
 }
 
@@ -51,14 +51,17 @@
                         {
                             var badgeClass = order.Status?.ToLower() switch
                             {
-                                "pending" => "bg-warning text-dark",
-                                "confirmed" => "bg-primary",
-                                "inprogress" => "bg-info text-dark",
-                                "completed" => "bg-success",
-                                "paid" => "bg-success",
-                                "cancelled" => "bg-danger",
-                                _ => "bg-secondary"
+                                "pending" => "badge-custom bg-warning text-dark",
+                                "pendingquote" => "badge-custom bg-warning text-dark",
+                                "confirmed" => "badge-custom bg-primary",
+                                "inprogress" => "badge-custom bg-info text-dark",
+                                "techniciancompleted" => "badge-custom bg-success",
+                                "completed" => "badge-custom bg-success",
+                                "paid" => "badge-custom bg-success",
+                                "cancelled" => "badge-custom bg-danger",
+                                _ => "badge-custom bg-secondary"
                             };
+
                             string displayNote = order.ChecklistNote ?? "";
                             if (!string.IsNullOrEmpty(order.TechnicianName))
                             {
@@ -87,14 +90,10 @@
                                             </a>
                                         }
                                     }
-                                    else if (order.Status == "Pending")
+                                    else if (order.Status?.Equals("Pending", StringComparison.OrdinalIgnoreCase) == true)
                                     {
                                         <a asp-page="Edit" asp-route-id="@order.OrderId" class="btn action-btn" title="Sửa"><i class="bi bi-pencil-square"></i></a>
                                         <a asp-page="Delete" asp-route-id="@order.OrderId" class="btn action-btn" title="Hủy"><i class="bi bi-trash-fill"></i></a>
-                                    }
-                                    else
-                                    {
-                                        <a asp-page="/Customer/Invoices/Details" asp-route-id="@order.OrderId" class="btn action-btn" title="Xem hóa đơn"><i class="bi bi-receipt"></i></a>
                                     }
                                 </td>
                             </tr>
