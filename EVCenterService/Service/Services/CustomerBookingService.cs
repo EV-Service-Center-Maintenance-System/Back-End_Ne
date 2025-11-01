@@ -2,6 +2,7 @@
 using EVCenterService.Models;
 using EVCenterService.Repository.Interfaces;
 using EVCenterService.Service.Interfaces;
+using EVCenterService.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
 namespace EVCenterService.Service.Services
@@ -75,6 +76,32 @@ namespace EVCenterService.Service.Services
 
             _context.OrderServices.Remove(booking);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<List<AppointmentHistoryViewModel>> GetAppointmentHistoryAsync(Guid userId)
+        {
+            // Đây chính là logic query phức tạp mà PageModel không nên biết
+            return await _context.OrderServices
+                .Where(o => o.UserId == userId)
+                .Include(o => o.Vehicle)
+                .Include(o => o.OrderDetails)
+                    .ThenInclude(od => od.Service)
+                .Include(o => o.Technician)
+                .Include(o => o.Feedbacks) // Tải Feedback
+                .OrderByDescending(o => o.AppointmentDate)
+                .Select(o => new AppointmentHistoryViewModel
+                {
+                    OrderId = o.OrderId,
+                    AppointmentDate = o.AppointmentDate,
+                    VehicleModel = o.Vehicle.Model,
+                    ServiceNames = string.Join(", ", o.OrderDetails.Select(od => od.Service.Name)),
+                    Status = o.Status,
+                    TotalCost = o.TotalCost,
+                    TechnicianName = o.Technician.FullName,
+                    ChecklistNote = o.ChecklistNote,
+                    HasFeedback = o.Feedbacks.Any() // Kiểm tra Feedback
+                })
+                .ToListAsync();
         }
     }
 }

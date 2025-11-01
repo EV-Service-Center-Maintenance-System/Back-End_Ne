@@ -2,89 +2,106 @@
 @model EVCenterService.Pages.Customer.Appointments.IndexModel
 @{
     Layout = "_AppLayout";
-    ViewData["Title"] = "Customer Order List";
+    ViewData["Title"] = "Lịch sử Lịch hẹn";
 }
 
-<h2 class="mb-3">Customer Order List</h2>
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h1>@ViewData["Title"]</h1>
+        <p class="lead mb-0 text-muted">Theo dõi trạng thái các cuộc hẹn và lịch sử dịch vụ của bạn.</p>
+    </div>
+    <a asp-page="Create" class="btn btn-add-new" style="background-color: var(--primary-color); color: var(--text-dark);">
+        <i class="bi bi-plus-lg me-2"></i> Đặt lịch hẹn mới
+    </a>
+</div>
 
-@if (Model.Bookings == null || !Model.Bookings.Any())
+@if (TempData["StatusMessage"] != null)
 {
-    <div class="alert alert-info">Bạn chưa có lịch hẹn nào.</div>
+    <div class="alert alert-success mt-3">@TempData["StatusMessage"]</div>
 }
-else
+@if (TempData["ErrorMessage"] != null)
 {
-    <table class="table table-hover table-bordered align-middle">
-        <thead class="table-dark">
-            <tr>
-                <th>#</th>
-                <th>Xe</th>
-                <th>Dịch vụ</th>
-                <th>Ngày hẹn</th>
-                <th>Ghi chú</th>
-                <th>Trạng thái</th>
-                <th>Tổng tiền</th>
-                <th class="text-center">Hành động</th>
-            </tr>
-        </thead>
-        <tbody>
-            @{
-                int index = 1;
-            }
-
-            @foreach (var order in Model.Bookings)
-            {
-                var serviceNames = string.Join(", ", order.OrderDetails
-                .Where(d => d.Service != null)
-                .Select(d => d.Service.Name));
-
-                var badgeClass = order.Status?.ToLower() switch
-                {
-                    "pending" => "bg-warning text-dark",
-                    "confirmed" => "bg-primary",
-                    "inprogress" => "bg-info text-dark",
-                    "completed" => "bg-success",
-                    "cancelled" => "bg-danger",
-                    _ => "bg-secondary"
-                };
-
-                string displayNote = string.Empty;
-
-                if (!string.IsNullOrEmpty(order.ChecklistNote))
-                {
-                    displayNote += order.ChecklistNote;
-                }
-
-                if (order.Technician != null)
-                {
-                    if (!string.IsNullOrEmpty(displayNote))
-                        displayNote += " — ";
-
-                    displayNote += $"👨‍🔧 Technician: {order.Technician.FullName}";
-                }
-
-                <tr>
-                    <td>@index</td>
-                    <td>@order.Vehicle?.Model</td>
-                    <td>@serviceNames</td>
-                    <td>@order.AppointmentDate.ToString("dd/MM/yyyy HH:mm")</td>
-                    <td>@displayNote</td>
-                    <td>
-                        <span class="badge @badgeClass">
-                            @(order.Status?.ToUpperInvariant() ?? "UNKNOWN")
-                        </span>
-                    </td>
-                    <td>@string.Format("{0:N0} đ", order.TotalCost ?? 0)</td>
-                    <td class="text-center">
-                        <a asp-page="Edit" asp-route-id="@order.OrderId" class="btn btn-sm btn-primary">Sửa</a>
-                        <a asp-page="Delete" asp-route-id="@order.OrderId" class="btn btn-sm btn-danger"
-                           onclick="return confirm('Bạn có chắc chắn muốn xóa lịch hẹn này không?');">Xóa</a>
-                    </td>
-                </tr>
-
-                index++;
-            }
-        </tbody>
-    </table>
+    <div class="alert alert-danger mt-3">@TempData["ErrorMessage"]</div>
 }
 
-<a asp-page="Create" class="btn btn-success mt-3">+ Đặt lịch mới</a>
+
+<div class="card data-card border-0 mt-4">
+    <div class="card-body">
+        @if (Model.Bookings == null || !Model.Bookings.Any())
+        {
+            <div class="alert alert-info mb-0">Bạn chưa có lịch hẹn nào.</div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-borderless table-custom">
+                    <thead>
+                        <tr>
+                            <th>Xe</th>
+                            <th>Dịch vụ</th>
+                            <th>Ngày hẹn</th>
+                            <th>Trạng thái</th>
+                            <th>Ghi chú / Kỹ thuật viên</th>
+                            <th class="text-end">Tổng tiền</th>
+                            <th class="text-center">Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var order in Model.Bookings)
+                        {
+                            var badgeClass = order.Status?.ToLower() switch
+                            {
+                                "pending" => "bg-warning text-dark",
+                                "confirmed" => "bg-primary",
+                                "inprogress" => "bg-info text-dark",
+                                "completed" => "bg-success",
+                                "paid" => "bg-success",
+                                "cancelled" => "bg-danger",
+                                _ => "bg-secondary"
+                            };
+                            string displayNote = order.ChecklistNote ?? "";
+                            if (!string.IsNullOrEmpty(order.TechnicianName))
+                            {
+                                displayNote += $" — 👨‍🔧 KTV: {order.TechnicianName}";
+                            }
+
+                            <tr>
+                                <td><span class="fw-bold">@order.VehicleModel</span></td>
+                                <td class="text-muted">@order.ServiceNames</td>
+                                <td class="text-muted">@order.AppointmentDate.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td><span class="badge @badgeClass">@order.Status?.ToUpperInvariant()</span></td>
+                                <td class="text-muted small">@displayNote</td>
+                                <td class="text-end fw-bold">@order.TotalCost?.ToString("N0") đ</td>
+
+                                <td class="text-center">
+                                    @if (order.Status == "TechnicianCompleted" || order.Status == "Completed" || order.Status == "Paid")
+                                    {
+                                        @if (order.HasFeedback)
+                                        {
+                                            <span class="badge-custom badge-active">Đã đánh giá</span>
+                                        }
+                                        else
+                                        {
+                                            <a asp-page="/Customer/Feedback/Create" asp-route-orderId="@order.OrderId" class="btn btn-sm btn-warning fw-bold" title="Đánh giá dịch vụ">
+                                                <i class="bi bi-star-fill"></i> Đánh giá
+                                            </a>
+                                        }
+                                    }
+                                    else if (order.Status == "Pending")
+                                    {
+                                        <a asp-page="Edit" asp-route-id="@order.OrderId" class="btn action-btn" title="Sửa"><i class="bi bi-pencil-square"></i></a>
+                                        <a asp-page="Delete" asp-route-id="@order.OrderId" class="btn action-btn" title="Hủy"><i class="bi bi-trash-fill"></i></a>
+                                    }
+                                    else
+                                    {
+                                        <a asp-page="/Customer/Invoices/Details" asp-route-id="@order.OrderId" class="btn action-btn" title="Xem hóa đơn"><i class="bi bi-receipt"></i></a>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

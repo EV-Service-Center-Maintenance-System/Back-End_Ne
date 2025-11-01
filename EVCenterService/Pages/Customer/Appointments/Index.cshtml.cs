@@ -1,6 +1,7 @@
 using EVCenterService.Data;
 using EVCenterService.Models;
 using EVCenterService.Service.Interfaces;
+using EVCenterService.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -20,19 +21,15 @@ namespace EVCenterService.Pages.Customer.Appointments
             _context = context;
         }
 
-        public IEnumerable<OrderService> Bookings { get; set; }
+        //public IEnumerable<OrderService> Bookings { get; set; }
+
+        public List<AppointmentHistoryViewModel> Bookings { get; set; } = new();
 
         public async Task OnGetAsync()
         {
             var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-            Bookings = await _context.OrderServices
-                .Include(o => o.Vehicle)
-                .Include(o => o.OrderDetails)
-                    .ThenInclude(od => od.Service).Include(o => o.Technician)
-                .Where(o => o.UserId == userId)
-                .OrderByDescending(o => o.AppointmentDate)
-                .ToListAsync();
+            Bookings = await _service.GetAppointmentHistoryAsync(userId);
         }
     }
 }

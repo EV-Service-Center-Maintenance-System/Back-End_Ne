@@ -32,7 +32,6 @@ namespace EVCenterService.Pages.Customer.Invoices
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            // T?i hóa ??n VÀ các d? li?u liên quan ?? hi?n th?
             Invoice = await _context.Invoices
                 .Include(i => i.Order)
                     .ThenInclude(o => o.User)
@@ -51,7 +50,6 @@ namespace EVCenterService.Pages.Customer.Invoices
                 return NotFound();
             }
 
-            // ??m b?o khách hàng này s? h?u hóa ??n
             if (Invoice.Order?.UserId.ToString() != userId)
             {
                 return Forbid();
@@ -72,33 +70,27 @@ namespace EVCenterService.Pages.Customer.Invoices
                 return NotFound();
             }
 
-            if (invoice.Status == "Paid") // Ki?m tra thêm n?u ?ã thanh toán thì không cho t?o link n?a
+            if (invoice.Status == "Paid") 
             {
                 TempData["ErrorMessage"] = "Hóa ??n này ?ã ???c thanh toán.";
                 return RedirectToPage("./Details", new { id = invoice.InvoiceId });
             }
 
-            // 1. T?o m?t mã duy nh?t cho l?n th? thanh toán này (Payment Attempt ID)
-            var paymentAttemptId = Guid.NewGuid().ToString("N"); // T?o GUID không có d?u g?ch n?i
+            var paymentAttemptId = Guid.NewGuid().ToString("N"); 
 
-            // 2. L?u mapping: paymentAttemptId -> InvoiceId vào Cache
-            // ??t th?i gian h?t h?n (ví d?: 15 phút) ?? tránh cache b? ??y
             var cacheEntryOptions = new MemoryCacheEntryOptions()
                 .SetAbsoluteExpiration(TimeSpan.FromMinutes(15));
             _memoryCache.Set(paymentAttemptId, invoice.InvoiceId, cacheEntryOptions);
 
-            // T?o model thông tin thanh toán
             var paymentModel = new PaymentInformationModel
             {
                 Amount = (double)invoice.Amount.Value,
-                // S?A: G?i paymentAttemptId làm mã giao d?ch
                 InvoiceId = paymentAttemptId,
                 OrderDescription = $"Thanh toan cho don hang #{invoice.OrderId}",
                 Name = "EV Center Service",
-                OrderType = "other" // Ho?c lo?i hình c?a b?n
+                OrderType = "other" 
             };
 
-            // T?o URL và chuy?n h??ng ng??i dùng
             var paymentUrl = _vnPayService.CreatePaymentUrl(paymentModel, HttpContext);
             return Redirect(paymentUrl);
         }

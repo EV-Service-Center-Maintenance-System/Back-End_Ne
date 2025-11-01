@@ -1,0 +1,83 @@
+﻿@page "{orderId:int}"
+@model EVCenterService.Pages.Customer.Feedback.CreateModel
+@{
+    ViewData["Title"] = "Gửi Đánh giá Dịch vụ";
+    Layout = "_AppLayout";
+}
+
+<div class="page-header">
+    <h1>@ViewData["Title"]</h1>
+    <p class="lead mb-0 text-muted">Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi.</p>
+</div>
+
+<div class="card data-card border-0 mb-4">
+    <div class="card-body">
+        <h5>Bạn đang đánh giá cho đơn hàng #@Model.OrderToReview.OrderId</h5>
+        <ul class="list-unstyled text-muted">
+            <li><strong>Xe:</strong> @Model.OrderToReview.Vehicle.Model</li>
+            <li><strong>Dịch vụ:</strong> @string.Join(", ", Model.OrderToReview.OrderDetails.Select(od => od.Service.Name))</li>
+            <li><strong>Ngày hoàn thành:</strong> @Model.OrderToReview.AppointmentDate.ToString("dd/MM/yyyy")</li>
+        </ul>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card data-card border-0">
+            <div class="card-body">
+                <form method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                    <input type="hidden" asp-for="Input.OrderId" />
+
+                    <div class="mb-3">
+                        <label asp-for="Input.Rating" class="form-label fs-5">Bạn hài lòng ở mức nào?</label>
+                        <div class="rating-stars">
+                            <input type="radio" id="star5" asp-for="Input.Rating" value="5" /><label for="star5" title="5 sao">★</label>
+                            <input type="radio" id="star4" asp-for="Input.Rating" value="4" /><label for="star4" title="4 sao">★</label>
+                            <input type="radio" id="star3" asp-for="Input.Rating" value="3" /><label for="star3" title="3 sao">★</label>
+                            <input type="radio" id="star2" asp-for="Input.Rating" value="2" /><label for="star2" title="2 sao">★</label>
+                            <input type="radio" id="star1" asp-for="Input.Rating" value="1" /><label for="star1" title="1 sao">★</label>
+                        </div>
+                        <span asp-validation-for="Input.Rating" class="text-danger d-block mt-2"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Input.Comment" class="form-label">Bình luận của bạn (Tùy chọn)</label>
+                        <textarea asp-for="Input.Comment" class="form-control" rows="5" placeholder="Hãy cho chúng tôi biết trải nghiệm của bạn..."></textarea>
+                        <span asp-validation-for="Input.Comment" class="text-danger"></span>
+                    </div>
+
+                    <hr class="my-4" />
+                    <button type="submit" class="btn btn-primary">Gửi Đánh Giá</button>
+                    <a asp-page="/Customer/Appointments/Index" class="btn btn-secondary">Quay lại</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <style>
+        .rating-stars {
+            display: inline-block;
+            direction: rtl; 
+        }
+        .rating-stars input[type="radio"] {
+            display: none;
+        }
+        .rating-stars label {
+            font-size: 2.5rem;
+            color: #ccc; 
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .rating-stars input[type="radio"]:checked ~ label,
+        .rating-stars label:hover,
+        .rating-stars label:hover ~ label {
+            color: #f5b301; 
+        }
+    </style>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

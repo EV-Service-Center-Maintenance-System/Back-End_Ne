@@ -1,4 +1,8 @@
 ﻿using EVCenterService.Models;
+using EVCenterService.ViewModels; 
+using System; 
+using System.Collections.Generic; 
+using System.Threading.Tasks;
 
 namespace EVCenterService.Service.Interfaces
 {
@@ -10,5 +14,6 @@ namespace EVCenterService.Service.Interfaces
         Task UpdateBookingAsync(OrderService order, int serviceId);
         Task DeleteBookingAsync(int orderId, Guid userId);
 
+        Task<List<AppointmentHistoryViewModel>> GetAppointmentHistoryAsync(Guid userId);
     }
 }

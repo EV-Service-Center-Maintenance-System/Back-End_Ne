@@ -159,7 +159,7 @@ namespace EVCenterService.Pages.Technician.Jobs
                 // Cập nhật OrderService
                 decimal serviceCost = Job.OrderDetails.Sum(od => (od.UnitPrice ?? 0) * (od.Quantity ?? 1));
                 Job.TotalCost = serviceCost + totalPartsCost;
-                Job.Status = "PendingQuote"; // Trạng thái chờ Staff duyệt báo giá
+                Job.Status = "PendingQuote"; 
                 if (!string.IsNullOrWhiteSpace(TechnicianNote))
                 {
                     Job.ChecklistNote = (Job.ChecklistNote ?? "") + $"\nTechnician note: {TechnicianNote}";
