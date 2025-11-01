@@ -41,6 +41,8 @@
                         <th>Loại</th>
                         <th>Hãng</th>
                         <th>Đơn giá</th>
+                        <th class="text-center">Tồn tối thiểu (Hiện tại)</th>
+                        <th class="text-center">Tồn tối thiểu (Gợi ý)</th>
                         <th>Tổng tồn kho</th>
                         <th class="text-end">Hành động</th>
                     </tr>
@@ -52,7 +54,18 @@
                             <td><span class="fw-bold">@item.Name</span></td>
                             <td class="text-muted">@item.Type</td>
                             <td class="text-muted">@item.Brand</td>
+
                             <td>@item.UnitPrice?.ToString("N0") đ</td>
+
+                            <td class="text-center">
+                                @item.CurrentTotalMinThreshold
+                            </td>
+
+                            <td class="text-center fw-bold text-warning">
+                                @item.SuggestedTotalMinThreshold
+                                <i class="bi bi-stars"></i>
+                            </td>
+
                             <td>
                                 @if (item.TotalQuantity > 0)
                                 {
@@ -63,6 +76,7 @@
                                     <span class="badge bg-danger">Hết hàng</span>
                                 }
                             </td>
+
                             <td class="text-end">
                                 <a asp-page="./Edit" asp-route-id="@item.PartId" class="btn action-btn me-1"><i class="bi bi-pencil-square"></i></a>
                                 <a asp-page="./Delete" asp-route-id="@item.PartId" class="btn action-btn"><i class="bi bi-trash-fill"></i></a>
