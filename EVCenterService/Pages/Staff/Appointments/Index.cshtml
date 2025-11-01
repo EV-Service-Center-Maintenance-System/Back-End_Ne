@@ -114,10 +114,18 @@
                                     <td class="text-center">
                                         <form method="post" asp-page-handler="Assign" asp-route-id="@order.OrderId" class="d-flex">
                                             <select name="technicianId" class="form-select form-select-sm me-2">
-                                                <option value="">-- Chọn KTV --</option>
-                                                @foreach (var tech in Model.TechnicianList)
+
+                                                @if (Model.AvailableTechniciansMap.TryGetValue(order.OrderId, out var techListForThisOrder) && techListForThisOrder.Any())
                                                 {
-                                                    <option value="@tech.Value">@tech.Text</option>
+                                                    <option value="">-- Chọn KTV --</option>
+                                                    @foreach (var tech in techListForThisOrder)
+                                                    {
+                                                        <option value="@tech.Value">@tech.Text</option>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <option value="" disabled selected>Không có KTV phù hợp</option>
                                                 }
                                             </select>
                                             <button type="submit" class="btn btn-sm btn-warning" title="Phân công"><i class="bi bi-person-gear"></i></button>

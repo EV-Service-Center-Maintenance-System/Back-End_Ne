@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace EVCenterService.Pages.Staff.Appointments
 {
     [Authorize(Roles = "Staff")]
-    public class IndexModel : PageModel // Đổi tên class từ ManageModel (nếu có) thành IndexModel
+    public class IndexModel : PageModel
     {
         private readonly IStaffAppointmentService _staffService;
         private readonly EVServiceCenterContext _context;
@@ -24,15 +24,17 @@ namespace EVCenterService.Pages.Staff.Appointments
             _context = context;
         }
 
-        // SỬA: Chia làm 3 danh sách
         public List<OrderService> PendingApprovalAppointments { get; set; } = new();
         public List<OrderService> PendingAssignmentAppointments { get; set; } = new();
         public List<OrderService> ReadyToFinalizeAppointments { get; set; } = new();
 
-        public List<SelectListItem> TechnicianList { get; set; } = new();
+        // THAY ĐỔI 1: Bỏ 'TechnicianList' cũ và thay bằng 'AvailableTechniciansMap'
+        // Đây là một "bản đồ" liên kết một OrderId (key) với danh sách KTV (value)
+        public Dictionary<int, List<SelectListItem>> AvailableTechniciansMap { get; set; } = new();
 
         public async Task OnGetAsync()
         {
+            // === PHẦN 1: Tải các đơn hàng (Giữ nguyên) ===
             var baseQuery = _context.OrderServices
                 .Include(o => o.Vehicle)
                 .Include(o => o.User)
@@ -40,37 +42,76 @@ namespace EVCenterService.Pages.Staff.Appointments
                     .ThenInclude(od => od.Service)
                 .AsNoTracking();
 
-            // 1. YÊU CẦU MỚI: Tab "Chờ duyệt đơn"
             PendingApprovalAppointments = await baseQuery
                 .Where(o => o.Status == "Pending")
                 .OrderBy(o => o.AppointmentDate)
                 .ToListAsync();
 
-            // 2. Tab "Cần phân công"
             PendingAssignmentAppointments = await baseQuery
                 .Where(o => o.Status == "Confirmed")
                 .OrderBy(o => o.AppointmentDate)
                 .ToListAsync();
 
-            // 3. Tab "Chờ duyệt báo giá"
             ReadyToFinalizeAppointments = await baseQuery
                 .Where(o => o.Status == "PendingQuote")
                 .OrderBy(o => o.AppointmentDate)
                 .ToListAsync();
 
-            // Tải danh sách KTV
-            TechnicianList = await _context.Accounts
+            // === THAY ĐỔI 2: Xây dựng logic lọc KTV ===
+
+            // 1. Tạo bản đồ (map) logic nghiệp vụ: Dịch vụ nào -> Cần chứng chỉ đó
+            // Tên dịch vụ và chứng chỉ này PHẢI KHỚP VỚI DATABASE CỦA BẠN
+            var serviceCertMap = new Dictionary<string, string>
+            {
+                { "Battery Replacement", "Battery System Certified" }, 
+                { "Brake Check", "Brake System Certified" },
+                { "Cooling System Check", "Thermal & Cooling System Certified" }, 
+                { "General Inspection", "General Inspection Certified" }
+            };
+
+            // 2. Tải TẤT CẢ KTV đang "Active" và chứng chỉ của họ
+            var allTechnicians = await _context.Accounts
                 .AsNoTracking()
-                .Where(a => a.Role == "Technician")
-                .Select(a => new SelectListItem
+                .Where(a => a.Role == "Technician" && a.Status == "Active")
+                .Select(a => new
                 {
-                    Value = a.UserId.ToString(),
-                    Text = a.FullName
+                    a.UserId,
+                    a.FullName,
+                    a.Certification
                 })
                 .ToListAsync();
+
+            // 3. Lọc KTV cho TỪNG đơn hàng trong tab "Cần phân công"
+            foreach (var order in PendingAssignmentAppointments)
+            {
+                // 3.1. Tìm tất cả chứng chỉ CẦN CÓ cho đơn hàng này
+                var requiredCerts = order.OrderDetails
+                    .Select(od => serviceCertMap.GetValueOrDefault(od.Service.Name))
+                    .Where(cert => cert != null) 
+                    .Distinct()
+                    .ToList();
+
+                List<SelectListItem> availableTechList;
+
+                if (requiredCerts.Any())
+                {
+                    availableTechList = allTechnicians
+                        .Where(tech => !string.IsNullOrWhiteSpace(tech.Certification)
+                                       && requiredCerts.Contains(tech.Certification))
+                        .Select(tech => new SelectListItem { Value = tech.UserId.ToString(), Text = tech.FullName })
+                        .ToList();
+                }
+                else
+                {
+                    availableTechList = allTechnicians
+                        .Select(tech => new SelectListItem { Value = tech.UserId.ToString(), Text = tech.FullName })
+                        .ToList();
+                }
+
+                AvailableTechniciansMap[order.OrderId] = availableTechList;
+            }
         }
 
-        // XỬ LÝ CHO TAB 1: Chờ duyệt đơn
         public async Task<IActionResult> OnPostConfirmAsync(int id)
         {
             await _staffService.ConfirmAppointmentAsync(id);
