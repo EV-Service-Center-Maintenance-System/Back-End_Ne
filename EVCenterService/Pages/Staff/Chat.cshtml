@@ -1,0 +1,216 @@
+﻿@page
+@model EVCenterService.Pages.Staff.ChatModel
+@{
+    ViewData["Title"] = "Hỗ trợ Khách hàng";
+    Layout = "_AppLayout";
+}
+
+<style>
+    .chat-card-body {
+        height: 500px; /* Giới hạn chiều cao */
+        overflow-y: auto; /* Tự cuộn */
+        display: flex;
+        flex-direction: column;
+        background-color: #161b22; /* Màu nền trong ô chat (tối hơn) */
+        padding: 1rem;
+    }
+
+    .list-group-item.active {
+        background-color: #1f6feb; /* Màu active của sidebar */
+        border-color: #1f6feb;
+    }
+
+    /* Style bong bóng chat (Giống Customer nhưng đảo ngược) */
+    .chat-card-body strong {
+        font-size: 0.8rem;
+        color: #8b949e;
+        display: block;
+        margin-bottom: 2px;
+    }
+
+    .chat-card-body .msg-customer {
+        text-align: left;
+    }
+
+        .chat-card-body .msg-customer span {
+            background: #30363d; /* Màu xám (Customer) */
+            color: #f0f6fc;
+            padding: 8px 12px;
+            border-radius: 12px 12px 12px 0;
+            display: inline-block;
+        }
+
+    .chat-card-body .msg-staff {
+        text-align: right;
+    }
+
+        .chat-card-body .msg-staff strong {
+            display: none;
+        }
+        /* Ẩn chữ "Bạn:" */
+        .chat-card-body .msg-staff span {
+            background: #1f6feb; /* Màu xanh (Staff) */
+            color: white;
+            padding: 8px 12px;
+            border-radius: 12px 12px 0 12px;
+            display: inline-block;
+        }
+</style>
+
+<h2 class="mb-4 text-white">@ViewData["Title"]</h2>
+
+<div class="row g-4">
+    <div class="col-lg-4">
+        <div class="card data-card border-0">
+            <div class="card-header bg-dark">
+                <h5 class="mb-0 text-white">Khách hàng đang chờ</h5>
+            </div>
+            <div class="list-group list-group-flush" id="customerList">
+                <div class="list-group-item list-group-item-action bg-transparent text-muted">
+                    Chưa có ai kết nối...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-8">
+        <div class="card data-card border-0" id="chatWindow" style="display: none;">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0" id="chatWithCustomerName">...</h5>
+            </div>
+
+            <div class="chat-card-body" id="staffChatMessages">
+            </div>
+
+            <div class="card-footer d-flex p-3 bg-dark">
+                <input type="text" id="staffReplyInput" class="form-control" placeholder="Nhập tin nhắn trả lời..." />
+                <button class="btn btn-primary ms-2" id="staffSendButton">Gửi</button>
+            </div>
+        </div>
+
+        <div class="card data-card border-0" id="chatPlaceholder">
+            <div class="card-body text-center text-muted" style="height: 600px; display: grid; place-items: center;">
+                <p>Vui lòng chọn một khách hàng từ danh sách bên trái để bắt đầu trò chuyện.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Lấy các element
+            const customerList = document.getElementById("customerList");
+            const chatWindow = document.getElementById("chatWindow");
+            const chatPlaceholder = document.getElementById("chatPlaceholder");
+            const chatWithCustomerName = document.getElementById("chatWithCustomerName");
+            const staffChatMessages = document.getElementById("staffChatMessages");
+            const staffReplyInput = document.getElementById("staffReplyInput");
+            const staffSendButton = document.getElementById("staffSendButton");
+
+            let currentCustomerConnectionId = null;
+            let activeCustomerElement = null;
+            let waitingCustomers = new Map();
+
+            const connection = new signalR.HubConnectionBuilder()
+                .withUrl("/chatHub")
+                .build();
+
+            // Lắng nghe tin nhắn mới từ khách
+            connection.on("ReceiveCustomerMessage", function (connectionId, customerName, message) {
+
+                if (!waitingCustomers.has(connectionId)) {
+                    if (waitingCustomers.size === 0) {
+                        customerList.innerHTML = ""; // Xóa "Chưa có ai"
+                    }
+                    waitingCustomers.set(connectionId, { name: customerName, messages: [] });
+
+                    const customerItem = document.createElement("a");
+                    customerItem.href = "#";
+                    // Thêm style cho list-group
+                    customerItem.className = "list-group-item list-group-item-action bg-transparent text-white border-secondary";
+                    customerItem.id = `customer-${connectionId}`;
+                    customerItem.textContent = customerName; // Tên này đã có "(Customer)"
+                    customerItem.onclick = (e) => {
+                        e.preventDefault();
+                        openChat(connectionId, customerItem);
+                    };
+                    customerList.appendChild(customerItem);
+                }
+
+                const customerData = waitingCustomers.get(connectionId);
+                customerData.messages.push({ user: customerName, text: message, isCustomer: true });
+
+                if (currentCustomerConnectionId === connectionId) {
+                    appendStaffMessage(customerName, message, true);
+                } else {
+                    document.getElementById(`customer-${connectionId}`).classList.add("fw-bold");
+                }
+            });
+
+            // Mở cửa sổ chat
+            function openChat(connectionId, element) {
+                currentCustomerConnectionId = connectionId;
+                const customerData = waitingCustomers.get(connectionId);
+
+                chatWithCustomerName.textContent = `Chat với: ${customerData.name}`;
+                staffChatMessages.innerHTML = "";
+
+                customerData.messages.forEach(msg => {
+                    appendStaffMessage(msg.user, msg.text, msg.isCustomer);
+                });
+
+                chatWindow.style.display = "flex"; // Hiển thị card chat
+                chatPlaceholder.style.display = "none"; // Ẩn placeholder
+
+                // Cập nhật trạng thái active
+                if(activeCustomerElement) {
+                    activeCustomerElement.classList.remove("active");
+                }
+                element.classList.remove("fw-bold");
+                element.classList.add("active");
+                activeCustomerElement = element;
+            }
+
+            // Gửi trả lời
+            async function sendReply() {
+                const message = staffReplyInput.value;
+                if (!message.trim() || !currentCustomerConnectionId) return;
+
+                try {
+                    await connection.invoke("StaffReplyMessage", currentCustomerConnectionId, message);
+                    appendStaffMessage("Bạn", message, false); // Tên là "Bạn" (Staff)
+                    waitingCustomers.get(currentCustomerConnectionId).messages.push({ user: "Bạn", text: message, isCustomer: false });
+                    staffReplyInput.value = "";
+                } catch (err) {
+                    console.error(err);
+                }
+            }
+
+            staffSendButton.addEventListener("click", sendReply);
+            staffReplyInput.addEventListener("keyup", (e) => e.key === "Enter" && sendReply());
+
+            // Hàm thêm tin nhắn (đảo ngược style)
+            function appendStaffMessage(user, message, isCustomer) {
+                const msgDiv = document.createElement("div");
+                msgDiv.className = isCustomer ? 'msg-customer mb-2' : 'msg-staff mb-2';
+                msgDiv.innerHTML = `<strong>${user}:</strong> <span>${message}</span>`;
+                staffChatMessages.appendChild(msgDiv);
+                staffChatMessages.scrollTop = staffChatMessages.scrollHeight;
+            }
+
+            // Khởi động kết nối
+            async function startConnection() {
+                try {
+                    await connection.start();
+                    console.log("SignalR Connected (Staff).");
+                } catch (err) {
+                    console.error(err);
+                    setTimeout(startConnection, 5000);
+                }
+            }
+            startConnection();
+        });
+    </script>
+}

@@ -70,6 +70,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         googleOptions.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
     });
 
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
@@ -88,5 +89,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapRazorPages();
+
+app.MapHub<EVCenterService.Hubs.ChatHub>("/chatHub");
 
 app.Run();

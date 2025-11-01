@@ -50,6 +50,7 @@
                                     else if (User.IsInRole("Staff"))
                                     {
                                         <li><a class="dropdown-item" asp-page="/Staff/Index">Quản lý Lịch hẹn</a></li>
+                                        <li><a class="dropdown-item" asp-page="/Staff/Chat">Chat với khách hàng</a></li>
                                     }
                                     else
                                     {
@@ -124,6 +125,190 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
+    @if (User.Identity != null && User.Identity.IsAuthenticated)
+    {
+        <style>
+            .chat-widget-button {
+                position: fixed;
+                bottom: 25px;
+                right: 25px;
+                background-color: #0d6efd;
+                color: white;
+                width: 60px;
+                height: 60px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 24px;
+                cursor: pointer;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+                z-index: 1040;
+            }
+
+            /* === BẮT ĐẦU SỬA GIAO DIỆN TỐI === */
+            .chat-popup {
+                position: fixed;
+                bottom: 100px;
+                right: 25px;
+                width: 320px;
+                height: 450px;
+                z-index: 1050;
+                overflow: hidden;
+                /* Style nền tối */
+                background: #0d1117; /* Nền đen */
+                border: 1px solid #30363d; /* Viền mờ */
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            }
+            .chat-header { 
+                background: #161b22; /* Nền header tối */
+                color: white; 
+                padding: 1rem; 
+                font-weight: bold;
+                border-bottom: 1px solid #30363d;
+            }
+            .chat-messages {
+                background: #0d1117; /* Nền ô chat */
+                color: #f0f6fc;
+            }
+            .chat-input {
+                background: #161b22; /* Nền ô nhập liệu */
+                border-top: 1px solid #30363d;
+            }
+            .chat-input input {
+                background: transparent;
+                color: white; /* Chữ trắng */
+                border: none;
+            }
+            .chat-input input::placeholder {
+                color: #8b949e;
+            }
+    
+            /* Style cho bong bóng chat */
+            .chat-messages strong {
+                font-size: 0.8rem;
+                color: #8b949e;
+                display: block;
+                margin-bottom: 2px;
+            }
+            .chat-messages .msg-customer { text-align: right; }
+            .chat-messages .msg-customer strong { display: none; } /* Ẩn chữ "Bạn:" */
+            .chat-messages .msg-customer span { 
+                background: #0d6efd; /* Màu xanh (Customer) */
+                color: white; 
+                padding: 8px 12px; 
+                border-radius: 12px 12px 0 12px;
+                display: inline-block;
+            }
+    
+            .chat-messages .msg-staff { text-align: left; }
+            .chat-messages .msg-staff span { 
+                background: #30363d; /* Màu xám (Staff) */
+                color: #f0f6fc; 
+                padding: 8px 12px; 
+                border-radius: 12px 12px 12px 0;
+                display: inline-block;
+            }
+            /* === KẾT THÚC SỬA GIAO DIỆN === */
+        </style>
+
+        <div id="chatButton" class="chat-widget-button">
+            <i class="bi bi-chat-dots-fill"></i>
+        </div>
+
+        <div id="chatPopup" class="chat-popup" style="display: none; flex-direction: column;">
+            <div class="chat-header">Trò chuyện trực tuyến</div>
+            <div class="chat-messages" id="chatMessages" style="flex-grow: 1; padding: 1rem; overflow-y: auto; background: #f4f7f6;">
+                </div>
+            <div class="chat-input" style="display: flex; border-top: 1px solid #ddd;">
+                <input type="text" id="chatInput" placeholder="Nhập tin nhắn..." style="flex-grow: 1; border: none; padding: 1rem;" />
+                <button id="chatSendButton" style="border: none; background: #0d6efd; color: white; padding: 0 1rem;"><i class="bi bi-send-fill"></i></button>
+            </div>
+        </div>
+
+        <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const chatButton = document.getElementById("chatButton");
+            const chatPopup = document.getElementById("chatPopup");
+            const chatMessages = document.getElementById("chatMessages");
+            const chatInput = document.getElementById("chatInput");
+            const chatSendButton = document.getElementById("chatSendButton");
+
+            // ===== PHẦN SỬA LỖI =====
+            // 1. GÁN SỰ KIỆN MỞ/ĐÓNG POPUP LÊN ĐẦU TIÊN
+            // Logic này không phụ thuộc vào SignalR nên sẽ luôn chạy
+            chatButton.addEventListener("click", () => {
+                const isDisplayed = chatPopup.style.display === "flex";
+                chatPopup.style.display = isDisplayed ? "none" : "flex";
+            });
+            // ===== KẾT THÚC PHẦN SỬA LỖI =====
+
+
+            // 2. HÀM THÊM TIN NHẮN (Giữ nguyên)
+            function appendMessage(user, message, isCustomer) {
+                const msgDiv = document.createElement("div");
+                msgDiv.className = isCustomer ? 'msg-customer mb-2' : 'msg-staff mb-2';
+                msgDiv.innerHTML = `<strong>${user}:</strong> <span>${message}</span>`;
+                chatMessages.appendChild(msgDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight; // Tự cuộn xuống
+            }
+
+            // 3. KIỂM TRA SIGNALR TRƯỚC KHI KẾT NỐI
+            if (typeof signalR === 'undefined') {
+                console.error("Lỗi: Thư viện SignalR (signalr.min.js) chưa được tải. Chat sẽ không hoạt động.");
+                appendMessage("Hệ thống", "Không thể kết nối máy chủ chat.", false);
+                return; // Dừng, không chạy code kết nối nữa
+            }
+
+            // 4. LOGIC KẾT NỐI SIGNALR (Giữ nguyên như cũ)
+            const connection = new signalR.HubConnectionBuilder()
+                .withUrl("/chatHub") // Đường dẫn đã map trong Program.cs
+                .build();
+
+            // Lắng nghe tin nhắn trả lời từ Staff
+            connection.on("ReceiveStaffReply", function (staffName, message) {
+                appendMessage(staffName, message, false);
+            });
+
+            // Gửi tin nhắn (khi nhấn nút hoặc Enter)
+            async function sendMessage() {
+                const message = chatInput.value;
+                if (message.trim() === "") return;
+
+                try {
+                    // Gọi hàm "CustomerSendMessage" trên Hub
+                    await connection.invoke("CustomerSendMessage", message);
+            
+                    // Hiển thị tin nhắn của chính mình
+                    appendMessage("Bạn", message, true);
+                    chatInput.value = "";
+                } catch (err) {
+                    console.error(err);
+                }
+            }
+    
+            chatSendButton.addEventListener("click", sendMessage);
+            chatInput.addEventListener("keyup", function(event) {
+                if (event.key === "Enter") sendMessage();
+            });
+
+            // Khởi động kết nối
+            async function startConnection() {
+                try {
+                    await connection.start();
+                    console.log("SignalR Connected (Customer).");
+                } catch (err) {
+                    console.error(err);
+                    setTimeout(startConnection, 5000); // Thử kết nối lại sau 5 giây
+                }
+            }
+
+            startConnection();
+        });
+        </script>
+    }
 </body>
 </html>
