@@ -403,7 +403,6 @@ body.app-body {
 /* 1. Thi?t l?p Flexbox cho .wrapper */
 .wrapper {
     display: flex;
-    flex-direction: column;
     min-height: 100vh; /* ??m b?o layout cao h?t màn hình */
 }
 
@@ -462,19 +461,27 @@ body.app-body {
             color: #ffffff; /* Sáng lên khi hover */
         }
 
+/* ======================================================= */
+/* == CSS CHO CUSTOMER LAYOUT (HEADER TRÊN, KHÔNG SIDEBAR) == */
+/* ======================================================= */
 
-/* ============================================= */
-/* == STYLE CHO HEADER TOP-NAV (CUSTOMER PORTAL) == */
-/* ============================================= */
+/* * Ghi ?è .wrapper m?c ??nh (display: flex, flex-direction: row)
+ * CH? KHI nó c?ng có class là .customer-layout.
+ * Layout Admin/Staff s? không b? ?nh h??ng.
+*/
+.wrapper.customer-layout {
+    flex-direction: column; /* ??i thành layout c?t (header trên, content d??i) */
+}
 
+/* Style cho header m?i */
 .top-navbar {
-    background-color: #0d1117; /* L?y màu n?n t?i t? sidebar */
-    border-bottom: 1px solid #30363d; /* L?y màu vi?n t? sidebar */
+    background-color: #0d1117; /* Màu n?n t?i */
+    border-bottom: 1px solid #30363d; /* Vi?n m? */
     padding: 0.75rem 1.5rem;
     flex-shrink: 0; /* ??m b?o header không b? co l?i */
 }
 
 .top-logo {
-    height: 36px; /* L?y chi?u cao logo t? sidebar */
+    height: 36px;
     width: auto;
 }

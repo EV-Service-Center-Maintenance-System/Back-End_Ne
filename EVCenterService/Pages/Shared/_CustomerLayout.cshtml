@@ -9,7 +9,8 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
 <body class="app-body">
-    <div class="wrapper">
+
+    <div class="wrapper customer-layout">
 
         <header class="top-navbar">
             <div class="container-fluid d-flex align-items-center">
@@ -18,11 +19,48 @@
                     <span class="fs-5 fw-bold text-white ms-2">Dịch vụ</span>
                 </a>
 
-                <div class="ms-auto text-white">
-                    Chào, @User.Identity.Name!
-                </div>
+                <ul class="navbar-nav ms-auto auth-buttons">
+                    @if (User.Identity != null && User.Identity.IsAuthenticated)
+                    {
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Chào, @User.FindFirst(System.Security.Claims.ClaimTypes.GivenName)?.Value
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <li><a class="dropdown-item" asp-page="/Admin/Index">Trang quản trị</a></li>
+                                }
+                                else if (User.IsInRole("Staff"))
+                                {
+                                    <li><a class="dropdown-item" asp-page="/Staff/Index">Quản lý Lịch hẹn</a></li>
+                                }
+                                else
+                                {
+                                    <li><a class="dropdown-item" asp-page="/Customer/Index">Trang cá nhân</a></li>
+                                }
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form class="form-inline" asp-page="/Account/Logout" method="post">
+                                        <button type="submit" class="dropdown-item">Đăng xuất</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a class="btn btn-login me-2" asp-page="/Account/Login">Đăng nhập</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="btn btn-register" asp-page="/Account/Register">Đăng ký</a>
+                        </li>
+                    }
+                </ul>
             </div>
         </header>
+
         <div class="main-content">
             <main role="main">
                 @RenderBody()
