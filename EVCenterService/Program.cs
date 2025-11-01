@@ -44,6 +44,8 @@ builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 
 builder.Services.AddScoped<IVnPayService, VnPayService>();
 
+builder.Services.AddHostedService<EVCenterService.Workers.MaintenanceReminderService>();
+
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 builder.Services.AddMemoryCache();
