@@ -73,13 +73,56 @@ namespace EVCenterService.Pages.Customer.Appointments
                 return Page();
             }
 
-            // 🔹 Tính tổng giá từ tất cả dịch vụ được chọn
+            // 🔹 Tính tổng giá VÀ TỔNG THỜI GIAN từ tất cả dịch vụ được chọn
             var services = await _context.ServiceCatalogs
                 .Where(s => SelectedServiceIds.Contains(s.ServiceId))
                 .ToListAsync();
 
+            if (!services.Any())
+            {
+                ModelState.AddModelError("SelectedServiceIds", "Bạn phải chọn ít nhất một dịch vụ.");
+                await OnGetAsync();
+                return Page();
+            }
+
             var total = services.Sum(s => s.BasePrice ?? 0);
+            var totalDuration = services.Sum(s => s.DurationMinutes ?? 0); // Lấy tổng thời gian
             Booking.TotalCost = total;
+
+            // ===== BẮT ĐẦU LOGIC KIỂM TRA CHỒNG CHÉO LỊCH =====
+            var newStartTime = Booking.AppointmentDate; // Đã bao gồm giờ
+            var newEndTime = newStartTime.AddMinutes(totalDuration);
+
+            // Tìm các lịch hẹn khác (không bị hủy/hoàn thành)
+            var existingOrders = await _context.OrderServices
+                .Include(o => o.OrderDetails)
+                    .ThenInclude(od => od.Service)
+                .Where(o => o.Status != "Cancelled" && o.Status != "Completed")
+                .ToListAsync();
+
+            bool isOverlapping = false;
+            foreach (var existingOrder in existingOrders)
+            {
+                var existingStartTime = existingOrder.AppointmentDate;
+                var existingDuration = existingOrder.OrderDetails.Sum(od => od.Service?.DurationMinutes ?? 0);
+                var existingEndTime = existingStartTime.AddMinutes(existingDuration);
+
+                // Đây là logic kiểm tra chồng chéo:
+                // (Bắt đầu MỚI < Kết thúc CŨ) VÀ (Kết thúc MỚI > Bắt đầu CŨ)
+                if (newStartTime < existingEndTime && newEndTime > existingStartTime)
+                {
+                    isOverlapping = true;
+                    break;
+                }
+            }
+
+            if (isOverlapping)
+            {
+                ModelState.AddModelError(string.Empty, "Khung giờ này đã đầy hoặc không đủ thời gian cho dịch vụ bạn chọn. Vui lòng chọn giờ khác.");
+                await OnGetAsync(); // Tải lại danh sách
+                return Page();
+            }
+            // ===== KẾT THÚC LOGIC KIỂM TRA CHỒNG CHÉO LỊCH =====
 
             // 🔹 Tạo OrderService
             var newOrder = await _bookingService.CreateBookingAsync(Booking, 0); // serviceId không dùng nữa

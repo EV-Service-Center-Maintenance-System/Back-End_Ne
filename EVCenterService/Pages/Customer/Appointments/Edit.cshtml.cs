@@ -94,6 +94,46 @@ namespace EVCenterService.Pages.Customer.Appointments
             existingOrder.AppointmentDate = Booking.AppointmentDate.Date + SelectedTime;
             existingOrder.Status = "Pending"; // Giữ nguyên trạng thái Pending
 
+            // ===== BẮT ĐẦU LOGIC KIỂM TRA CHỒNG CHÉO LỊCH (TRANG EDIT) =====
+            var selectedServicesForDuration = await _context.ServiceCatalogs
+                .Where(s => SelectedServiceIds.Contains(s.ServiceId))
+                .ToListAsync();
+
+            var totalDuration = selectedServicesForDuration.Sum(s => s.DurationMinutes ?? 0);
+            var newStartTime = existingOrder.AppointmentDate; // Giờ mới
+            var newEndTime = newStartTime.AddMinutes(totalDuration);
+
+            // Tìm các lịch hẹn khác (BỎ QUA CHÍNH LỊCH NÀY)
+            var existingOrders = await _context.OrderServices
+                .Include(o => o.OrderDetails)
+                    .ThenInclude(od => od.Service)
+                .Where(o => o.Status != "Cancelled" &&
+                            o.Status != "Completed" &&
+                            o.OrderId != existingOrder.OrderId) // <--- Bỏ qua chính nó
+                .ToListAsync();
+
+            bool isOverlapping = false;
+            foreach (var order in existingOrders)
+            {
+                var existingStartTime = order.AppointmentDate;
+                var existingDuration = order.OrderDetails.Sum(od => od.Service?.DurationMinutes ?? 0);
+                var existingEndTime = existingStartTime.AddMinutes(existingDuration);
+
+                if (newStartTime < existingEndTime && newEndTime > existingStartTime)
+                {
+                    isOverlapping = true;
+                    break;
+                }
+            }
+
+            if (isOverlapping)
+            {
+                ModelState.AddModelError(string.Empty, "Khung giờ này đã đầy hoặc không đủ thời gian cho dịch vụ bạn chọn. Vui lòng chọn giờ khác.");
+                await OnGetAsync(id); // Tải lại dữ liệu cho form
+                return Page();
+            }
+            // ===== KẾT THÚC LOGIC KIỂM TRA CHỒNG CHÉO LỊCH =====
+
             _context.OrderDetails.RemoveRange(existingOrder.OrderDetails);
 
             var selectedServices = await _context.ServiceCatalogs
