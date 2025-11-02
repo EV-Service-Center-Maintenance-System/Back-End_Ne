@@ -27,9 +27,27 @@
                         <li class="nav-item">
                             <a class="nav-link" asp-page="/Customer/Subscriptions/Index">Gói dịch vụ</a>
                         </li>
+                        @if (User.Identity != null && User.Identity.IsAuthenticated && User.IsInRole("Customer"))
+                        {
+                            @* NẾU LÀ CUSTOMER: Hiển thị menu thả xuống (dropdown) với các link trang cá nhân *@
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="customerServicesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Dịch vụ Của Tôi
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="customerServicesDropdown">
+                                    <li><a class="dropdown-item" asp-page="/Customer/Vehicles/Index">Quản lý Xe</a></li>
+                                    <li><a class="dropdown-item" asp-page="/Customer/Appointments/Index">Lịch hẹn & Lịch sử</a></li>
+                                    <li><a class="dropdown-item" asp-page="/Customer/Invoices/Index">Hóa đơn & Thanh toán</a></li>
+                                </ul>
+                            </li>
+                        }
+                        else
+                        {
+                        @* NẾU LÀ PUBLIC (hoặc Admin/Staff): Giữ nguyên link "Dịch vụ" công khai *@
                         <li class="nav-item">
                             <a class="nav-link" href="#">Dịch vụ</a>
                         </li>
+                    }
                         <li class="nav-item">
                             <a class="nav-link" href="#">Về chúng tôi</a>
                         </li>

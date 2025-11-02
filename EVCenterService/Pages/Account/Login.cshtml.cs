@@ -204,7 +204,7 @@ namespace EVCenterService.Pages.Account
                     case "Admin": return RedirectToPage("/Admin/Index");
                     case "Staff": return RedirectToPage("/Staff/Index");
                     case "Technician": return RedirectToPage("/Technician/Jobs/Index");
-                    default: return RedirectToPage("/Customer/Index"); // M?c ??nh là Customer
+                    default: return RedirectToPage("/Index"); 
                 }
             }
         }
