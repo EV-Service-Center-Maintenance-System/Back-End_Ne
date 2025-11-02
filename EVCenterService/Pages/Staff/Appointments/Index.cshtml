@@ -129,6 +129,14 @@
                                                 }
                                             </select>
                                             <button type="submit" class="btn btn-sm btn-warning" title="Phân công"><i class="bi bi-person-gear"></i></button>
+                                            <button type="button"
+                                                    class="btn btn-sm btn-danger ms-1"
+                                                    title="Hủy lịch hẹn"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#cancelModal"
+                                                    data-order-id="@order.OrderId">
+                                                <i class="bi bi-trash-fill"></i>
+                                            </button>
                                         </form>
                                     </td>
                                 </tr>
@@ -179,3 +187,45 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark text-white">
+            <form method="post" asp-page-handler="Cancel">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title" id="cancelModalLabel">Xác nhận Hủy Lịch Hẹn</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Bạn có chắc chắn muốn hủy lịch hẹn này? Hành động này sẽ gửi email thông báo cho khách hàng.</p>
+                    <input type="hidden" name="id" id="cancelOrderId" />
+                    <div class="mb-3">
+                        <label for="cancellationReason" class="form-label">Lý do hủy (bắt buộc):</label>
+                        <textarea name="cancellationReason" id="cancellationReason" class="form-control" rows="3" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Không</button>
+                    <button type="submit" class="btn btn-danger">Xác nhận Hủy</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var cancelModal = document.getElementById('cancelModal');
+            cancelModal.addEventListener('show.bs.modal', function (event) {
+                // Nút đã kích hoạt modal
+                var button = event.relatedTarget;
+                // Lấy OrderId từ data-order-id
+                var orderId = button.getAttribute('data-order-id');
+                // Cập nhật thẻ input ẩn trong form của modal
+                var input = cancelModal.querySelector('#cancelOrderId');
+                input.value = orderId;
+            });
+        });
+    </script>
+}

@@ -146,5 +146,25 @@ namespace EVCenterService.Pages.Staff.Appointments
             }
             return RedirectToPage();
         }
+
+        public async Task<IActionResult> OnPostCancelAsync(int id, string cancellationReason)
+        {
+            if (string.IsNullOrWhiteSpace(cancellationReason))
+            {
+                TempData["Message"] = "⚠️ Bạn phải nhập lý do hủy lịch.";
+                return RedirectToPage();
+            }
+
+            try
+            {
+                await _staffService.CancelAppointmentByStaffAsync(id, cancellationReason);
+                TempData["Message"] = "✅ Đã hủy lịch hẹn và gửi email thông báo cho khách hàng.";
+            }
+            catch (Exception ex)
+            {
+                TempData["Message"] = $"Error: {ex.Message}";
+            }
+            return RedirectToPage();
+        }
     }
 }

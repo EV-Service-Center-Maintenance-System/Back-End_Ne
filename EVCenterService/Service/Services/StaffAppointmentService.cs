@@ -4,7 +4,8 @@ using EVCenterService.Repository.Interfaces;
 using EVCenterService.Service.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System; 
-using System.Collections.Generic; 
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks; 
 
 namespace EVCenterService.Service.Services
@@ -14,12 +15,14 @@ namespace EVCenterService.Service.Services
         private readonly IStaffAppointmentRepository _appointmentRepository; 
         private readonly IAccountRepository _accountRepository;
         private readonly EVServiceCenterContext _context;
+        private readonly IEmailSender _emailSender;
 
-        public StaffAppointmentService(IStaffAppointmentRepository appointmentRepository, IAccountRepository accountRepository, EVServiceCenterContext context)
+        public StaffAppointmentService(IStaffAppointmentRepository appointmentRepository, IAccountRepository accountRepository, EVServiceCenterContext context, IEmailSender emailSender)
         {
             _appointmentRepository = appointmentRepository;
             _accountRepository = accountRepository;
             _context = context;
+            _emailSender = emailSender;
         }
 
         public async Task<IEnumerable<OrderService>> GetPendingAppointmentsAsync()
@@ -40,6 +43,46 @@ namespace EVCenterService.Service.Services
 
             appointment.Status = "Confirmed";
             await _appointmentRepository.UpdateAsync(appointment);
+        }
+
+        public async Task CancelAppointmentByStaffAsync(int orderId, string cancellationReason)
+        {
+            var appointment = await _context.OrderServices
+                                        .Include(o => o.User) // Tải thông tin User để lấy email
+                                        .FirstOrDefaultAsync(o => o.OrderId == orderId)
+                ?? throw new KeyNotFoundException("Không tìm thấy lịch hẹn.");
+
+            // Kiểm tra trạng thái cuối
+            if (appointment.Status == "Completed" || appointment.Status == "Cancelled")
+            {
+                throw new InvalidOperationException("Không thể hủy lịch hẹn đã hoàn thành hoặc đã bị hủy.");
+            }
+
+            // 1. Cập nhật trạng thái
+            appointment.Status = "Cancelled";
+
+            // 2. Giải phóng Slot (nếu có)
+            var slot = await _context.Slots.FirstOrDefaultAsync(s => s.OrderId == orderId);
+            if (slot != null)
+            {
+                _context.Slots.Remove(slot); // Xóa slot để KTV rảnh
+            }
+
+            // 3. Gửi Email thông báo (Sử dụng EmailSender.cs)
+            var customerEmail = appointment.User.Email;
+            var subject = $"Thông báo Hủy Lịch hẹn #{orderId}";
+            var message = $@"
+                <p>Chào {appointment.User.FullName},</p>
+                <p>Chúng tôi rất tiếc phải thông báo rằng lịch hẹn của bạn (Mã #{orderId}) vào lúc {appointment.AppointmentDate:dd/MM/yyyy HH:mm} đã bị hủy.</p>
+                <p>Lý do: {cancellationReason}</p>
+                <p>Chúng tôi thành thật xin lỗi vì sự bất tiện này. Vui lòng đặt lại lịch hẹn mới vào thời gian thuận tiện hơn.</p>
+                <p>Trân trọng,<br>Đội ngũ EV Service Center</p>";
+
+            // Không cần 'await' nếu bạn không cần biết kết quả
+            await _emailSender.SendEmailAsync(customerEmail, subject, message);
+
+            // 4. Lưu thay đổi
+            await _context.SaveChangesAsync();
         }
 
         public async Task RejectAppointmentAsync(int orderId)
@@ -73,6 +116,8 @@ namespace EVCenterService.Service.Services
             int totalDurationMinutes = appointment.OrderDetails.Sum(od => od.Service?.DurationMinutes ?? 0);
             DateTime startTime = appointment.AppointmentDate; // Lấy thời gian bắt đầu từ lịch hẹn
             DateTime endTime = startTime.AddMinutes(totalDurationMinutes);
+
+
 
             if (slot == null)
             {
