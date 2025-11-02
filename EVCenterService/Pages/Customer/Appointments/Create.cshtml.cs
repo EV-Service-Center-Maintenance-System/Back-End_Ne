@@ -15,11 +15,13 @@ namespace EVCenterService.Pages.Customer.Appointments
     {
         private readonly EVServiceCenterContext _context;
         private readonly ICustomerBookingService _bookingService;
+        private readonly IEmailSender _emailSender;
 
-        public CreateModel(EVServiceCenterContext context, ICustomerBookingService bookingService)
+        public CreateModel(EVServiceCenterContext context, ICustomerBookingService bookingService, IEmailSender emailSender)
         {
             _context = context;
             _bookingService = bookingService;
+            _emailSender = emailSender;
         }
 
         [BindProperty] public OrderService Booking { get; set; } = new();
@@ -200,6 +202,35 @@ namespace EVCenterService.Pages.Customer.Appointments
             }
 
             await _context.SaveChangesAsync();
+
+            try
+            {
+                // Lấy thông tin user (vì chúng ta chỉ có userId)
+                var userAccount = await _context.Accounts.FindAsync(userId);
+                if (userAccount != null)
+                {
+                    // Lấy tên các dịch vụ
+                    var serviceNames = string.Join(", ", services.Select(s => s.Name));
+                    var subject = "Xác nhận Đặt Lịch hẹn Mới (Chờ duyệt)";
+                    var message = $@"
+                        <p>Chào {userAccount.FullName},</p>
+                        <p>Chúng tôi đã nhận được yêu cầu đặt lịch hẹn của bạn:</p>
+                        <ul>
+                            <li><strong>Ngày giờ:</strong> {Booking.AppointmentDate:dd/MM/yyyy HH:mm}</li>
+                            <li><strong>Dịch vụ:</strong> {serviceNames}</li>
+                            <li><strong>Tổng chi phí (tạm tính):</strong> {Booking.TotalCost:N0} đ</li>
+                        </ul>
+                        <p>Lịch hẹn của bạn đang ở trạng thái <strong>Chờ duyệt</strong>. Chúng tôi sẽ liên hệ lại sớm.</p>
+                        <p>Trân trọng,<br>Đội ngũ EV Service Center</p>";
+
+                    await _emailSender.SendEmailAsync(userAccount.Email, subject, message);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Lỗi gửi mail đặt lịch: {ex.Message}");
+                // Không dừng lại nếu gửi mail lỗi, chỉ log
+            }
 
             TempData["Message"] = "Order Successfull! Please waiting to approve.";
             return RedirectToPage("/Customer/Appointments/Index");

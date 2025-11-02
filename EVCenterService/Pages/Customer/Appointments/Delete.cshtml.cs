@@ -16,13 +16,14 @@ namespace EVCenterService.Pages.Customer.Appointments
     public class DeleteModel : PageModel
     {
         private readonly EVServiceCenterContext _context;
-        // _bookingService không còn ???c dùng n?u ch? c?p nh?t Status, nh?ng ta c? gi? l?i
         private readonly ICustomerBookingService _bookingService;
+        private readonly IEmailSender _emailSender;
 
-        public DeleteModel(EVServiceCenterContext context, ICustomerBookingService bookingService)
+        public DeleteModel(EVServiceCenterContext context, ICustomerBookingService bookingService, IEmailSender emailSender)
         {
             _context = context;
             _bookingService = bookingService;
+            _emailSender = emailSender;
         }
 
         [BindProperty]
@@ -55,6 +56,9 @@ namespace EVCenterService.Pages.Customer.Appointments
             var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
             var booking = await _context.OrderServices
+                .Include(o => o.User) 
+                .Include(o => o.OrderDetails) 
+                    .ThenInclude(od => od.Service) 
                 .FirstOrDefaultAsync(o => o.OrderId == id && o.UserId == userId);
 
             if (booking == null) return NotFound();
@@ -74,6 +78,31 @@ namespace EVCenterService.Pages.Customer.Appointments
             _context.OrderServices.Update(booking);
 
             await _context.SaveChangesAsync();
+
+            try
+            {
+                if (booking.User != null)
+                {
+                    var serviceNames = string.Join(", ", booking.OrderDetails.Select(od => od.Service?.Name ?? "N/A"));
+                    var subject = $"Xác nh?n H?y L?ch h?n #{booking.OrderId}";
+                    var message = $@"
+                        <p>Chào {booking.User.FullName},</p>
+                        <p>Yêu c?u h?y l?ch h?n c?a b?n ?ã ???c xác nh?n:</p>
+                        <ul>
+                            <li><strong>Mã l?ch h?n:</strong> #{booking.OrderId}</li>
+                            <li><strong>Ngày gi?:</strong> {booking.AppointmentDate:dd/MM/yyyy HH:mm}</li>
+                            <li><strong>D?ch v?:</strong> {serviceNames}</li>
+                        </ul>
+                        <p>N?u b?n h?y nh?m, vui lòng liên h? chúng tôi ho?c ??t l?i l?ch h?n m?i.</p>
+                        <p>Trân tr?ng,<br>??i ng? EV Service Center</p>";
+
+                    await _emailSender.SendEmailAsync(booking.User.Email, subject, message);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"L?i g?i mail h?y l?ch: {ex.Message}");
+            }
 
             TempData["StatusMessage"] = "?ã h?y l?ch h?n thành công.";
             return RedirectToPage("Index");
