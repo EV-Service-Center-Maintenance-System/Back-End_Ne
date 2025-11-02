@@ -28,6 +28,7 @@ namespace EVCenterService.Pages.Customer.Appointments
 
         public SelectList VehicleList { get; set; }
         public List<ServiceCatalog> ServiceList { get; set; }
+        public bool IsEligibleForFreeInspection { get; set; }
 
         public async Task OnGetAsync()
         {
@@ -42,6 +43,31 @@ namespace EVCenterService.Pages.Customer.Appointments
                 .OrderBy(s => s.Name)
                 .AsNoTracking()
                 .ToListAsync();
+
+            // 1. Kiểm tra xem user có gói "active" không
+            var activeSubscription = await _context.Subscriptions
+                .FirstOrDefaultAsync(s => s.UserId == userId &&
+                                          s.Status == "active" &&
+                                          s.EndDate >= DateTime.Now); //
+
+            IsEligibleForFreeInspection = false;
+            if (activeSubscription != null)
+            {
+                // 2. Có gói. Kiểm tra xem đã dùng lần miễn phí tháng này chưa.
+                var startOfMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+
+                var alreadyUsedFreebie = await _context.OrderDetails
+                    .AnyAsync(od => od.ServiceId == 4 && // ServiceId = 4 là "General Inspection"
+                                    od.Order.UserId == userId &&
+                                    od.Order.AppointmentDate >= startOfMonth &&
+                                    od.UnitPrice == 0); // Đã được miễn phí
+
+                if (!alreadyUsedFreebie)
+                {
+                    // 3. ĐỦ ĐIỀU KIỆN MIỄN PHÍ
+                    IsEligibleForFreeInspection = true;
+                }
+            }
 
             Booking.AppointmentDate = DateTime.Now;
         }
@@ -77,6 +103,40 @@ namespace EVCenterService.Pages.Customer.Appointments
             var services = await _context.ServiceCatalogs
                 .Where(s => SelectedServiceIds.Contains(s.ServiceId))
                 .ToListAsync();
+
+            // ServiceId = 4 là "General Inspection" trong CSDL của bạn
+            var inspectionService = services.FirstOrDefault(s => s.ServiceId == 4);
+
+            if (inspectionService != null) // Kiểm tra xem khách có chọn dịch vụ này không
+            {
+                // 1. Kiểm tra xem user có gói "active" không
+                var activeSubscription = await _context.Subscriptions
+                    .FirstOrDefaultAsync(s => s.UserId == userId &&
+                                              s.Status == "active" &&
+                                              s.EndDate >= DateTime.Now); //
+
+                if (activeSubscription != null)
+                {
+                    // 2. Có gói. Kiểm tra xem đã dùng lần miễn phí tháng này chưa.
+                    var startOfMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+
+                    var alreadyUsedFreebie = await _context.OrderDetails
+                        .AnyAsync(od => od.ServiceId == 4 && // Là dịch vụ General Inspection
+                                        od.Order.UserId == userId && // Của user này
+                                        od.Order.AppointmentDate >= startOfMonth && // Trong tháng này
+                                        od.UnitPrice == 0); // Đã được miễn phí (giá 0)
+
+                    if (!alreadyUsedFreebie)
+                    {
+                        // 3. CHƯA DÙNG -> Áp dụng miễn phí
+                        inspectionService.BasePrice = 0;
+
+                        // Thêm ghi chú để Staff biết
+                        Booking.ChecklistNote = (Booking.ChecklistNote ?? "") +
+                                                "\n[Áp dụng miễn phí kiểm tra (Gói dịch vụ)]";
+                    }
+                }
+            }
 
             if (!services.Any())
             {

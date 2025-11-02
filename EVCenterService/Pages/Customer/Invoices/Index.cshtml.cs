@@ -32,12 +32,13 @@ namespace EVCenterService.Pages.Customer.Invoices
             }
 
             InvoiceList = await _context.Invoices
-                .Include(i => i.Order)       
-                    .ThenInclude(o => o.User) 
-                .Include(i => i.Order)      
-                    .ThenInclude(o => o.Vehicle) 
-                .Where(i => i.Order.UserId == userId) 
-                .OrderByDescending(i => i.IssueDate)   
+                .Include(i => i.Order)
+                    .ThenInclude(o => o.Vehicle)
+                .Include(i => i.Subscription) 
+                    .ThenInclude(s => s.Plan) 
+                .Where(i => (i.Order != null && i.Order.UserId == userId) ||
+                            (i.Subscription != null && i.Subscription.UserId == userId))
+                .OrderByDescending(i => i.IssueDate)
                 .ToListAsync();
 
             return Page();

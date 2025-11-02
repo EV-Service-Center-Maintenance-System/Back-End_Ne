@@ -14,12 +14,14 @@ namespace EVCenterService.Pages.Customer.Invoices
         private readonly IVnPayService _vnPayService;
         private readonly EVServiceCenterContext _context;
         private readonly IMemoryCache _memoryCache;
+        private readonly IEmailSender _emailSender;
 
-        public PaymentCallbackModel(IVnPayService vnPayService, EVServiceCenterContext context, IMemoryCache memoryCache)
+        public PaymentCallbackModel(IVnPayService vnPayService, EVServiceCenterContext context, IMemoryCache memoryCache, IEmailSender emailSender)
         {
             _vnPayService = vnPayService;
             _context = context;
             _memoryCache = memoryCache;
+            _emailSender = emailSender;
         }
 
         // OnGet vì VNPay tr? v? b?ng QueryString
@@ -57,18 +59,41 @@ namespace EVCenterService.Pages.Customer.Invoices
                     // Dùng invoiceId l?y t? cache ?? tìm hóa ??n
                     var invoice = await _context.Invoices
                         .Include(i => i.Order)
+                        .Include(i => i.Subscription)
+                            .ThenInclude(s => s.Plan)
+                        .Include(i => i.Subscription.User)
                         .FirstOrDefaultAsync(i => i.InvoiceId == invoiceId);
 
                     if (invoice != null && invoice.Status == "Unpaid")
                     {
                         invoice.Status = "Paid";
-                        if (invoice.Order != null)
+
+                        if (invoice.OrderId != null && invoice.Order != null)
                         {
+                            // === LOGIC C? (CHO D?CH V? S?A CH?A) ===
                             invoice.Order.Status = "ReadyForRepair";
+                            TempData["StatusMessage"] = $"Thanh toán thành công cho Hóa ??n D?ch V? #{invoiceId}.";
                         }
+                        else if (invoice.SubscriptionId != null && invoice.Subscription != null)
+                        {
+                            // === LOGIC M?I (CHO GÓI D?CH V?) ===
+                            invoice.Subscription.Status = "active";
+                            TempData["StatusMessage"] = $"??ng ký gói {invoice.Subscription.Plan.Name} thành công!";
+
+                            // G?I EMAIL C?M ?N
+                            var user = invoice.Subscription.User;
+                            var subject = "C?m ?n b?n ?ã ??ng ký gói d?ch v? EV Center";
+                            var message = $@"
+                            <p>Chào {user.FullName},</p>
+                            <p>C?m ?n b?n ?ã ??ng ký thành công gói <strong>{invoice.Subscription.Plan.Name}</strong>.</p>
+                            <p>Gói d?ch v? c?a b?n có hi?u l?c t? {invoice.Subscription.StartDate:dd/MM/yyyy} ??n {invoice.Subscription.EndDate:dd/MM/yyyy}.</V>
+                            <p>Trân tr?ng,<br>??i ng? EV Service Center</p>";
+
+                            await _emailSender.SendEmailAsync(user.Email, subject, message);
+                        }
+
                         await _context.SaveChangesAsync();
                         await transaction.CommitAsync();
-                        TempData["StatusMessage"] = $"Thanh toán thành công cho Hóa ??n #{invoiceId}.";
                     }
                     else if (invoice != null && invoice.Status == "Paid")
                     {

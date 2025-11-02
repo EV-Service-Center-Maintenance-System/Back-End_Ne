@@ -51,25 +51,35 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var (detail, index) in Model.Invoice.Order.OrderDetails.Select((v, i) => (v, i + 1)))
-                            {
-                                <tr>
-                                    <td>@index</td>
-                                    <td>
-                                        <strong>Dịch vụ:</strong> @detail.Service?.Name
-                                    </td>
-                                    <td class="text-end">@detail.UnitPrice?.ToString("N0")đ</td>
-                                </tr>
-                            }
 
-                            @foreach (var (part, index) in Model.Invoice.Order.PartsUseds.Select((v, i) => (v, i + 1 + Model.Invoice.Order.OrderDetails.Count)))
+                            @if (Model.Invoice.Order != null)
+                            {
+                                @foreach (var (detail, index) in Model.Invoice.Order.OrderDetails.Select((v, i) => (v, i + 1)))
+                                {
+                                    <tr>
+                                        <td>@index</td>
+                                        <td><strong>Dịch vụ:</strong> @detail.Service?.Name</td>
+                                        <td class="text-end">@detail.UnitPrice?.ToString("N0")đ</td>
+                                    </tr>
+                                }
+                                @foreach (var (part, index) in Model.Invoice.Order.PartsUseds.Select((v, i) => (v, i + 1 + Model.Invoice.Order.OrderDetails.Count)))
+                                {
+                                    <tr>
+                                        <td>@index</td>
+                                        <td><strong>Phụ tùng:</strong> @part.Part?.Name (SL: @part.Quantity)</td>
+                                        <td class="text-end">@((part.Part?.UnitPrice * part.Quantity)?.ToString("N0"))đ</td>
+                                    </tr>
+                                }
+                            }
+                            else if (Model.Invoice.Subscription != null)
                             {
                                 <tr>
-                                    <td>@index</td>
+                                    <td>1</td>
                                     <td>
-                                        <strong>Phụ tùng:</strong> @part.Part?.Name (SL: @part.Quantity)
+                                        <strong>Gói dịch vụ:</strong> @Model.Invoice.Subscription.Plan.Name
+                                        <small class="d-block text-muted">Thời hạn: @Model.Invoice.Subscription.Plan.DurationDays ngày</small>
                                     </td>
-                                    <td class="text-end">@((part.Part?.UnitPrice * part.Quantity)?.ToString("N0"))đ</td>
+                                    <td class="text-end">@Model.Invoice.Subscription.Plan.PriceVnd.ToString("N0")đ</td>
                                 </tr>
                             }
                         </tbody>

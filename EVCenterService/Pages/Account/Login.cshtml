@@ -24,8 +24,7 @@
                 </div>
 
                 <form method="post" asp-route-returnUrl="@Model.ReturnUrl">
-                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert" style="display: @(ModelState.Any(m => m.Key == string.Empty) ? "block" : "none");">
-                        @Html.ValidationMessage(string.Empty)
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert">
                     </div>
                     <div class="form-floating mb-3">
                         <input asp-for="Input.Email" class="form-control" placeholder="name@example.com" required />

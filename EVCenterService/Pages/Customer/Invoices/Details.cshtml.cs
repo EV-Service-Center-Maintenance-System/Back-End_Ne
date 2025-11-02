@@ -43,6 +43,8 @@ namespace EVCenterService.Pages.Customer.Invoices
                 .Include(i => i.Order)
                     .ThenInclude(o => o.PartsUseds)
                     .ThenInclude(pu => pu.Part)
+                .Include(i => i.Subscription)
+                    .ThenInclude(s => s.Plan)
                 .FirstOrDefaultAsync(i => i.InvoiceId == id);
 
             if (Invoice == null)
@@ -50,7 +52,13 @@ namespace EVCenterService.Pages.Customer.Invoices
                 return NotFound();
             }
 
-            if (Invoice.Order?.UserId.ToString() != userId)
+            var subscriptionUserId = await _context.Subscriptions
+                                .Where(s => s.SubscriptionId == Invoice.SubscriptionId)
+                                .Select(s => s.UserId)
+                                .FirstOrDefaultAsync();
+
+            if (Invoice.Order?.UserId.ToString() != userId &&
+                subscriptionUserId.ToString() != userId)
             {
                 return Forbid();
             }
