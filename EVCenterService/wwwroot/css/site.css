@@ -281,11 +281,7 @@ body.body-homepage-dark {
 /* ==           (DARK MODE CHUYÊN NGHI?P)         == */
 /* ============================================= */
 
-/* 1. Set n?n t?i cho toàn b? trang Admin */
-body.app-body {
-    background-color: #161b22 !important; /* N?n xám ?en (thay vì n?n tr?ng) */
-    color: #adb5bd; /* Màu ch? m?c ??nh (xám nh?t) */
-}
+
 
 /* 2. Ghi ?è Sidebar (t? tr?ng thành ?en) */
 .sidebar {
@@ -477,7 +473,7 @@ body.app-body {
     flex-direction: column; /* ??i thành layout c?t (header trên, content d??i) */
 }
 
-/* Style cho header m?i */
+/* Style cho header m?i */  
 .top-navbar {
     background-color: #0d1117; /* Màu n?n t?i */
     border-bottom: 1px solid #30363d; /* Vi?n m? */
@@ -486,8 +482,12 @@ body.app-body {
 }
 
 .top-logo {
-    height: 36px;
-    width: auto;
+    height: 44px; 
+    width: 44px; 
+    border-radius: 50%;
+    object-fit: cover;
+    position: relative; 
+    top: 2px;
 }
 
 /* ======================================================= */
@@ -602,3 +602,310 @@ body.app-body {
     animation: gradient-flow 15s ease infinite;
     border: 1px solid #30363d; /* Giữ viền cũ */
 }
+
+/* ======================================================= */
+/* == STYLE TRANG LOGIN & REGISTER (NÂNG CẤP) == */
+/* ======================================================= */
+
+/* 1. Nền (Giống trang chủ) & Font chữ */
+body.body-account {
+    background-image: url('../images/why-choose-us-bg.jpg'); /* Nền cát đen */
+    background-color: #1c2128;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed; /* Cố định nền khi cuộn */
+    font-family: 'Segoe UI', sans-serif; /* Font sạch sẽ hơn */
+    overflow: hidden; /* Tránh thanh cuộn khi load animation */
+}
+
+/* 2. Hiệu ứng động (Fade-in và trượt lên) */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 3. Style cho Card (Hiệu ứng "Kính mờ" - Frosted Glass) */
+.account-card {
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    /* Hiệu ứng kính mờ */
+    background-color: rgba(13, 17, 23, 0.85); /* Màu nền đen mờ 85% */
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+    border-radius: 1rem; /* Giữ bo góc cũ */
+    /* Áp dụng hiệu ứng động */
+    animation: fadeInUp 0.8s ease-out;
+}
+
+/* 4. Style cho Logo (Logo tròn mới) */
+.account-logo {
+    height: 110px; 
+    width: 110px;
+    border-radius: 50%;
+    margin-bottom: 1rem;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    object-fit: cover;
+}
+
+/* 5. Style cho Chữ (Tiêu đề, text) */
+.account-card h2 {
+    color: #ffffff;
+}
+
+.account-card p,
+.account-card .text-secondary,
+.account-card .small {
+    color: #adb5bd !important; /* Màu xám nhạt */
+}
+
+/* 6. Style cho Form (Ô nhập liệu) */
+.account-card .form-floating > .form-control {
+    background-color: rgba(255, 255, 255, 0.05); /* Nền ô input siêu mờ */
+    color: #ffffff; /* Chữ gõ màu trắng */
+    border-color: rgba(255, 255, 255, 0.2); /* Viền mờ */
+    border-radius: 0.5rem;
+}
+
+.account-card .form-floating > label {
+    color: #adb5bd; /* Chữ "Email", "Password" */
+}
+
+/* Hiệu ứng "Glow" (Phát sáng) khi focus */
+.account-card .form-control:focus {
+    background-color: rgba(255, 255, 255, 0.1);
+    /* Dùng màu cyan/blue của theme */
+    border-color: var(--primary-color, #0d6efd);
+    box-shadow: 0 0 15px rgba(13, 110, 253, 0.3);
+}
+
+/* 7. Style cho Nút bấm (Tương tác) */
+.account-card .btn-primary {
+    font-weight: 600;
+    padding: 0.75rem; /* Nút to, rõ ràng hơn */
+    border-radius: 0.5rem;
+    /* Thêm hiệu ứng chuyển động */
+    transition: all 0.3s ease;
+}
+
+    .account-card .btn-primary:hover {
+        transform: translateY(-3px); /* Nhấc nút lên khi hover */
+        box-shadow: 0 5px 15px rgba(13, 110, 253, 0.4);
+    }
+
+/* Nút Google */
+.account-card .btn-outline-secondary {
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.3);
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+    .account-card .btn-outline-secondary:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.5);
+        transform: translateY(-3px);
+    }
+
+/* 8. Style cho link (Đăng ký/Đăng nhập) */
+.account-card a {
+    color: var(--primary-color, #0d6efd);
+    transition: color 0.2s ease;
+}
+
+    .account-card a:hover {
+        color: #4da3ff; /* Sáng hơn khi hover */
+    }
+
+/* ======================================================= */
+/* == NÂNG CẤP GIAO DIỆN APP (GLASSMORPHISM) == */
+/* ======================================================= */
+
+/* 1. Thêm nền "cát đen" cho body để hiệu ứng kính mờ hoạt động */
+body.app-body {
+    background-image: url('../images/dark-sand-bg.jpg') !important;
+    background-color: #0d1117 !important;
+    background-size: cover !important;
+    background-position: center !important;
+    background-attachment: fixed !important; /* QUAN TRỌNG: Cố định nền */
+    color: #adb5bd;
+}
+
+/* 2. Biến .data-card thành "Kính mờ" (bo cong + glass) */
+.card.data-card,
+.main-content > form.card { /* Áp dụng cho cả form ở trang Create */
+    /* Hiệu ứng Kính mờ */
+    background: rgba(13, 17, 23, 0.85); /* Nền đen mờ 85% */
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    /* Hiệu ứng Bo cong (iOS) */
+    border-radius: 1.25rem; /* Bo cong nhiều hơn */
+    border: 1px solid rgba(255, 255, 255, 0.15); /* Viền mờ */
+
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* 3. Làm cho Form (Input, Select) cũng "Kính mờ" */
+.main-content .form-control,
+.main-content .form-select {
+    background-color: rgba(255, 255, 255, 0.05); /* Nền siêu mờ */
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 0.5rem; /* Bo cong nhẹ */
+}
+
+    .main-content .form-control::placeholder {
+        color: #8b949e;
+    }
+
+    /* Hiệu ứng "Glow" khi focus (Giữ nguyên) */
+    .main-content .form-control:focus,
+    .main-content .form-select:focus {
+        background-color: rgba(255, 255, 255, 0.1);
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.2);
+    }
+
+/* 4. Sửa Checkbox (bỏ nền trắng) */
+.main-content .form-check-input {
+    background-color: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+    .main-content .form-check-input:checked {
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+    }
+
+/* ======================================================= */
+/* == NÂNG CẤP TOM-SELECT (DROPDOWN XỊN - KÍNH MỜ) == */
+/* ======================================================= */
+
+/* 1. Hộp (Control) lúc chưa bấm */
+.main-content .ts-wrapper .ts-control {
+    /* Áp dụng style "kính mờ" */
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.25) !important;
+    border-radius: 0.5rem !important; /* Bo cong */
+    box-shadow: none !important; /* Tắt shadow mặc định */
+    padding: 0.55rem 0.75rem !important;
+}
+
+/* 2. Hộp lúc đang focus (thêm "glow") */
+.main-content .ts-wrapper.focus .ts-control {
+    border-color: #0d6efd !important;
+    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.2) !important;
+}
+
+/* 3. Chữ bên trong (màu trắng) */
+.main-content .ts-wrapper .ts-control .item,
+.main-content .ts-wrapper .ts-control .ts-placeholder {
+    color: #ffffff !important;
+}
+
+/* 4. Danh sách thả xuống (Dropdown Menu) - ĐÂY LÀ PHẦN QUAN TRỌNG */
+.main-content .ts-wrapper .ts-dropdown {
+    /* Áp dụng "Kính mờ" (Glassmorphism) */
+    background: rgba(13, 17, 23, 0.95) !important; /* Nền đen mờ 95% */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    /* Bo cong (iOS style) */
+    border-radius: 0.75rem !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    margin-top: 0.25rem;
+}
+
+    /* 5. Các lựa chọn (Option) bên trong */
+    .main-content .ts-wrapper .ts-dropdown .option {
+        color: #adb5bd; /* Chữ xám */
+        padding: 0.5rem 0.75rem;
+    }
+
+        /* 6. Hiệu ứng Hover/Active (màu xanh) */
+        .main-content .ts-wrapper .ts-dropdown .option:hover,
+        .main-content .ts-wrapper .ts-dropdown .active {
+            background-color: #0d6efd !important;
+            color: #ffffff !important;
+        }
+
+/* ======================================================= */
+/* == NÂNG CẤP BẢNG (TABLE) & BADGE (TRANG INDEX) == */
+/* ======================================================= */
+
+/* 1. Ghi đè .table-custom để đồng bộ dark mode */
+.main-content .table-custom {
+    border-color: #30363d !important; /* Viền mờ */
+    margin-bottom: 0; /* Bỏ margin cuối bảng */
+}
+
+    /* 2. Tiêu đề cột (Header) */
+    .main-content .table-custom thead th {
+        color: #8b949e; /* Màu xám, thay vì trắng */
+        font-weight: 500;
+        text-transform: uppercase; /* Chữ hoa */
+        font-size: 0.75rem; /* Nhỏ hơn */
+        letter-spacing: 0.5px;
+        border-bottom-width: 1px !important;
+        border-color: #30363d !important;
+    }
+
+    /* 3. Nội dung hàng (Row) */
+    .main-content .table-custom tbody td {
+        color: #adb5bd; /* Màu chữ nội dung (xám nhạt) */
+        vertical-align: middle;
+        border-color: #30363d !important;
+    }
+
+        /* 4. Chữ "Testla" (in đậm) */
+        .main-content .table-custom tbody td .fw-bold {
+            color: #f0f6fc !important; /* Màu trắng sáng */
+        }
+
+    /* 5. Hiệu ứng Hover (chĩa vào) */
+    .main-content .table-custom.table-hover tbody tr:hover {
+        background-color: rgba(255, 255, 255, 0.03) !important;
+    }
+
+/* 6. Nâng cấp BADGE TRẠNG THÁI (Tinh tế hơn) */
+.badge-custom {
+    padding: 0.4em 0.75em;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+}
+    /* Trạng thái Chờ (Pending) */
+    .badge-custom.bg-warning {
+        background-color: rgba(255, 193, 7, 0.1) !important;
+        color: #ffc107 !important;
+    }
+    /* Trạng thái Thành công (Completed) */
+    .badge-custom.bg-success {
+        background-color: rgba(25, 135, 84, 0.1) !important;
+        color: #198754 !important;
+    }
+    /* Trạng thái Hủy (Cancelled) */
+    .badge-custom.bg-danger {
+        background-color: rgba(220, 53, 69, 0.1) !important;
+        color: #dc3545 !important;
+    }
+    /* Các trạng thái khác (Inprogress) */
+    .badge-custom.bg-info {
+        background-color: rgba(13, 202, 240, 0.1) !important;
+        color: #0dcaf0 !important;
+    }
+    /* Đã đánh giá (Active) */
+    .badge-custom.badge-active {
+        background-color: rgba(25, 135, 84, 0.1) !important;
+        color: #198754 !important;
+        padding: 0.4em 0.75em;
+        font-size: 0.7rem;
+        font-weight: 600;
+    }

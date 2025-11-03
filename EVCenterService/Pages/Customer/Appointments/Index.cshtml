@@ -10,7 +10,7 @@
         <h1>@ViewData["Title"]</h1>
         <p class="lead mb-0 text-muted">Theo dõi trạng thái các cuộc hẹn và lịch sử dịch vụ của bạn.</p>
     </div>
-    <a asp-page="Create" class="btn btn-add-new" style="background-color: var(--primary-color); color: var(--text-dark);">
+    <a asp-page="Create" class="btn btn-primary">
         <i class="bi bi-plus-lg me-2"></i> Đặt lịch hẹn mới
     </a>
 </div>
@@ -25,7 +25,7 @@
 }
 
 
-<div class="card data-card border-0 mt-4">
+<div class="card data-card mt-4">
     <div class="card-body">
         @if (Model.Bookings == null || !Model.Bookings.Any())
         {
@@ -34,7 +34,7 @@
         else
         {
             <div class="table-responsive">
-                <table class="table table-borderless table-custom">
+                <table class="table table-hover table-custom">
                     <thead>
                         <tr>
                             <th>Xe</th>
@@ -92,8 +92,8 @@
                                     }
                                     else if (order.Status?.Equals("Pending", StringComparison.OrdinalIgnoreCase) == true)
                                     {
-                                        <a asp-page="Edit" asp-route-id="@order.OrderId" class="btn action-btn" title="Sửa"><i class="bi bi-pencil-square"></i></a>
-                                        <a asp-page="Delete" asp-route-id="@order.OrderId" class="btn action-btn" title="Hủy"><i class="bi bi-trash-fill"></i></a>
+                                        <a asp-page="Edit" asp-route-id="@order.OrderId" class="btn btn-sm btn-secondary" title="Sửa"><i class="bi bi-pencil-square"></i></a>
+                                        <a asp-page="Delete" asp-route-id="@order.OrderId" class="btn btn-sm btn-danger" title="Hủy"><i class="bi bi-trash-fill"></i></a>
                                     }
                                 </td>
                             </tr>

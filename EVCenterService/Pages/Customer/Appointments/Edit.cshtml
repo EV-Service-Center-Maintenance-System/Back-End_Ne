@@ -1,18 +1,19 @@
 ﻿@page
 @model EVCenterService.Pages.Customer.Appointments.EditModel
 @{
-	Layout = "_AppLayout";
+    Layout = "_CustomerLayout";
 	ViewData["Title"] = "Update Order";
 }
-<h2 class="mb-3">Update</h2>
+<div class="page-header">
+    <h1 class="mb-0">Chỉnh sửa Lịch hẹn</h1>
+</div>
 
-<form method="post" class="card p-4 shadow-sm bg-light">
+<form method="post" class="card data-card p-4 mt-4">
 
     <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
     <div class="form-group mb-3">
         <label class="fw-bold">Chọn xe:</label>
-        <select asp-for="Booking.VehicleId" asp-items="Model.VehicleList" class="form-control" required>
-            <option value="">-- Chọn xe của bạn --</option>
+        <select id="select-vehicle-edit" asp-for="Booking.VehicleId" asp-items="Model.VehicleList" class="form-select" required>
         </select>
     </div>
 
@@ -72,7 +73,7 @@
     </div>
 
     <div class="mt-3">
-        <button type="submit" class="btn btn-success">Cập nhật</button>
+        <button type="submit" class="btn btn-primary">Cập nhật</button>
         <a asp-page="Index" class="btn btn-secondary ms-2">Hủy</a>
     </div>
 </form>
@@ -83,6 +84,11 @@
             const checkboxes = document.querySelectorAll(".service-checkbox");
             const totalPriceInput = document.getElementById("totalPrice");
             const priceSection = document.getElementById("priceSection");
+
+            new TomSelect('#select-vehicle-edit', {
+                placeholder: '-- Chọn xe của bạn --',
+                create: false
+            });
 
             function updateTotal() {
                 let total = 0;
