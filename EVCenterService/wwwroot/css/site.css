@@ -1,71 +1,77 @@
-/* ======================================================= */
+Ôªø/* ======================================================= */
 /* == CSS CHO HOMEPAGE (DARK THEME) == */
 /* ======================================================= */
 
 /*
- * ¡p d?ng n?n x·m ?en (Solid Color) tr?c ti?p lÍn BODY
- * khi nÛ cÛ class .body-homepage-dark
+ * √Åp d?ng n?n x√°m ?en (Solid Color) tr?c ti?p l√™n BODY
+ * khi n√≥ c√≥ class .body-homepage-dark
 */
-/* 1. S?A N?N BODY: ¡p d?ng ?nh "c·t ?en" l‡m n?n chÌnh cho to‡n trang ch? */
+/* 1. S?A N?N BODY: √Åp d?ng ?nh "c√°t ?en" l√†m n?n ch√≠nh cho to√†n trang ch? */
 body.body-homepage-dark {
-    /* (H„y ch?c ch?n b?n ?„ l?u ?nh "c·t ?en" v?i tÍn dark-sand-bg.jpg) */
+    /* (H√£y ch?c ch?n b?n ?√£ l?u ?nh "c√°t ?en" v?i t√™n dark-sand-bg.jpg) */
     background-image: url('../images/dark-sand-bg.jpg') !important;
-    background-color: #22272e !important; /* M‡u d? phÚng */
-    /* C·c thu?c tÌnh quan tr?ng ?? ?nh n?n "??ng yÍn" */
+    background-color: #22272e !important; /* M√†u d? ph√≤ng */
+    /* C√°c thu?c t√≠nh quan tr?ng ?? ?nh n?n "??ng y√™n" */
     background-size: cover !important;
     background-position: center !important;
     background-repeat: no-repeat !important;
     background-attachment: scroll !important;
 }
 
-.header-logo, .footer-logo {
+.footer-logo {
     height: 32px;
     width: auto;
     border-radius: 6px;
     margin-right: 8px;
 }
 
-/* 1. L?p wrapper (GI? CH? C“N T¡C D?NG SET M¿U CH?) */
+.header-logo {
+    height: 56px; 
+    width: 56px; 
+    border-radius: 50%;
+    margin-right: 10px;
+    object-fit: cover;
+    position: relative; 
+    top: 4px; 
+}
+
+/* 1. L?p wrapper (GI? CH? C√íN T√ÅC D?NG SET M√ÄU CH?) */
 .homepage-dark-wrapper {
-    /* N?n ?„ ???c chuy?n lÍn body, ? ?‚y ch? c?n gi? m‡u ch? */
+    /* N?n ?√£ ???c chuy?n l√™n body, ? ?√¢y ch? c?n gi? m√†u ch? */
     color: var(--text-light);
 }
 
-/* 2. ?i?u ch?nh c·c section cho n?n t?i */
+/* 2. ?i?u ch?nh c√°c section cho n?n t?i */
 
 /* Hero Section (Ph?n gi?i thi?u ??u) */
 .hero-section-dark {
-    padding-top: 8rem; /* Gi? padding c? */
+    padding-top: 0.25rem;
     padding-bottom: 6rem;
-    /* * S?A: ThÍm ?nh n?n s?c chÈo v‡o khu v?c n‡y 
-     * (H„y ch?c ch?n b?n ?„ l?u ?nh v?i tÍn hero-stripes-bg.jpg)
-    */
     background-image: url('../images/hero-stripes-bg.jpg');
-    background-size: cover; /* Ph? kÌn */
-    background-position: center; /* C?n gi?a */
-    background-repeat: no-repeat; /* KhÙng l?p l?i */
-    /* M‡u ?en d? phÚng n?u ?nh khÙng t?i ???c */
+    background-size: cover; 
+    background-position: center; 
+    background-repeat: no-repeat;
     background-color: #121212;
 }
 
     .hero-section-dark h1 {
-        color: #ffffff; /* Ch? tiÍu ?? tr?ng */
+        color: #ffffff; /* Ch? ti√™u ?? tr?ng */
     }
 
-        /* Ch? "?i?n" m‡u xanh cyan n?i b?t nh? trong ?nh m?u */
+        /* Ch? "?i?n" m√†u xanh cyan n?i b?t nh? trong ?nh m?u */
         .hero-section-dark h1 span {
-            color: #00e5ff; /* M‡u cyan */
+            color: #00e5ff; /* M√†u cyan */
         }
 
     .hero-section-dark p.lead {
-        color: #adb5bd; /* Ch? mÙ t? m‡u x·m nh?t */
+        color: #adb5bd; /* Ch? m√¥ t? m√†u x√°m nh?t */
     }
 
-    /* N˙t "TÏm hi?u thÍm" (secondary) */
+    /* N√∫t "T√¨m hi?u th√™m" (secondary) */
     .hero-section-dark .btn-secondary {
         background-color: transparent;
-        border-color: #00e5ff; /* Vi?n m‡u cyan */
-        color: #00e5ff; /* Ch? m‡u cyan */
+        border-color: #00e5ff; /* Vi?n m√†u cyan */
+        color: #00e5ff; /* Ch? m√†u cyan */
         border-radius: 0.5rem;
     }
 
@@ -77,14 +83,11 @@ body.body-homepage-dark {
 
 /* Services Section (Ph?n d?ch v?) */
 .services-section-dark {
-    /* S?A: ThÍm ?nh n?n spotlight v‡o khu v?c "D?ch v?" */
-    background-image: url('../images/services-spotlight-bg.jpg');
+    background-image: url('../images/services-spotlight-bg.jpeg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    /* M‡u ?en d? phÚng n?u ?nh khÙng t?i ???c */
     background-color: #121212;
-    /* Gi? padding c? */
     padding-top: 4rem;
     padding-bottom: 4rem;
 }
@@ -98,7 +101,7 @@ body.body-homepage-dark {
         color: #adb5bd !important;
     }
 
-    /* Icon d?ch v? (gi?ng m‡u cyan trong ?nh) */
+    /* Icon d?ch v? (gi?ng m√†u cyan trong ?nh) */
     .services-section-dark .feature-icon {
         display: inline-flex;
         align-items: center;
@@ -107,7 +110,7 @@ body.body-homepage-dark {
         height: 4rem;
         border-radius: 0.75rem;
         background-color: rgba(0, 229, 255, 0.1); /* N?n m? cyan */
-        color: #00e5ff; /* M‡u icon cyan */
+        color: #00e5ff; /* M√†u icon cyan */
         font-size: 2rem;
         margin-bottom: 1rem;
     }
@@ -121,29 +124,29 @@ body.body-homepage-dark {
     }
 
     /* * 3. B?O T?N HI?U ?NG "N?Y N?Y" (HOVER CARD) CHO DARK THEME
- * ?‚y l‡ ph?n b?n yÍu c?u gi? l?i:
+ * ?√¢y l√† ph?n b?n y√™u c?u gi? l?i:
 */
     .services-section-dark .col > div {
         transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
-        padding: 2rem; /* T?ng padding cho tho·ng */
+        padding: 2rem; /* T?ng padding cho tho√°ng */
         border-radius: 0.75rem;
         height: 100%;
-        /* S?A: B? vi?n c?, d˘ng n?n v‡ bÛng ?? */
+        /* S?A: B? vi?n c?, d√πng n?n v√† b√≥ng ?? */
         border: none;
-        /* S?A: D˘ng m‡u n?n c?a body (#22272e) ?? nÛ "n?i" trÍn n?n section (#1c2128) */
+        /* S?A: D√πng m√†u n?n c?a body (#22272e) ?? n√≥ "n?i" tr√™n n?n section (#1c2128) */
         background-color: #22272e;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* ThÍm bÛng ?? */
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Th√™m b√≥ng ?? */
     }
 
         .services-section-dark .col > div:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-            background-color: #30363d; /* ??i m‡u n?n khi hover */
+            background-color: #30363d; /* ??i m√†u n?n khi hover */
         }
 
 /* Why Choose Us Section */
 .why-choose-us-dark {
-    /* S?A: L‡m trong su?t ?? th?y n?n "c·t" c?a body */
+    /* S?A: L√†m trong su?t ?? th?y n?n "c√°t" c?a body */
     background: transparent;
 }
 
@@ -159,9 +162,9 @@ body.body-homepage-dark {
         color: #adb5bd; /* Ch? c?a list item */
     }
 
-        /* D˘ng m‡u cyan cho icon check */
+        /* D√πng m√†u cyan cho icon check */
         .why-choose-us-dark .list-unstyled li i {
-            color: #00e5ff !important; /* D˘ng !important ?? ghi ?Ë style inline c? */
+            color: #00e5ff !important; /* D√πng !important ?? ghi ?√® style inline c? */
         }
 
 /* Final CTA Section */
@@ -170,7 +173,7 @@ body.body-homepage-dark {
 }
 
     .final-cta-dark .rounded-3 {
-        /* S?A: D˘ng m‡u n?n c?a section, thÍm !important */
+        /* S?A: D√πng m√†u n?n c?a section, th√™m !important */
         background-color: #1c2128 !important;
         border: 1px solid #30363d !important;
     }
@@ -180,7 +183,7 @@ body.body-homepage-dark {
     }
 
     .final-cta-dark p {
-        /* S?A: ??m b?o ch? mÙ t? cÛ m‡u x·m nh?t */
+        /* S?A: ??m b?o ch? m√¥ t? c√≥ m√†u x√°m nh?t */
         color: #adb5bd !important;
     }
 
@@ -190,55 +193,56 @@ body.body-homepage-dark {
 /* ======================================================= */
 
 .public-header-dark {
-    /* S?A: D˘ng n?n tr?ng m? 10% (trong su?t h?n) */
+    /* S?A: D√πng n?n tr?ng m? 10% (trong su?t h?n) */
     background-color: rgba(255, 255, 255, 0.1) !important;
-    /* Gi? hi?u ?ng blur (kÌnh m?) */
+    /* Gi? hi?u ?ng blur (k√≠nh m?) */
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
-    /* S?A: ThÍm vi?n tr?ng m? ?? header n?i b?t h?n */
+    /* S?A: Th√™m vi?n tr?ng m? ?? header n?i b?t h?n */
     border: 1px solid rgba(255, 255, 255, 0.15);
-    /* Gi? c·c style layout c?a b?n */
+    /* Gi? c√°c style layout c?a b?n */
     border-radius: 99px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* T?ng nh? bÛng ?? cho d? th?y */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* T?ng nh? b√≥ng ?? cho d? th?y */
     max-width: 1320px;
-    margin: 1rem auto;
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
+    margin: 0.5rem auto;
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
     position: sticky;
-    top: 1rem;
+    top: 0.5rem;
     z-index: 1020;
 }
 
-    /* S?A: ??i m‡u ch? tÍn brand (EV Service Center) th‡nh TR?NG */
+    /* S?A: ??i m√†u ch? t√™n brand (EV Service Center) th√†nh TR?NG */
     .public-header-dark .navbar-brand span {
         color: #ffffff;
         font-weight: 700;
+        font-size: 1.4rem;
     }
 
-    /* C?n gi?a c·c link chÌnh (Gi? nguyÍn) */
+    /* C?n gi?a c√°c link ch√≠nh (Gi? nguy√™n) */
     .public-header-dark .navbar-nav.main-nav {
         margin-left: auto;
         margin-right: auto;
     }
 
-    /* S?A: ??i m‡u link nav m?c ??nh th‡nh TR?NG M? (?? ??c ???c) */
+    /* S?A: ??i m√†u link nav m?c ??nh th√†nh TR?NG M? (?? ??c ???c) */
     .public-header-dark .navbar-nav .nav-link {
-        color: rgba(255, 255, 255, 0.7); /* Thay vÏ var(--text-muted) */
+        color: rgba(255, 255, 255, 0.7); /* Thay v√¨ var(--text-muted) */
         font-weight: 500;
         padding-left: 1.2rem;
         padding-right: 1.2rem;
         transition: color 0.2s ease-in-out;
     }
 
-        /* Gi? m‡u v‡ng cam khi active/hover (n?u b?n cÛ ??nh ngh?a var) */
+        /* Gi? m√†u v√†ng cam khi active/hover (n?u b?n c√≥ ??nh ngh?a var) */
         .public-header-dark .navbar-nav .nav-link:hover,
         .public-header-dark .navbar-nav .nav-link.active {
             color: var(--secondary-color);
-            /* N?u m‡u v‡ng cam khÙng ??p, b?n cÛ th? ??i th‡nh m‡u tr?ng s·ng: */
+            /* N?u m√†u v√†ng cam kh√¥ng ??p, b?n c√≥ th? ??i th√†nh m√†u tr?ng s√°ng: */
             /* color: #ffffff; */
         }
 
-    /* Style cho n˙t Login / Register */
+    /* Style cho n√∫t Login / Register */
     .public-header-dark .auth-buttons .btn {
         border-radius: 99px;
         padding: 0.5rem 1.5rem;
@@ -247,7 +251,7 @@ body.body-homepage-dark {
         border: 2px solid transparent;
     }
 
-    /* S?A: N˙t Login vi?n tr?ng m?, ch? tr?ng */
+    /* S?A: N√∫t Login vi?n tr?ng m?, ch? tr?ng */
     .public-header-dark .auth-buttons .btn-login {
         background-color: transparent; /* N?n trong su?t */
         border-color: rgba(255, 255, 255, 0.5); /* Vi?n tr?ng m? */
@@ -256,14 +260,14 @@ body.body-homepage-dark {
 
         .public-header-dark .auth-buttons .btn-login:hover {
             background-color: rgba(255, 255, 255, 0.1); /* N?n tr?ng m? nh? khi hover */
-            border-color: #ffffff; /* Vi?n tr?ng rı khi hover */
+            border-color: #ffffff; /* Vi?n tr?ng r√µ khi hover */
         }
 
-    /* N˙t Register (m‡u v‡ng cam) ?„ n?i r?i, gi? nguyÍn */
+    /* N√∫t Register (m√†u v√†ng cam) ?√£ n?i r?i, gi? nguy√™n */
     .public-header-dark .auth-buttons .btn-register {
         background-color: var(--secondary-color);
         border-color: var(--secondary-color);
-        color: var(--text-dark); /* Ch? ?en trÍn n?n v‡ng l‡ OK */
+        color: var(--text-dark); /* Ch? ?en tr√™n n?n v√†ng l√† OK */
     }
 
         .public-header-dark .auth-buttons .btn-register:hover {
@@ -274,24 +278,24 @@ body.body-homepage-dark {
 
 /* ============================================= */
 /* == CSS CHO ADMIN LAYOUT (_AppLayout.cshtml) == */
-/* ==           (DARK MODE CHUY N NGHI?P)         == */
+/* ==           (DARK MODE CHUY√äN NGHI?P)         == */
 /* ============================================= */
 
-/* 1. Set n?n t?i cho to‡n b? trang Admin */
+/* 1. Set n?n t?i cho to√†n b? trang Admin */
 body.app-body {
-    background-color: #161b22 !important; /* N?n x·m ?en (thay vÏ n?n tr?ng) */
-    color: #adb5bd; /* M‡u ch? m?c ??nh (x·m nh?t) */
+    background-color: #161b22 !important; /* N?n x√°m ?en (thay v√¨ n?n tr?ng) */
+    color: #adb5bd; /* M√†u ch? m?c ??nh (x√°m nh?t) */
 }
 
-/* 2. Ghi ?Ë Sidebar (t? tr?ng th‡nh ?en) */
+/* 2. Ghi ?√® Sidebar (t? tr?ng th√†nh ?en) */
 .sidebar {
     background-color: #0d1117; /* N?n sidebar ?en k?t */
-    border-right: 1px solid #30363d; /* Vi?n ng?n c·ch m? */
+    border-right: 1px solid #30363d; /* Vi?n ng?n c√°ch m? */
 }
 
 /* 3. Header c?a Sidebar */
 .sidebar-header {
-    border-bottom: 1px solid #30363d; /* Vi?n ch‚n header m? */
+    border-bottom: 1px solid #30363d; /* Vi?n ch√¢n header m? */
     padding: 1.25rem 1rem;
 }
 
@@ -301,21 +305,21 @@ body.app-body {
     width: auto;
 }
 
-/* 5. Ghi ?Ë c·c link trong Sidebar (t? ?en/x·m th‡nh tr?ng) */
+/* 5. Ghi ?√® c√°c link trong Sidebar (t? ?en/x√°m th√†nh tr?ng) */
 .sidebar-nav .nav-link {
-    color: #c9d1d9; /* M‡u ch? link (tr?ng m?) */
+    color: #c9d1d9; /* M√†u ch? link (tr?ng m?) */
     border-left-color: transparent !important;
     padding: 0.75rem 1.5rem;
 }
 
     .sidebar-nav .nav-link i {
-        color: #8b949e; /* M‡u icon (x·m) */
+        color: #8b949e; /* M√†u icon (x√°m) */
         margin-right: 0.75rem;
         font-size: 1rem;
         width: 20px;
     }
 
-    /* 6. Style khi Hover v‡ Active */
+    /* 6. Style khi Hover v√† Active */
     .sidebar-nav .nav-link:hover {
         color: #ffffff;
         background-color: #22272e; /* N?n khi hover */
@@ -324,27 +328,27 @@ body.app-body {
     .sidebar-nav .nav-link.active {
         color: #ffffff;
         font-weight: 600;
-        background-color: #1f6feb; /* M‡u xanh active */
+        background-color: #1f6feb; /* M√†u xanh active */
         border-left-color: #1f6feb !important;
     }
 
         .sidebar-nav .nav-link.active i {
-            color: #ffffff; /* Icon active m‡u tr?ng */
+            color: #ffffff; /* Icon active m√†u tr?ng */
         }
 
-/* 7. Khu v?c n?i dung chÌnh (Dashboard) */
+/* 7. Khu v?c n?i dung ch√≠nh (Dashboard) */
 .main-content {
-    background-color: #161b22; /* ??ng b? n?n x·m ?en */
+    background-color: #161b22; /* ??ng b? n?n x√°m ?en */
     padding: 2rem;
 }
 
-    /* 8. Style ch? (h1, p) trong n?i dung chÌnh */
+    /* 8. Style ch? (h1, p) trong n?i dung ch√≠nh */
     .main-content h1, .main-content h2, .main-content h5 {
-        color: #f0f6fc; /* Ch? tiÍu ?? m‡u tr?ng */
+        color: #f0f6fc; /* Ch? ti√™u ?? m√†u tr?ng */
     }
 
     .main-content p, .main-content .text-muted {
-        color: #8b949e !important; /* Ch? mÙ t? (x·m) */
+        color: #8b949e !important; /* Ch? m√¥ t? (x√°m) */
     }
 
     /* 9. Style cho Card (Dark Mode) */
@@ -362,7 +366,7 @@ body.app-body {
 
     /* 10. Style cho B?ng (Dark Mode) */
     .main-content .table {
-        color: #f0f6fc; /* Ch? trong b?ng m‡u tr?ng */
+        color: #f0f6fc; /* Ch? trong b?ng m√†u tr?ng */
     }
 
         .main-content .table thead th {
@@ -375,15 +379,15 @@ body.app-body {
         }
 
     .main-content .table-hover tbody tr:hover {
-        background-color: #161b22; /* M‡u khi hover v‡o h‡ng */
+        background-color: #161b22; /* M√†u khi hover v√†o h√†ng */
     }
 
-    /* 11. S?a c·c chi ti?t nh? */
+    /* 11. S?a c√°c chi ti?t nh? */
     /* (N?n icon "New Appointments") */
     .main-content .bg-light {
         background-color: #22272e !important;
     }
-    /* (N˙t "Details" trong b?ng) */
+    /* (N√∫t "Details" trong b?ng) */
     .main-content .btn-light {
         background-color: #22272e;
         border-color: #30363d;
@@ -397,39 +401,39 @@ body.app-body {
         }
 
 /* ============================================= */
-/* == S?A L?I B? C?C ADMIN (FIX SIDEBAR V¿ CONTENT) == */
+/* == S?A L?I B? C?C ADMIN (FIX SIDEBAR V√Ä CONTENT) == */
 /* ============================================= */
 
 /* 1. Thi?t l?p Flexbox cho .wrapper */
 .wrapper {
     display: flex;
-    min-height: 100vh; /* ??m b?o layout cao h?t m‡n hÏnh */
+    min-height: 100vh; /* ??m b?o layout cao h?t m√†n h√¨nh */
 }
 
-/* 2. Set kÌch th??c c? ??nh cho sidebar */
+/* 2. Set k√≠ch th??c c? ??nh cho sidebar */
 .sidebar {
     width: 260px; /* Chi?u r?ng c? ??nh c?a sidebar */
-    flex-shrink: 0; /* KhÙng cho phÈp sidebar b? co l?i */
+    flex-shrink: 0; /* Kh√¥ng cho ph√©p sidebar b? co l?i */
 }
 
-/* 3. Cho phÈp n?i dung chÌnh co gi„n v‡ cu?n */
+/* 3. Cho ph√©p n?i dung ch√≠nh co gi√£n v√† cu?n */
 .main-content {
-    flex-grow: 1; /* Cho phÈp .main-content chi?m h?t ph?n cÚn l?i */
-    overflow-y: auto; /* Cho phÈp cu?n n?i dung chÌnh n?u nÛ qu· d‡i */
+    flex-grow: 1; /* Cho ph√©p .main-content chi?m h?t ph?n c√≤n l?i */
+    overflow-y: auto; /* Cho ph√©p cu?n n?i dung ch√≠nh n?u n√≥ qu√° d√†i */
 }
 
 /* ============================================= */
-/* == STYLE CHO FOOTER (S¡NG V¿ T?I) == */
+/* == STYLE CHO FOOTER (S√ÅNG V√Ä T?I) == */
 /* ============================================= */
 
-/* 1. Class cho footer s·ng (c·c trang bÏnh th??ng) */
+/* 1. Class cho footer s√°ng (c√°c trang b√¨nh th??ng) */
 .footer-light {
     background-color: #ffffff;
     border-top: 1px solid #e5e5e5;
     padding-top: 3rem;
     padding-bottom: 2rem;
     margin-top: 3rem;
-    /* (NÛ s? d˘ng m‡u ch? m?c ??nh l‡ m‡u ?en) */
+    /* (N√≥ s? d√πng m√†u ch? m?c ??nh l√† m√†u ?en) */
 }
 
     .footer-light span, .footer-light h6 {
@@ -437,7 +441,7 @@ body.app-body {
     }
 
     .footer-light p, .footer-light a, .footer-light li, .footer-light .small {
-        color: #6b7280; /* Ch? x·m */
+        color: #6b7280; /* Ch? x√°m */
     }
 
 /* 2. Class cho footer t?i (trang ch?) */
@@ -454,34 +458,147 @@ body.app-body {
     }
 
     .footer-dark p, .footer-dark a, .footer-dark li, .footer-dark .small {
-        color: #8b949e; /* Ch? x·m m? */
+        color: #8b949e; /* Ch? x√°m m? */
     }
 
         .footer-dark a:hover {
-            color: #ffffff; /* S·ng lÍn khi hover */
+            color: #ffffff; /* S√°ng l√™n khi hover */
         }
 
 /* ======================================================= */
-/* == CSS CHO CUSTOMER LAYOUT (HEADER TR N, KH‘NG SIDEBAR) == */
+/* == CSS CHO CUSTOMER LAYOUT (HEADER TR√äN, KH√îNG SIDEBAR) == */
 /* ======================================================= */
 
-/* * Ghi ?Ë .wrapper m?c ??nh (display: flex, flex-direction: row)
- * CH? KHI nÛ c?ng cÛ class l‡ .customer-layout.
- * Layout Admin/Staff s? khÙng b? ?nh h??ng.
+/* * Ghi ?√® .wrapper m?c ??nh (display: flex, flex-direction: row)
+ * CH? KHI n√≥ c?ng c√≥ class l√† .customer-layout.
+ * Layout Admin/Staff s? kh√¥ng b? ?nh h??ng.
 */
 .wrapper.customer-layout {
-    flex-direction: column; /* ??i th‡nh layout c?t (header trÍn, content d??i) */
+    flex-direction: column; /* ??i th√†nh layout c?t (header tr√™n, content d??i) */
 }
 
 /* Style cho header m?i */
 .top-navbar {
-    background-color: #0d1117; /* M‡u n?n t?i */
+    background-color: #0d1117; /* M√†u n?n t?i */
     border-bottom: 1px solid #30363d; /* Vi?n m? */
     padding: 0.75rem 1.5rem;
-    flex-shrink: 0; /* ??m b?o header khÙng b? co l?i */
+    flex-shrink: 0; /* ??m b?o header kh√¥ng b? co l?i */
 }
 
 .top-logo {
     height: 36px;
     width: auto;
+}
+
+/* ======================================================= */
+/* == B·ªî SUNG HI·ªÜU ·ª®NG ƒê·ªòNG & T∆Ø∆†NG T√ÅC (N√ÇNG C·∫§P) == */
+/* ======================================================= */
+
+/* 1. Hi·ªáu ·ª©ng Fade-in khi cu·ªôn trang (D√πng chung) 
+   Ch√∫ng ta s·∫Ω d√πng JavaScript ƒë·ªÉ th√™m class 'is-visible'
+*/
+.fade-in-section {
+    opacity: 0;
+    /* Hi·ªáu ·ª©ng tr∆∞·ª£t nh·∫π t·ª´ d∆∞·ªõi l√™n */
+    transform: translateY(30px);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+    .fade-in-section.is-visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+/* 2. N√¢ng c·∫•p Hero Section */
+
+/* Hi·ªáu ·ª©ng "pulse" (nh·ªãp ƒë·∫≠p) cho ch·ªØ "ƒëi·ªán" */
+@keyframes pulse-cyan {
+    0% {
+        text-shadow: 0 0 5px rgba(0, 229, 255, 0.3), 0 0 10px rgba(0, 229, 255, 0.2);
+    }
+
+    50% {
+        text-shadow: 0 0 15px rgba(0, 229, 255, 0.8), 0 0 30px rgba(0, 229, 255, 0.5);
+    }
+
+    100% {
+        text-shadow: 0 0 5px rgba(0, 229, 255, 0.3), 0 0 10px rgba(0, 229, 255, 0.2);
+    }
+}
+
+.hero-section-dark h1 span {
+    /* √Åp d·ª•ng animation ƒë√£ t·∫°o */
+    animation: pulse-cyan 3s infinite ease-in-out;
+}
+
+/* Th√™m hi·ªáu ·ª©ng "glow" cho n√∫t ch√≠nh khi hover */
+.hero-section-dark .btn-primary:hover,
+.why-choose-us-dark .btn-primary:hover,
+.final-cta-dark .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(var(--bs-primary-rgb), 0.4);
+}
+
+.hero-section-dark .btn-primary,
+.why-choose-us-dark .btn-primary,
+.final-cta-dark .btn-primary {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+
+/* 3. N√¢ng c·∫•p Services Section (Hover s·ªëng ƒë·ªông h∆°n) */
+
+/* B·ªï sung hi·ªáu ·ª©ng cho icon khi hover v√†o card */
+.services-section-dark .col > div:hover .feature-icon {
+    background-color: #00e5ff; /* N·ªÅn cyan r·ª±c r·ª° */
+    color: #0d1117; /* Icon m√†u t·ªëi */
+    transform: scale(1.1) rotate(-10deg); /* Ph√≥ng to v√† xoay nh·∫π */
+    box-shadow: 0 0 20px rgba(0, 229, 255, 0.5);
+}
+
+/* L√†m cho icon transition m∆∞·ª£t h∆°n */
+.services-section-dark .feature-icon {
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Th√™m vi·ªÅn cyan n·ªïi b·∫≠t khi hover card */
+.services-section-dark .col > div:hover {
+    /* Gi·ªØ hi·ªáu ·ª©ng c≈© c·ªßa b·∫°n */
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+    background-color: #30363d;
+    /* Th√™m vi·ªÅn tr√™n */
+    border-top: 3px solid #00e5ff;
+}
+
+/* Th√™m transition cho border-top */
+.services-section-dark .col > div {
+    /* Th√™m border-top-color v√†o transition c√≥ s·∫µn c·ªßa b·∫°n */
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease, border-top-color 0.3s ease;
+    /* Th√™m border trong su·ªët m·∫∑c ƒë·ªãnh */
+    border-top: 3px solid transparent;
+}
+
+/* 4. N√¢ng c·∫•p Final CTA (N·ªÅn gradient ƒë·ªông) */
+
+@keyframes gradient-flow {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.final-cta-dark .rounded-3 {
+    /* Thay n·ªÅn tƒ©nh b·∫±ng gradient */
+    background: linear-gradient(-45deg, #1c2128, #161b22, #1c2128, #0d1117);
+    background-size: 400% 400%;
+    animation: gradient-flow 15s ease infinite;
+    border: 1px solid #30363d; /* Gi·ªØ vi·ªÅn c≈© */
 }

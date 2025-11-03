@@ -63,7 +63,6 @@
         <input asp-for="Booking.AppointmentDate"
                type="date"
                class="form-control"
-               value="@DateTime.Now.ToString("yyyy-MM-dd")"
                min="@DateTime.Now.ToString("yyyy-MM-dd")"
                required />
     </div>
@@ -165,7 +164,9 @@
             if (currentHour < workStart) defaultHour = workStart;
             else if (currentHour >= workEnd) defaultHour = workEnd - 1;
             const defaultTime = `${String(defaultHour).padStart(2, "0")}:${String(currentMinute).padStart(2, "0")}`;
-            timeInput.value = defaultTime;
+            if (!timeInput.value) {
+                timeInput.value = defaultTime;
+            }
 
             // Khi người dùng đổi ngày hoặc giờ, kiểm tra hợp lệ
             function validateTime() {
