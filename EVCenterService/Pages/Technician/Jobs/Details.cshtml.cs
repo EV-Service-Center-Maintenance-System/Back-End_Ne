@@ -1,5 +1,6 @@
 ﻿using EVCenterService.Data;
 using EVCenterService.Models;
+using EVCenterService.Service.Interfaces;
 using EVCenterService.Pages.Staff.Appointments;
 using EVCenterService.Service.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -17,11 +18,13 @@ namespace EVCenterService.Pages.Technician.Jobs
     {
         private readonly ITechnicianJobService _jobService;
         private readonly EVServiceCenterContext _context;
+        private readonly IEmailSender _emailSender;
 
-        public DetailsModel(ITechnicianJobService jobService, EVServiceCenterContext context)
+        public DetailsModel(ITechnicianJobService jobService, EVServiceCenterContext context, IEmailSender emailSender)
         {
             _jobService = jobService;
             _context = context;
+            _emailSender = emailSender;
         }
 
         public OrderService Job { get; set; } = default!;
@@ -34,12 +37,22 @@ namespace EVCenterService.Pages.Technician.Jobs
 
         [BindProperty]
         public List<PartUsageInput> PartsUsedInput { get; set; } = new();
+        public bool IsGeneralInspection { get; set; } = false;
 
         public async Task<IActionResult> OnGetAsync(int id)
         {
             Job = await _jobService.GetJobDetailAsync(id);
             if (Job == null)
                 return NotFound();
+
+            // Kiểm tra xem đơn hàng này có dịch vụ "General Inspection" (ID=4) không
+            bool hasGeneralInspection = Job.OrderDetails.Any(od => od.ServiceId == 4);
+
+            // Chỉ hiển thị Checklist NẾU trạng thái là "InProgress" VÀ là "General Inspection"
+            if (Job.Status == "InProgress" && hasGeneralInspection)
+            {
+                IsGeneralInspection = true;
+            }
 
             if (Job.Status == "InProgress")
             {
@@ -60,13 +73,11 @@ namespace EVCenterService.Pages.Technician.Jobs
 
         public async Task<IActionResult> OnPostSubmitQuoteAsync(int id)
         {
-            // Tải lại Job với các chi tiết cần thiết, bao gồm Slot để lấy CenterID
-            Job = await _context.OrderServices
-                .Include(o => o.OrderDetails)
-                .Include(o => o.Slot) // <<-- QUAN TRỌNG: Lấy thông tin Slot
-                .FirstOrDefaultAsync(o => o.OrderId == id);
+            Job = await _jobService.GetJobDetailAsync(id);
 
             if (Job == null) return NotFound();
+
+            var slot = await _context.Slots.FirstOrDefaultAsync(s => s.OrderId == id);
 
             // Hàm helper để tải lại dữ liệu khi có lỗi
             var reloadDataOnError = async () =>
@@ -188,6 +199,45 @@ namespace EVCenterService.Pages.Technician.Jobs
             {
                 await _jobService.CompleteJobAsync(id, TechnicianNote);
                 TempData["Message"] = " Công việc đã được đánh dấu hoàn thành.";
+
+                try
+                {
+                    // 2. Lấy thông tin đơn hàng và người dùng
+                    var completedJob = await _context.OrderServices
+                        .Include(o => o.User) // Lấy thông tin Account (Customer)
+                        .Include(o => o.OrderDetails)
+                            .ThenInclude(od => od.Service) // Lấy thông tin Dịch vụ
+                        .FirstOrDefaultAsync(o => o.OrderId == id);
+
+                    if (completedJob != null && completedJob.User != null)
+                    {
+                        var userAccount = completedJob.User;
+                        var serviceNames = string.Join(", ", completedJob.OrderDetails.Select(s => s.Service?.Name));
+
+                        var subject = "Thông báo: Dịch vụ xe của bạn đã hoàn tất";
+                        var message = $@"
+                    <p>Chào {userAccount.FullName},</p>
+                    <p>Chúng tôi vui mừng thông báo rằng công việc bảo dưỡng/sửa chữa cho xe của bạn đã <strong>hoàn tất</strong>.</p>
+                    <ul>
+                        <li><strong>Mã lịch hẹn:</strong> {completedJob.OrderId}</li>
+                        <li><strong>Dịch vụ:</strong> {serviceNames}</li>
+                        <li><strong>Tổng chi phí:</strong> {completedJob.TotalCost:N0} đ</li>
+                        <li><strong>Trạng thái:</strong> Đã hoàn thành</li>
+                    </ul>
+                    <p>Bạn có thể đến trung tâm dịch vụ của chúng tôi để nhận lại xe.</p>
+                    <p>Cảm ơn bạn đã sử dụng dịch vụ của EV Service Center.</p>
+                    <p>Trân trọng,</p>";
+
+                        await _emailSender.SendEmailAsync(userAccount.Email, subject, message);
+                    }
+                }
+                catch (Exception ex_email)
+                {
+                    // Nếu gửi mail lỗi, không làm dừng chương trình, chỉ log lại
+                    Console.WriteLine($"Lỗi gửi mail thông báo hoàn thành: {ex_email.Message}");
+                    // Vẫn redirect thành công
+                }
+
                 return RedirectToPage("Index");
             }
             catch (Exception ex)

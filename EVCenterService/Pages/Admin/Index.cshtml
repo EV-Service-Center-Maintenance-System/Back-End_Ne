@@ -103,34 +103,88 @@
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        const labels = [
-            @string.Join(",", Model.MonthlyRevenue.Select(m => $"'{m.Month:MM/yyyy}'"))
-        ];
-        const data = [
-            @string.Join(",", Model.MonthlyRevenue.Select(m => m.TotalRevenue.ToString().Replace(',', '.')))
-        ];
+        document.addEventListener('DOMContentLoaded', function () {
 
-        const ctx = document.getElementById('revenueChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Doanh thu (VNĐ)',
-                    data: data,
-                    borderColor: '#00FF7F',
-                    backgroundColor: 'rgba(0,255,127,0.1)',
-                    fill: true,
-                    tension: 0.4
-                }]
-            },
-            options: {
-                scales: {
-                    y: { beginAtZero: true, ticks: { color: '#fff' } },
-                    x: { ticks: { color: '#fff' } }
+            // Dữ liệu từ Backend (Ví dụ: ['11/2025'])
+            const labels = [
+                @Html.Raw(string.Join(",", Model.MonthlyRevenue.Select(m => $"'{m.Month:MM/yyyy}'")))
+            ];
+
+            // Dữ liệu từ Backend (Ví dụ: [29749000])
+            const data = [
+                @Html.Raw(string.Join(",", Model.MonthlyRevenue.Select(m => m.TotalRevenue.ToString(System.Globalization.CultureInfo.InvariantCulture))))
+            ].map(Number); // Đảm bảo Javascript nhận đây là SỐ
+
+            const ctx = document.getElementById('revenueChart').getContext('2d');
+
+            new Chart(ctx, {
+                // ***** DÒNG QUAN TRỌNG NHẤT ĐỂ SỬA LỖI LÀ ĐÂY *****
+                type: 'bar',
+                // ***** DÒNG QUAN TRỌNG NHẤT ĐỂ SỬA LỖI LÀ ĐÂY *****
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Doanh thu (VNĐ)',
+                        data: data,
+                        backgroundColor: [
+                            'rgba(0, 255, 127, 0.6)',
+                            'rgba(54, 162, 235, 0.6)',
+                            'rgba(255, 206, 86, 0.6)',
+                            'rgba(75, 192, 192, 0.6)',
+                            'rgba(153, 102, 255, 0.6)',
+                            'rgba(255, 159, 64, 0.6)'
+                        ],
+                        borderColor: [
+                            'rgba(0, 255, 127, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
                 },
-                plugins: { legend: { labels: { color: '#fff' } } }
-            }
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                color: '#D4D4D4',
+                                // Định dạng tiền VNĐ cho trục Y
+                                callback: function(value) {
+                                    return value.toLocaleString('vi-VN') + ' VNĐ';
+                                }
+                            },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                        },
+                        x: {
+                            ticks: { color: '#D4D4D4' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: { color: '#D4D4D4' }
+                        },
+                        // Định dạng tiền VNĐ khi di chuột
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== null) {
+                                        label += context.parsed.y.toLocaleString('vi-VN') + ' VNĐ';
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
         });
     </script>
 }

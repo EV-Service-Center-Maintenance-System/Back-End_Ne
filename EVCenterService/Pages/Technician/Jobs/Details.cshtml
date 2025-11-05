@@ -2,11 +2,21 @@
 @model EVCenterService.Pages.Technician.Jobs.DetailsModel
 @using EVCenterService.Pages.Staff.Appointments
 @{
-    Layout = "_AppLayout";
+    Layout = "_CustomerLayout";
     ViewData["Title"] = "Job Details";
 }
 
-<h2 class="mb-4 text-white">Job Details #@Model.Job.OrderId</h2>
+<h2 class="mb-4 text-white">
+    @if (Model.IsGeneralInspection)
+    {
+        <span>Kiểm tra Tổng quát (Checklist)</span>
+    }
+    else
+    {
+        <span>Chi tiết Công việc</span>
+    }
+    <small class="text-muted fw-normal">#@Model.Job.OrderId</small>
+</h2>
 
 @if (Model.Job.Status == "InProgress")
 {
@@ -17,59 +27,49 @@
         <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
         <div class="row g-4">
             <div class="col-lg-8">
-                <div class="card data-card border-0 mb-4">
-                    <div class="card-header bg-dark d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0 text-white">Chọn phụ tùng cần thiết (Báo giá)</h5>
-                        <button type="button" class="btn btn-sm btn-outline-light" id="addPartButton">
-                            <i class="bi bi-plus-circle me-1"></i> Thêm phụ tùng
-                        </button>
-                    </div>
-                    <div class="card-body">
-                        <div id="partsUsedContainer">
-                            <div class="row g-2 mb-2 part-row align-items-center" style="display: none;">
-                                <div class="col-md-5">
-                                    <select class="form-select part-select" data-name-template="PartsUsedInput[index].PartId">
-                                        <option value="0">-- Chọn phụ tùng --</option>
-                                        @foreach (var part in Model.AvailableParts)
-                                        {
-                                            <option value="@part.Value">@part.Text</option>
-                                        }
-                                    </select>
-                                </div>
-                                <div class="col-md-2">
-                                    <input type="number" class="form-control part-quantity" placeholder="SL" min="1" value="1" data-name-template="PartsUsedInput[index].Quantity" />
-                                </div>
-                                <div class="col-md-4">
-                                    <input type="text" class="form-control part-note" placeholder="Ghi chú (nếu có)" data-name-template="PartsUsedInput[index].Note" />
-                                </div>
-                                <div class="col-md-1 text-end">
-                                    <button type="button" class="btn btn-sm btn-outline-danger remove-part-button"><i class="bi bi-trash"></i></button>
+
+                @if (Model.IsGeneralInspection)
+                {
+                    <div class="card data-card border-0 mb-4">
+                        <div class="card-header bg-dark">
+                            <h5 class="mb-0 text-white">Checklist Bảo dưỡng Tổng quát</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted">Đánh giá tình trạng các bộ phận chính. Nếu không ổn (❌), hệ thống sẽ yêu cầu bạn báo giá phụ tùng ở bước tiếp theo.</p>
+
+                            <div class="d-flex justify-content-between align-items-center p-3 border-bottom border-secondary">
+                                <h5 class="mb-0 text-white">1. Hệ thống Pin (Battery)</h5>
+                                <div>
+                                    <button type="button" class="btn btn-outline-success btn-lg checklist-btn" data-service-id="1" data-status="ok">✅ Tốt</button>
+                                    <button type="button" class="btn btn-outline-danger btn-lg checklist-btn" data-service-id="1" data-status="fail">❌ Cần sửa</button>
                                 </div>
                             </div>
-                            @for (int i = 0; i < Model.PartsUsedInput.Count; i++)
-                            {
-                                <div class="row g-2 mb-2 part-row align-items-center">
-                                    <div class="col-md-5">
-                                        <select asp-for="PartsUsedInput[i].PartId" class="form-select part-select" asp-items="Model.AvailableParts">
-                                            <option value="0">-- Chọn phụ tùng --</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <input asp-for="PartsUsedInput[i].Quantity" class="form-control part-quantity" placeholder="SL" min="1" />
-                                    </div>
-                                    <div class="col-md-4">
-                                        <input asp-for="PartsUsedInput[i].Note" class="form-control part-note" placeholder="Ghi chú (nếu có)" />
-                                    </div>
-                                    <div class="col-md-1 text-end">
-                                        <button type="button" class="btn btn-sm btn-outline-danger remove-part-button"><i class="bi bi-trash"></i></button>
-                                    </div>
+                            <div class="d-flex justify-content-between align-items-center p-3 border-bottom border-secondary">
+                                <h5 class="mb-0 text-white">2. Hệ thống Phanh (Brake)</h5>
+                                <div>
+                                    <button type="button" class="btn btn-outline-success btn-lg checklist-btn" data-service-id="2" data-status="ok">✅ Tốt</button>
+                                    <button type="button" class="btn btn-outline-danger btn-lg checklist-btn" data-service-id="2" data-status="fail">❌ Cần sửa</button>
                                 </div>
-                            }
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center p-3">
+                                <h5 class="mb-0 text-white">3. Hệ thống Làm mát (Cooling)</h5>
+                                <div>
+                                    <button type="button" class="btn btn-outline-success btn-lg checklist-btn" data-service-id="3" data-status="ok">✅ Tốt</button>
+                                    <button type="button" class="btn btn-outline-danger btn-lg checklist-btn" data-service-id="3" data-status="fail">❌ Cần sửa</button>
+                                </div>
+                            </div>
                         </div>
-                        <em class="text-muted small" id="noPartsMessage">Chưa có phụ tùng nào được thêm.</em>
                     </div>
+
+                    <div id="quoteSection" style="display: none;">
+                        @await Html.PartialAsync("_QuotePartsPartial", Model)
+                    </div>
+                }
+                else
+                {
+                    @await Html.PartialAsync("_QuotePartsPartial", Model)
+                }
                 </div>
-            </div>
             <div class="col-lg-4">
                 <div class="card data-card border-0 sticky-top" style="top: 2rem;">
                     <div class="card-header bg-dark text-white">
@@ -162,10 +162,54 @@ else
 @section Scripts {
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Kiểm tra xem các phần tử có tồn tại không (chỉ chạy khi ở chế độ báo giá)
+            
+            // Lấy các phần tử (elements)
             const container = document.getElementById('partsUsedContainer');
-            if (!container) return; // Thoát nếu không ở chế độ báo giá
+            const quoteSection = document.getElementById('quoteSection');
+            const checklistButtons = document.querySelectorAll('.checklist-btn');
 
+            // ===== LOGIC 1: CHẠY CHO CHECKLIST =====
+            if (checklistButtons.length > 0) {
+                
+                checklistButtons.forEach(button => {
+                    button.addEventListener('click', function() {
+                        const serviceId = this.getAttribute('data-service-id');
+                        const status = this.getAttribute('data-status');
+                        
+                        // Lấy 2 nút trong cùng một nhóm
+                        const okButton = this.parentElement.querySelector('.checklist-btn[data-status=ok]');
+                        const failButton = this.parentElement.querySelector('.checklist-btn[data-status=fail]');
+                        
+                        // Đặt lại style
+                        okButton.classList.remove('active', 'btn-success');
+                        okButton.classList.add('btn-outline-success');
+                        failButton.classList.remove('active', 'btn-danger');
+                        failButton.classList.add('btn-outline-danger');
+                        
+                        // Kích hoạt nút được chọn
+                        if (status === 'ok') {
+                            this.classList.add('active', 'btn-success');
+                            this.classList.remove('btn-outline-success');
+                        } else {
+                            this.classList.add('active', 'btn-danger');
+                            this.classList.remove('btn-outline-danger');
+                        }
+                        
+                        // Hiển thị phần Báo giá Phụ tùng
+                        if (quoteSection) {
+                            quoteSection.style.display = 'block';
+                        }
+                    });
+                });
+            }
+
+            // ===== LOGIC 2: CHẠY CHO BÁO GIÁ (NẾU TỒN TẠI) =====
+            // (Thoát nếu không tìm thấy container báo giá)
+            if (!container) {
+                return; 
+            }
+
+            // (Code báo giá phụ tùng cũ của bạn bắt đầu từ đây)
             const addButton = document.getElementById('addPartButton');
             const noPartsMessage = document.getElementById('noPartsMessage');
             let partIndex = container.querySelectorAll('.part-row:not([style*="display: none"])').length;
@@ -176,16 +220,19 @@ else
                 const newRow = templateRow.cloneNode(true);
                 newRow.style.display = '';
                 newRow.classList.remove('d-none');
+                
                 newRow.querySelectorAll('[data-name-template]').forEach(el => {
                     const nameTemplate = el.getAttribute('data-name-template');
                     el.name = nameTemplate.replace('index', partIndex);
                     el.id = el.name.replace(/\[|\]|\./g, '_');
                 });
+                
                 newRow.querySelector('.remove-part-button').addEventListener('click', function() {
                     newRow.remove();
                     updateTotals();
                     toggleNoPartsMessage();
                 });
+                
                 newRow.querySelector('.part-select').addEventListener('change', updateTotals);
                 newRow.querySelector('.part-quantity').addEventListener('input', updateTotals);
                 container.appendChild(newRow);
@@ -201,6 +248,7 @@ else
                     const quantityInput = row.querySelector('.part-quantity');
                     const selectedOption = select.options[select.selectedIndex];
                     const quantity = parseInt(quantityInput.value) || 0;
+   
                     if (selectedOption && selectedOption.value !== "0" && quantity > 0) {
                         const priceText = selectedOption.text.split(' - ')[1];
                         if (priceText) {
@@ -223,6 +271,7 @@ else
             }
 
             addButton.addEventListener('click', addPartRow);
+            
             container.querySelectorAll('.part-row:not([style*="display: none"]) .remove-part-button').forEach(button => {
                  button.addEventListener('click', function(event) {
                     event.target.closest('.part-row').remove();
@@ -230,8 +279,9 @@ else
                     toggleNoPartsMessage();
                  });
             });
+            
             container.querySelectorAll('.part-row:not([style*="display: none"]) .part-select').forEach(select => select.addEventListener('change', updateTotals));
-            container.querySelectorAll('.part-row:not([style*a="display: none"]) .part-quantity').forEach(input => input.addEventListener('input', updateTotals));
+            container.querySelectorAll('.part-row:not([style*="display: none"]) .part-quantity').forEach(input => input.addEventListener('input', updateTotals));
 
             updateTotals();
             toggleNoPartsMessage();

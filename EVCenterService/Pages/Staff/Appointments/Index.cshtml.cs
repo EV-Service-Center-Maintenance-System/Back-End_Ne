@@ -40,19 +40,18 @@ namespace EVCenterService.Pages.Staff.Appointments
                     .ThenInclude(od => od.Service)
                 .AsNoTracking();
 
-            // (Các truy vấn PendingApproval, ReadyToFinalize giữ nguyên...)
             PendingApprovalAppointments = await baseQuery
-                .Where(o => o.Status.Equals("Pending", StringComparison.OrdinalIgnoreCase))
+                .Where(o => o.Status.ToLower() == "pending")
                 .OrderBy(o => o.AppointmentDate)
                 .ToListAsync();
 
             PendingAssignmentAppointments = await baseQuery
-                .Where(o => o.Status.Equals("Confirmed", StringComparison.OrdinalIgnoreCase))
+                .Where(o => o.Status.ToLower() == "confirmed")
                 .OrderBy(o => o.AppointmentDate)
                 .ToListAsync();
 
             ReadyToFinalizeAppointments = await baseQuery
-                .Where(o => o.Status.Equals("PendingQuote", StringComparison.OrdinalIgnoreCase))
+                .Where(o => o.Status.ToLower() == "pendingquote")
                 .OrderBy(o => o.AppointmentDate)
                 .ToListAsync();
 

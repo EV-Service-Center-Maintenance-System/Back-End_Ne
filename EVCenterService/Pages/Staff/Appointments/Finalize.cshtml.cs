@@ -65,11 +65,12 @@ namespace EVCenterService.Pages.Staff.Appointments
         public async Task<IActionResult> OnPostAsync(int id)
         {
             Appointment = await _context.OrderServices
-                .Include(o => o.PartsUseds) // T?i l?i ph? tùng ?ã báo giá
-                .Include(o => o.OrderDetails) // T?i l?i ?? tính ServiceTotalCost
+                .Include(o => o.OrderDetails) 
                     .ThenInclude(od => od.Service)
-                .Include(o => o.User) // T?i l?i ?? hi?n th? n?u có l?i
-                .Include(o => o.Vehicle) // T?i l?i ?? hi?n th? n?u có l?i
+                .Include(o => o.PartsUseds) 
+                    .ThenInclude(pu => pu.Part)
+                .Include(o => o.User) 
+                .Include(o => o.Vehicle) 
                 .FirstOrDefaultAsync(o => o.OrderId == id);
 
             if (Appointment == null) return NotFound();

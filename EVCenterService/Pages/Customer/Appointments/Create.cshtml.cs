@@ -16,12 +16,14 @@ namespace EVCenterService.Pages.Customer.Appointments
         private readonly EVServiceCenterContext _context;
         private readonly ICustomerBookingService _bookingService;
         private readonly IEmailSender _emailSender;
+        private readonly IConfiguration _configuration;
 
-        public CreateModel(EVServiceCenterContext context, ICustomerBookingService bookingService, IEmailSender emailSender)
+        public CreateModel(EVServiceCenterContext context, ICustomerBookingService bookingService, IEmailSender emailSender, IConfiguration configuration)
         {
             _context = context;
             _bookingService = bookingService;
             _emailSender = emailSender;
+            _configuration = configuration;
         }
 
         [BindProperty] public OrderService Booking { get; set; } = new();
@@ -72,6 +74,23 @@ namespace EVCenterService.Pages.Customer.Appointments
             }
 
             Booking.AppointmentDate = DateTime.Now;
+
+            var now = DateTime.Now;
+            int defaultHour = now.Hour;
+            int defaultMinute = now.Minute;
+
+            if (defaultHour < 7)
+            { // Giờ làm việc 
+                defaultHour = 7;
+                defaultMinute = 0;
+            }
+            else if (defaultHour >= 19)
+            { // Giờ làm việc 
+                defaultHour = 18; // Giờ cuối cùng là 18:xx
+                defaultMinute = 0;
+            }
+
+            SelectedTime = new TimeSpan(defaultHour, defaultMinute, 0);
         }
 
         public async Task<IActionResult> OnPostAsync()
@@ -81,18 +100,29 @@ namespace EVCenterService.Pages.Customer.Appointments
             Booking.AppointmentDate = Booking.AppointmentDate.Date + SelectedTime;
             Booking.Status = "Pending";
 
-            // Validate giờ hẹn
+            // LẤY MÚI GIỜ VIỆT NAM TỪ appsettings.json
+            var timeZoneId = _configuration["TimeZoneId"] ?? "SE Asia Standard Time";
+            var vietnamTimeZone = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
+
+            // LẤY GIỜ HIỆN TẠI CHÍNH XÁC CỦA VIỆT NAM
+            var vietnamNow = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, vietnamTimeZone);
+
+
+            // 1. Kiểm tra tổng thể xem lịch hẹn có ở quá khứ không
+            // (Booking.AppointmentDate là giờ khách chọn, ví dụ: 07:00 06/11)
+            // (vietnamNow là giờ hiện tại, ví dụ: 08:00 06/11)
+            if (Booking.AppointmentDate < vietnamNow)
+            {
+                // (07:00 < 08:00) -> ĐÚNG -> Lỗi
+                ModelState.AddModelError(string.Empty, "Không thể đặt lịch vào thời gian đã qua. Vui lòng chọn ngày và giờ trong tương lai.");
+            }
+
+            // 2. Kiểm tra khung giờ làm việc (vẫn giữ)
             var workStart = new TimeSpan(7, 0, 0);
             var workEnd = new TimeSpan(19, 0, 0);
-            var now = DateTime.Now;
-
             if (SelectedTime < workStart || SelectedTime > workEnd)
             {
                 ModelState.AddModelError("SelectedTime", "Giờ hẹn phải nằm trong khung 07:00 – 19:00.");
-            }
-            else if (Booking.AppointmentDate.Date == now.Date && SelectedTime < now.TimeOfDay)
-            {
-                ModelState.AddModelError("SelectedTime", "Không thể chọn giờ đã qua trong hôm nay.");
             }
 
             if (!ModelState.IsValid)

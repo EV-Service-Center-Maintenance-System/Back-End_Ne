@@ -9,7 +9,11 @@
 
 <form method="post" class="card data-card p-4">
 
-    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+    @if (!ModelState.IsValid)
+    {
+        <div asp-validation-summary="All" class="alert alert-danger"></div>
+    }
+
     <div class="form-group mb-3">
         <label class="fw-bold">Chọn xe:</label>
         <select id="select-vehicle" asp-for="Booking.VehicleId" asp-items="Model.VehicleList" class="form-select" required>
@@ -76,7 +80,9 @@
                        type="time"
                        class="form-control"
                        required />
-                <small class="text-muted">Giờ làm việc: 07:00 – 19:00</small>
+                <span asp-validation-for="SelectedTime" class="text-danger small"></span>
+
+                <small class="text-muted d-block">Giờ làm việc: 07:00 – 19:00</small>
             </div>
         </div>
     </div>
@@ -204,14 +210,14 @@
                 // Ngoài khung giờ
                 if (hour < workStart || (hour === workEnd && minute > 0)) {
                     alert("Vui lòng chọn giờ trong khung 07:00 – 19:00.");
-                    timeInput.value = defaultTime;
+                    // timeInput.value = defaultTime;
                     return;
                 }
 
                 // Nếu hôm nay, không được chọn giờ đã qua
                 if (selectedDate === today && (hour < currentHour || (hour === currentHour && minute < currentMinute))) {
                     alert("Không thể chọn giờ đã qua trong hôm nay!");
-                    timeInput.value = defaultTime;
+                    // timeInput.value = defaultTime;
                     return;
                 }
             }
