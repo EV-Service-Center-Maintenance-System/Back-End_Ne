@@ -1,4 +1,4 @@
-using EVCenterService.Data;
+﻿using EVCenterService.Data;
 using EVCenterService.Models;
 using EVCenterService.Service.Interfaces; 
 using Microsoft.AspNetCore.Authentication;
@@ -34,11 +34,11 @@ namespace EVCenterService.Pages.Account
 
         public class InputModel
         { 
-            [Required(ErrorMessage = "H? v� t�n l� b?t bu?c.")][StringLength(100)] public string FullName { get; set; } = "";
-            [Required(ErrorMessage = "Email l� b?t bu?c.")][EmailAddress][StringLength(255)] public string Email { get; set; } = "";
-            [Required(ErrorMessage = "S? ?i?n tho?i l� b?t bu?c.")][RegularExpression(@"^(\+?84|0)\d{9,10}$", ErrorMessage = "S?T kh�ng h?p l?.")] public string PhoneNumber { get; set; } = "";
-            [Required(ErrorMessage = "M?t kh?u l� b?t bu?c.")][DataType(DataType.Password)][MinLength(6)][StringLength(100)] public string Password { get; set; } = "";
-            [DataType(DataType.Password)][Compare("Password", ErrorMessage = "M?t kh?u kh�ng kh?p.")] public string ConfirmPassword { get; set; } = "";
+            [Required(ErrorMessage = "Họ và tên là bắt buộc.")][StringLength(100)] public string FullName { get; set; } = "";
+            [Required(ErrorMessage = "Email là bắt buộc.")][EmailAddress][StringLength(255)] public string Email { get; set; } = "";
+            [Required(ErrorMessage = "Số điện thoại là bắt buộc.")][RegularExpression(@"^(\+?84|0)\d{9,10}$", ErrorMessage = "SĐT không hợp lệ.")] public string PhoneNumber { get; set; } = "";
+            [Required(ErrorMessage = "Mật khẩu là bắt buộc.")][DataType(DataType.Password)][MinLength(6)][StringLength(100)] public string Password { get; set; } = "";
+            [DataType(DataType.Password)][Compare("Password", ErrorMessage = "Mật khẩu không khớp.")] public string ConfirmPassword { get; set; } = "";
         }
 
 
@@ -48,15 +48,15 @@ namespace EVCenterService.Pages.Account
         {
             if (!ModelState.IsValid) return Page();
 
-            // Ki?m tra Email v� S?T t?n t?i
+            // Ki?m tra Email và S?T t?n t?i
             if (await _context.Accounts.AnyAsync(a => a.Email == Input.Email))
             {
-                ModelState.AddModelError("Input.Email", "??a ch? email n�y ?� ???c s? d?ng.");
+                ModelState.AddModelError("Input.Email", "Địa chỉ email này đã được sử dụng.");
                 return Page();
             }
             if (!string.IsNullOrEmpty(Input.PhoneNumber) && await _context.Accounts.AnyAsync(a => a.Phone == Input.PhoneNumber))
             {
-                ModelState.AddModelError("Input.PhoneNumber", "S? ?i?n tho?i n�y ?� ???c s? d?ng.");
+                ModelState.AddModelError("Input.PhoneNumber", "Số điện thoại này đã được sử dụng.");
                 return Page();
             }
 
@@ -75,24 +75,24 @@ namespace EVCenterService.Pages.Account
             _context.Accounts.Add(newAccount);
             await _context.SaveChangesAsync();
 
-            // --- G?I EMAIL CH�O M?NG (D�ng Mailjet) ---
+            // --- G?I EMAIL CHÀO M?NG (Dùng Mailjet) ---
             try
             {
-                var subject = "Ch�o m?ng b?n ??n v?i EV Service Center!";
-                var message = $"Ch�o {newAccount.FullName},<br><br>" +
-                              "C?m ?n b?n ?� ??ng k� t�i kho?n th�nh c�ng t?i EV Service Center.<br>" +
-                              "Ch�c b?n c� nh?ng tr?i nghi?m d?ch v? t?t nh?t!<br><br>" +
-                              "Tr�n tr?ng,<br> EV Service Center";
+                var subject = "Chào mừng bạn đến với EV Service Center!";
+                var message = $"Chào {newAccount.FullName},<br><br>" +
+                              "Cảm ơn bạn đã đăng ký tài khoản thành công tại EV Service Center.<br>" +
+                              "Chúc bạn có những trải nghiệm dịch vụ tốt nhất!<br><br>" +
+                              "Trân trongng,<br> đội ngũ EV Service Center";
                 await _emailSender.SendEmailAsync(newAccount.Email, subject, message);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"L?i g?i mail ??ng k�: {ex.Message}");
-                // Kh�ng d?ng l?i n?u g?i mail l?i, ch? log
+                Console.WriteLine($"Lỗi gửi mail đăng ký: {ex.Message}");
+                // Không d?ng l?i n?u g?i mail l?i, ch? log
             }
-            // --- K?T TH�C G?I MAIL ---
+            // --- K?T THÚC G?I MAIL ---
 
-            // T? ??ng ??ng nh?p ng??i d�ng sau khi ??ng k�
+            // T? ??ng ??ng nh?p ng??i dùng sau khi ??ng ký
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, newAccount.Email),

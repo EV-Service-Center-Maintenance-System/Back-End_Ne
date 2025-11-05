@@ -237,9 +237,7 @@ body.body-homepage-dark {
         /* Gi? màu vàng cam khi active/hover (n?u b?n có ??nh ngh?a var) */
         .public-header-dark .navbar-nav .nav-link:hover,
         .public-header-dark .navbar-nav .nav-link.active {
-            color: var(--secondary-color);
-            /* N?u màu vàng cam không ??p, b?n có th? ??i thành màu tr?ng sáng: */
-            /* color: #ffffff; */
+            color: #ffffff;
         }
 
     /* Style cho nút Login / Register */
@@ -263,17 +261,34 @@ body.body-homepage-dark {
             border-color: #ffffff; /* Vi?n tr?ng rõ khi hover */
         }
 
-    /* Nút Register (màu vàng cam) ?ã n?i r?i, gi? nguyên */
+    /* SỬA: Nút Register (màu cyan + hiệu ứng glow) */
     .public-header-dark .auth-buttons .btn-register {
-        background-color: var(--secondary-color);
-        border-color: var(--secondary-color);
-        color: var(--text-dark); /* Ch? ?en trên n?n vàng là OK */
+        background-color: #00e5ff; /* Màu cyan */
+        border-color: #00e5ff;
+        color: #0d1117; /* Chữ đen cho nổi bật */
+        animation: pulse-cyan-button 3s infinite ease-in-out;
     }
 
         .public-header-dark .auth-buttons .btn-register:hover {
-            background-color: var(--secondary-hover);
-            border-color: var(--secondary-hover);
+            background-color: #33fffc; /* Sáng hơn khi hover */
+            border-color: #33fffc;
+            color: #0d1117;
         }
+
+/* Thêm animation cho nút (giống chữ "điện") */
+@keyframes pulse-cyan-button {
+    0% {
+        box-shadow: 0 0 5px rgba(0,229,255,0.3);
+    }
+
+    50% {
+        box-shadow: 0 0 15px rgba(0,229,255,0.8);
+    }
+
+    100% {
+        box-shadow: 0 0 5px rgba(0,229,255,0.3);
+    }
+}
 
 
 /* ============================================= */
@@ -739,17 +754,17 @@ body.app-body {
 }
 
 /* 2. Biến .data-card thành "Kính mờ" (bo cong + glass) */
-.card.data-card,
+.main-content .card.data-card,
 .main-content > form.card { /* Áp dụng cho cả form ở trang Create */
     /* Hiệu ứng Kính mờ */
     background: rgba(13, 17, 23, 0.85); /* Nền đen mờ 85% */
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
     /* Hiệu ứng Bo cong (iOS) */
-    border-radius: 1.25rem; /* Bo cong nhiều hơn */
-    border: 1px solid rgba(255, 255, 255, 0.15); /* Viền mờ */
-
+    border-radius: 1.25rem;
+    border: 1px solid rgba(255, 255, 255, 0.15);
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
 }
 
 /* 3. Làm cho Form (Input, Select) cũng "Kính mờ" */
@@ -856,16 +871,25 @@ body.app-body {
         border-color: #30363d !important;
     }
 
+    .main-content .table-custom tbody tr {
+        background-color: transparent !important;
+    }
+
     /* 3. Nội dung hàng (Row) */
     .main-content .table-custom tbody td {
-        color: #adb5bd; /* Màu chữ nội dung (xám nhạt) */
+        color: #495057;
         vertical-align: middle;
         border-color: #30363d !important;
     }
 
+        /* THÊM MỚI: Làm mờ lại các cột text-muted */
+        .main-content .table-custom tbody td.text-muted {
+            color: #8b949e !important; /* Màu xám mờ */
+        }
+
         /* 4. Chữ "Testla" (in đậm) */
         .main-content .table-custom tbody td .fw-bold {
-            color: #f0f6fc !important; /* Màu trắng sáng */
+            color: #495057 !important; /* Màu trắng sáng */
         }
 
     /* 5. Hiệu ứng Hover (chĩa vào) */
@@ -908,4 +932,99 @@ body.app-body {
         padding: 0.4em 0.75em;
         font-size: 0.7rem;
         font-weight: 600;
+    }
+
+/* ======================================================= */
+/* == NÂNG CẤP TRANG GÓI DỊCH VỤ (SUBSCRIPTIONS) == */
+/* ======================================================= */
+
+/* 1. Thêm hiệu ứng "lift" (nâng lên) khi hover */
+.card.sub-card-interactive:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3); /* Bóng to hơn */
+}
+
+.card.sub-card-interactive {
+    /* Thêm transition để hiệu ứng mượt mà */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* 2. Thêm hiệu ứng "Glow" cho gói Active (thay border-primary) */
+@keyframes active-plan-glow {
+    0% {
+        box-shadow: 0 0 5px rgba(13,110,253,0.3), 0 0 10px rgba(13,110,253,0.2);
+    }
+
+    50% {
+        box-shadow: 0 0 20px rgba(13,110,253,0.7), 0 0 30px rgba(13,110,253,0.5);
+    }
+
+    100% {
+        box-shadow: 0 0 5px rgba(13,110,253,0.3), 0 0 10px rgba(13,110,253,0.2);
+    }
+}
+
+.card.sub-card-active {
+    /* Ghi đè border cũ */
+    border: 1px solid rgba(13, 110, 253, 0.7) !important;
+    /* Thêm animation "glow" */
+    animation: active-plan-glow 3s infinite ease-in-out;
+}
+
+/* 3. Style cho danh sách lợi ích (Benefits List) */
+.sub-benefits-list {
+    list-style: none;
+    padding-left: 0;
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+    color: #adb5bd; /* Màu chữ xám nhạt */
+}
+
+    .sub-benefits-list li {
+        position: relative;
+        padding-left: 30px; /* Khoảng trống cho icon */
+        margin-bottom: 0.75rem;
+        line-height: 1.4;
+    }
+        /* Icon check (màu xanh lá) */
+        .sub-benefits-list li::before {
+            content: '\F26A'; /* Mã icon "check-circle-fill" của Bootstrap Icons */
+            font-family: 'bootstrap-icons'; /* Đảm bảo bạn đã tải font icon */
+            position: absolute;
+            left: 0;
+            top: 0;
+            color: #198754; /* Màu xanh lá (success) */
+            font-size: 1.1rem;
+        }
+
+/* ======================================================= */
+/* == NÂNG CẤP DROPDOWN "DỊCH VỤ CỦA TÔI" (GIỐNG ẢNH MẪU) == */
+/* ======================================================= */
+
+.public-header-dark .dropdown-menu {
+    /* 1. Nền tối + Kính mờ (Glassmorphism) */
+    background-color: rgba(22, 27, 34, 0.9) !important; /* Nền xám đen mờ */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    /* 2. Style (Bo cong, viền, bóng đổ) */
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 0.75rem; /* Bo cong */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    padding: 0.5rem 0;
+    margin-top: 0.5rem !important; /* Hạ xuống 1 chút */
+}
+
+/* 3. Style các link bên trong (Quản lý Xe,...) */
+.public-header-dark .dropdown-item {
+    color: #adb5bd; /* Chữ xám mờ */
+    font-weight: 500;
+    padding: 0.75rem 1.5rem; /* To, rõ ràng */
+    transition: all 0.2s ease;
+}
+
+    /* 4. Hiệu ứng Hover (Chữ trắng + Nền xanh) */
+    .public-header-dark .dropdown-item:hover,
+    .public-header-dark .dropdown-item:focus {
+        color: #ffffff;
+        background-color: transparent;
     }

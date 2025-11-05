@@ -7,8 +7,8 @@
 
 <div class="row justify-content-center">
     <div class="col-lg-8">
-        <div class="card">
-            <div class="card-header text-center bg-white py-4">
+        <div class="card data-card">
+            <div class="card-header text-center py-4">
                 <h2 class="mb-0">HÓA ĐƠN DỊCH VỤ</h2>
                 <p class="text-muted mb-0">Mã hóa đơn: #HD-@(Model.Invoice.InvoiceId)</p>
             </div>
@@ -43,18 +43,18 @@
                     <div class="col-md-6 text-md-end">
                         @if (Model.Invoice.Status == "Paid")
                         {
-                            <span class="badge bg-success fs-6">ĐÃ THANH TOÁN</span>
+                            <span class="badge badge-custom bg-success fs-6">ĐÃ THANH TOÁN</span>
                         }
                         else
                         {
-                            <span class="badge bg-danger fs-6">CHƯA THANH TOÁN</span>
+                            <span class="badge badge-custom bg-danger fs-6">CHƯA THANH TOÁN</span>
                         }
                     </div>
                 </div>
 
                 <div class="table-responsive mb-4">
-                    <table class="table table-bordered">
-                        <thead class="table-light">
+                    <table class="table table-custom">
+                        <thead class="">
                             <tr>
                                 <th>#</th>
                                 <th>Nội dung</th>
@@ -115,7 +115,7 @@
                     </div>
                 }
             </div>
-            <div class="card-footer text-center">
+            <div class="card-footer text-center" style="background-color: transparent; border-top-color: #30363d;">
                 <button class="btn btn-secondary" onclick="window.print();"><i class="bi bi-printer me-2"></i>In Hóa Đơn</button>
             </div>
         </div>

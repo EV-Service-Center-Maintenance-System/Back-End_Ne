@@ -7,8 +7,9 @@ namespace EVCenterService.Pages.Customer
     [Authorize(Roles = "Customer")]
     public class IndexModel : PageModel
     {
-        public void OnGet()
+        public IActionResult OnGet()
         {
+            return RedirectToPagePermanent("/Customer/Profile");
         }
     }
 }

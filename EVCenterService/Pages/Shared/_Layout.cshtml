@@ -48,11 +48,8 @@
                             <a class="nav-link" href="#">Dịch vụ</a>
                         </li>
                     }
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Về chúng tôi</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Liên hệ</a>
+                       <li class="nav-item">
+                            <a class="nav-link" href="#footer-contact">Liên hệ</a>
                         </li>
                     </ul>
 
@@ -105,7 +102,8 @@
         @RenderBody()
     </main>
 
-    <footer class="@(ViewData["BodyClass"] == "body-homepage-dark" ? "footer-dark" : "footer-light")">
+    <footer id="footer-contact" class="@(ViewData["BodyClass"] == "body-homepage-dark" ?
+"footer-dark" : "footer-light")">
         <div class="container">
             <div class="row gy-4">
                 <div class="col-lg-4 col-md-6">

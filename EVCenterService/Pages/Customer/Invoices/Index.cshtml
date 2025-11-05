@@ -5,9 +5,11 @@
     Layout = "_CustomerLayout";
 }
 
-<h1 class="h2 mb-4">@ViewData["Title"]</h1>
+<div class="page-header">
+    <h1 class="mb-0">@ViewData["Title"]</h1>
+</div>
 
-<div class="card data-card border-0">
+<div class="card data-card mt-4">
     <div class="card-body">
         @if (Model.InvoiceList == null || !Model.InvoiceList.Any())
         {
@@ -16,8 +18,8 @@
         else
         {
             <div class="table-responsive">
-                <table class="table table-hover align-middle">
-                    <thead class="table-dark">
+                <table class="table table-hover table-custom align-middle">
+                    <thead class="">
                         <tr>
                             <th>Mã HĐ</th>
                             <th>Xe</th>
@@ -38,11 +40,11 @@
                                 <td>
                                     @if (invoice.Status == "Paid")
                                     {
-                                        <span class="badge bg-success">Đã thanh toán</span>
+                                        <span class="badge badge-custom bg-success">Đã thanh toán</span>
                                     }
                                     else
                                     {
-                                        <span class="badge bg-danger">Chưa thanh toán</span>
+                                        <span class="badge badge-custom bg-danger">Chưa thanh toán</span>
                                     }
                                 </td>
                                 <td class="text-end">

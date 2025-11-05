@@ -1,4 +1,4 @@
-using EVCenterService.Data;
+Ôªøusing EVCenterService.Data;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
@@ -15,7 +15,7 @@ namespace EVCenterService.Pages.Account
     public class LoginModel : PageModel
     {
         private readonly EVServiceCenterContext _context;
-        private readonly IPasswordHasher<AccountEntity> _passwordHasher; // D˘ng l?i Hasher
+        private readonly IPasswordHasher<AccountEntity> _passwordHasher; // D√πng l?i Hasher
 
         public LoginModel(EVServiceCenterContext context, IPasswordHasher<AccountEntity> passwordHasher)
         {
@@ -31,11 +31,11 @@ namespace EVCenterService.Pages.Account
 
         public class InputModel
         {
-            [Required(ErrorMessage = "Vui lÚng nh?p Email.")]
-            [EmailAddress(ErrorMessage = "Email khÙng h?p l?.")]
+            [Required(ErrorMessage = "Vui l√≤ng nh·∫≠p Email.")]
+            [EmailAddress(ErrorMessage = "Email kh√¥ng h·ª£p l·ªá.")]
             public string Email { get; set; } = string.Empty;
 
-            [Required(ErrorMessage = "Vui lÚng nh?p m?t kh?u.")]
+            [Required(ErrorMessage = "Vui l√≤ng nh·∫≠p m·∫≠t kh·∫©u.")]
             [DataType(DataType.Password)]
             public string Password { get; set; } = string.Empty;
         }
@@ -43,7 +43,7 @@ namespace EVCenterService.Pages.Account
         public async Task OnGetAsync(string? returnUrl = null)
         {
             ReturnUrl = returnUrl;
-            // XÛa cookie bÍn ngo‡i n?u cÛ (?? ??m b?o login Google s?ch)
+            // X√≥a cookie b√™n ngo√†i n?u c√≥ (?? ??m b?o login Google s?ch)
             //await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
         }
 
@@ -54,25 +54,25 @@ namespace EVCenterService.Pages.Account
 
             var account = await _context.Accounts.FirstOrDefaultAsync(a => a.Email == Input.Email);
 
-            // Ki?m tra t‡i kho?n v‡ m?t kh?u
+            // Ki?m tra t√†i kho?n v√† m?t kh?u
             if (account == null || string.IsNullOrEmpty(account.Password) || _passwordHasher.VerifyHashedPassword(account, account.Password, Input.Password) == PasswordVerificationResult.Failed)
             {
-                ModelState.AddModelError(string.Empty, "Email ho?c m?t kh?u khÙng ?˙ng.");
+                ModelState.AddModelError(string.Empty, "Email ho·∫∑c m·∫≠t kh·∫©u kh√¥ng ƒë√∫ng.");
                 return Page();
             }
 
-            // Ki?m tra tr?ng th·i t‡i kho?n (ThÍm ki?m tra n‡y)
+            // Ki?m tra tr?ng th√°i t√†i kho?n (Th√™m ki?m tra n√†y)
             if (account.Status != "Active")
             {
-                ModelState.AddModelError(string.Empty, "T‡i kho?n c?a b?n ?„ b? khÛa ho?c ch?a kÌch ho?t.");
+                ModelState.AddModelError(string.Empty, "T√†i kho·∫£n c·ªßa b·∫°n ƒë√£ b·ªã kh√≥a ho·∫∑c ch∆∞a k√≠ch ho·∫°t.");
                 return Page();
             }
 
-            // D˘ng h‡m helper ?? ??ng nh?p
+            // D√πng h√†m helper ?? ??ng nh?p
             return await SignInUserAsync(account, ReturnUrl);
         }
 
-        // --- HANDLER CHO N⁄T GOOGLE ---
+        // --- HANDLER CHO N√öT GOOGLE ---
         public IActionResult OnPostGoogleLogin()
         {
             // ???ng d?n callback s? g?i OnGetGoogleCallbackAsync
@@ -85,24 +85,24 @@ namespace EVCenterService.Pages.Account
             return Challenge(properties, GoogleDefaults.AuthenticationScheme);
         }
 
-        // --- HANDLER X? L› CALLBACK T? GOOGLE ---
+        // --- HANDLER X? L√ù CALLBACK T? GOOGLE ---
         public async Task<IActionResult> OnGetGoogleCallbackAsync(string? remoteError = null)
         {
             if (remoteError != null)
             {
-                ModelState.AddModelError(string.Empty, $"L?i t? Google: {remoteError}");
+                ModelState.AddModelError(string.Empty, $"L·ªói t·ª´ Google: {remoteError}");
                 return Page();
             }
 
-            // L?y thÙng tin t? cookie Google tr? v?
+            // L?y th√¥ng tin t? cookie Google tr? v?
             var info = await HttpContext.AuthenticateAsync(GoogleDefaults.AuthenticationScheme);
             if (info?.Principal == null)
             {
-                // Th? l?y t? cookie chÌnh n?u Google scheme khÙng cÛ
+                // Th? l?y t? cookie ch√≠nh n?u Google scheme kh√¥ng c√≥
                 info = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
                 if (info?.Principal == null)
                 {
-                    ModelState.AddModelError(string.Empty, "KhÙng th? l?y thÙng tin ??ng nh?p t? Google.");
+                    ModelState.AddModelError(string.Empty, "Kh√¥ng th·ªÉ l·∫•y th√¥ng tin ƒëƒÉng nh·∫≠p t·ª´ Google.");
                     return Page();
                 }
             }
@@ -112,11 +112,11 @@ namespace EVCenterService.Pages.Account
 
             if (string.IsNullOrEmpty(email))
             {
-                ModelState.AddModelError(string.Empty, "KhÙng th? l?y ??a ch? email t? Google.");
+                ModelState.AddModelError(string.Empty, "Kh√¥ng th·ªÉ l·∫•y ƒë·ªãa ch·ªâ email t·ª´ Google.");
                 return Page();
             }
 
-            // TÏm t‡i kho?n trong DB
+            // T√¨m t√†i kho?n trong DB
             var account = await _context.Accounts.FirstOrDefaultAsync(a => a.Email == email);
 
             // ??ng xu?t kh?i cookie t?m th?i c?a Google
@@ -124,28 +124,28 @@ namespace EVCenterService.Pages.Account
 
             if (account != null)
             {
-                // T‡i kho?n t?n t?i, ki?m tra tr?ng th·i r?i ??ng nh?p
+                // T√†i kho?n t?n t?i, ki?m tra tr?ng th√°i r?i ??ng nh?p
                 if (account.Status != "Active")
                 {
-                    ModelState.AddModelError(string.Empty, "T‡i kho?n Google n‡y ?„ liÍn k?t v?i m?t t‡i kho?n b? khÛa.");
+                    ModelState.AddModelError(string.Empty, "T√†i kho·∫£n Google n√†y ƒë√£ li√™n k·∫øt v·ªõi m·ªôt t√†i kho·∫£n b·ªã kh√≥a.");
                     return Page();
                 }
                 return await SignInUserAsync(account, ReturnUrl);
             }
             else
             {
-                // T‡i kho?n ch?a t?n t?i -> T? ??ng t?o t‡i kho?n Customer m?i
+                // T√†i kho?n ch?a t?n t?i -> T? ??ng t?o t√†i kho?n Customer m?i
                 var newAccount = new AccountEntity
                 {
                     UserId = Guid.NewGuid(),
-                    FullName = name ?? email.Split('@')[0], // L?y tÍn n?u cÛ, n?u khÙng thÏ l?y ph?n tr??c @
+                    FullName = name ?? email.Split('@')[0], // L?y t√™n n?u c√≥, n?u kh√¥ng th√¨ l?y ph?n tr??c @
                     Email = email,
-                    // KhÙng l?y S?T t? Google
+                    // Kh√¥ng l?y S?T t? Google
                     Role = "Customer", // M?c ??nh
                     Status = "Active",
-                    Password = "" // Quan tr?ng: ??t m?t kh?u r?ng ho?c m?t gi· tr? ??c bi?t
-                                  // vÏ khÙng cÛ m?t kh?u khi ??ng nh?p b?ng Google
-                                  // KhÙng c?n hash
+                    Password = "" // Quan tr?ng: ??t m?t kh?u r?ng ho?c m?t gi√° tr? ??c bi?t
+                                  // v√¨ kh√¥ng c√≥ m?t kh?u khi ??ng nh?p b?ng Google
+                                  // Kh√¥ng c?n hash
                 };
 
                 _context.Accounts.Add(newAccount);
@@ -155,18 +155,18 @@ namespace EVCenterService.Pages.Account
                 }
                 catch (DbUpdateException ex)
                 {
-                    ModelState.AddModelError(string.Empty, "L?i khi t?o t‡i kho?n. Email cÛ th? ?„ t?n t?i.");
+                    ModelState.AddModelError(string.Empty, "L·ªói khi t·∫°o t√†i kho·∫£n. Email c√≥ th·ªÉ ƒë√£ t·ªìn t·∫°i.");
                     Console.WriteLine($"Error creating Google user: {ex.InnerException?.Message ?? ex.Message}");
                     return Page();
                 }
 
-                // ??ng nh?p t‡i kho?n v?a t?o
+                // ??ng nh?p t√†i kho?n v?a t?o
                 return await SignInUserAsync(newAccount, ReturnUrl);
             }
         }
-        // --- K?T TH⁄C HANDLER GOOGLE ---
+        // --- K?T TH√öC HANDLER GOOGLE ---
 
-        // --- H¿M HELPER ??NG NH?P (D˘ng chung) ---
+        // --- H√ÄM HELPER ??NG NH?P (D√πng chung) ---
         private async Task<IActionResult> SignInUserAsync(AccountEntity account, string? returnUrl = null)
         {
             var claims = new List<Claim>
@@ -175,7 +175,7 @@ namespace EVCenterService.Pages.Account
                 new Claim(ClaimTypes.GivenName, account.FullName ?? string.Empty),
                 new Claim(ClaimTypes.NameIdentifier, account.UserId.ToString()),
                 new Claim(ClaimTypes.Role, account.Role)
-                // ThÍm c·c Claim kh·c n?u c?n (vÌ d?: S? ?i?n tho?i)
+                // Th√™m c√°c Claim kh√°c n?u c?n (v√≠ d?: S? ?i?n tho?i)
                 // new Claim(ClaimTypes.MobilePhone, account.Phone ?? string.Empty)
             };
 
@@ -208,6 +208,6 @@ namespace EVCenterService.Pages.Account
                 }
             }
         }
-        // --- K?T TH⁄C HELPER ---
+        // --- K?T TH√öC HELPER ---
     }
 }
