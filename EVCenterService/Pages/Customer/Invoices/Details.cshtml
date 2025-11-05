@@ -10,9 +10,10 @@
         <div class="card">
             <div class="card-header text-center bg-white py-4">
                 <h2 class="mb-0">HÓA ĐƠN DỊCH VỤ</h2>
-                <p class="text-muted mb-0">Mã hóa đơn: #HD-@Model.Invoice.InvoiceId</p>
+                <p class="text-muted mb-0">Mã hóa đơn: #HD-@(Model.Invoice.InvoiceId)</p>
             </div>
             <div class="card-body p-5">
+
 
                 @if (TempData["StatusMessage"] != null)
                 {
@@ -25,9 +26,19 @@
 
                 <div class="row mb-4">
                     <div class="col-md-6">
-                        <strong>Khách hàng:</strong> @Model.Invoice.Order?.User?.FullName<br>
-                        <strong>Xe:</strong> @Model.Invoice.Order?.Vehicle?.Model - @Model.Invoice.Order?.Vehicle?.Vin<br>
-                        <strong>Ngày tạo:</strong> @Model.Invoice.IssueDate?.ToString("dd/MM/yyyy")
+                        @if (Model.Invoice.Order != null)
+                        {
+                            <p class="mb-0"><strong>Khách hàng:</strong> @(Model.Invoice.Order.User?.FullName)</p>
+                            <p class="mb-0"><strong>Xe:</strong> @(Model.Invoice.Order.Vehicle?.Model) - @(Model.Invoice.Order.Vehicle?.Vin)</p>
+                            <p class="mb-0"><strong>Ngày tạo:</strong> @(Model.Invoice.IssueDate?.ToString("dd/MM/yyyy"))</p>
+                        }
+                        else if (Model.Invoice.Subscription != null)
+                        {
+                            <p class="mb-0"><strong>Khách hàng:</strong> @(Model.Invoice.Subscription.User?.FullName)</p>
+                            <p class="mb-0"><strong>Gói dịch vụ:</strong> @(Model.Invoice.Subscription.Plan?.Name)</p>
+                            <p class="mb-0"><strong>Ngày tạo:</strong> @(Model.Invoice.IssueDate?.ToString("dd/MM/yyyy"))</p>
+                            <p class="mb-0"><strong>Ngày kết thúc:</strong> @(Model.Invoice.Subscription.EndDate.ToString("dd/MM/yyyy"))</p>
+                        }
                     </div>
                     <div class="col-md-6 text-md-end">
                         @if (Model.Invoice.Status == "Paid")
@@ -58,15 +69,15 @@
                                 {
                                     <tr>
                                         <td>@index</td>
-                                        <td><strong>Dịch vụ:</strong> @detail.Service?.Name</td>
-                                        <td class="text-end">@detail.UnitPrice?.ToString("N0")đ</td>
+                                        <td><strong>Dịch vụ:</strong> @(detail.Service?.Name)</td>
+                                        <td class="text-end">@(detail.UnitPrice?.ToString("N0"))đ</td>
                                     </tr>
                                 }
                                 @foreach (var (part, index) in Model.Invoice.Order.PartsUseds.Select((v, i) => (v, i + 1 + Model.Invoice.Order.OrderDetails.Count)))
                                 {
                                     <tr>
                                         <td>@index</td>
-                                        <td><strong>Phụ tùng:</strong> @part.Part?.Name (SL: @part.Quantity)</td>
+                                        <td><strong>Phụ tùng:</strong> @(part.Part?.Name) (SL: @(part.Quantity))</td>
                                         <td class="text-end">@((part.Part?.UnitPrice * part.Quantity)?.ToString("N0"))đ</td>
                                     </tr>
                                 }
@@ -76,17 +87,17 @@
                                 <tr>
                                     <td>1</td>
                                     <td>
-                                        <strong>Gói dịch vụ:</strong> @Model.Invoice.Subscription.Plan.Name
-                                        <small class="d-block text-muted">Thời hạn: @Model.Invoice.Subscription.Plan.DurationDays ngày</small>
+                                        <strong>Gói dịch vụ:</strong> @(Model.Invoice.Subscription.Plan.Name)
+                                        <small class="d-block text-muted">Thời hạn: @(Model.Invoice.Subscription.Plan.DurationDays) ngày</small>
                                     </td>
-                                    <td class="text-end">@Model.Invoice.Subscription.Plan.PriceVnd.ToString("N0")đ</td>
+                                    <td class="text-end">@(Model.Invoice.Subscription.Plan.PriceVnd.ToString("N0"))đ</td>
                                 </tr>
                             }
                         </tbody>
                         <tfoot>
                             <tr>
                                 <td colspan="2" class="text-end fw-bold">Tổng cộng</td>
-                                <td class="text-end fw-bold fs-5">@Model.Invoice.Amount?.ToString("N0")đ</td>
+                                <td class="text-end fw-bold fs-5">@(Model.Invoice.Amount?.ToString("N0"))đ</td>
                             </tr>
                         </tfoot>
                     </table>

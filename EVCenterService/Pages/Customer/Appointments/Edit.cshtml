@@ -107,6 +107,54 @@
 
             // Hiển thị tổng ngay khi mở trang
             updateTotal();
+
+            // ===== BẮT ĐẦU LOGIC VÔ HIỆU HÓA DỊCH VỤ =====
+
+            // ID Dịch vụ (phải khớp CSDL)
+            const generalInspectionId = 4;
+            const mainServiceIds = [1, 2, 3]; // Battery, Brake, Cooling
+
+            const generalCheckbox = document.getElementById('svc_' + generalInspectionId);
+            const mainCheckboxes = mainServiceIds.map(id => document.getElementById('svc_' + id));
+
+            function handleInspectionLogic() {
+                // Kiểm tra xem generalCheckbox có tồn tại không (nếu dịch vụ bị xóa)
+                if (!generalCheckbox) return;
+
+                if (generalCheckbox.checked) {
+                    // 1. NẾU CHỌN "General Inspection"
+                    mainCheckboxes.forEach(chk => {
+                        if (chk) { // Kiểm tra chk tồn tại
+                            if (chk.checked) {
+                                chk.checked = false; // Bỏ chọn
+                            }
+                            chk.disabled = true; // Vô hiệu hóa
+                            chk.closest('.form-check').classList.add('text-muted');
+                        }
+                    });
+                } else {
+                    // 2. NẾU BỎ CHỌN "General Inspection"
+                    mainCheckboxes.forEach(chk => {
+                        if (chk) {
+                            chk.disabled = false; // Kích hoạt lại
+                            chk.closest('.form-check').classList.remove('text-muted');
+                        }
+                    });
+                }
+
+                // Tính lại tổng giá sau khi thay đổi
+                updateTotal();
+            }
+
+            if (generalCheckbox) {
+                generalCheckbox.addEventListener('change', handleInspectionLogic);
+            }
+
+            // Chạy logic này ngay khi tải trang (RẤT QUAN TRỌNG CHO TRANG EDIT)
+            handleInspectionLogic();
+
+            // ===== KẾT THÚC LOGIC VÔ HIỆU HÓA DỊCH VỤ =====
+
         });
     </script>
 }

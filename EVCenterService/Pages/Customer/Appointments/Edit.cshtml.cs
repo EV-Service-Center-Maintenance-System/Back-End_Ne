@@ -89,6 +89,30 @@ namespace EVCenterService.Pages.Customer.Appointments
                 return Page();
             }
 
+            // ===== BẮT ĐẦU LOGIC NGHIỆP VỤ DỊCH VỤ (TRANG EDIT) =====
+            const int generalInspectionId = 4;
+            var mainServiceIds = new List<int> { 1, 2, 3 }; // Battery, Brake, Cooling
+
+            bool hasGeneral = SelectedServiceIds.Contains(generalInspectionId);
+            int mainServiceCount = SelectedServiceIds.Count(id => mainServiceIds.Contains(id));
+
+            // KỊCH BẢN 1: Chọn cả 3 mục chính
+            if (mainServiceCount == 3)
+            {
+                ModelState.AddModelError(string.Empty, "Bạn đã chọn cả 3 dịch vụ chính. Vui lòng chỉ chọn 'Bảo dưỡng Tổng quát' (General Inspection) vì đã bao gồm các mục này.");
+                await OnGetAsync(id); // Tải lại dữ liệu cho form
+                return Page();
+            }
+
+            // KỊCH BẢN 2: Chọn "General" VÀ một dịch vụ chính khác
+            if (hasGeneral && mainServiceCount > 0)
+            {
+                ModelState.AddModelError(string.Empty, "'Bảo dưỡng Tổng quát' đã bao gồm các dịch vụ khác. Vui lòng chỉ chọn 'Bảo dưỡng Tổng quát' hoặc các dịch vụ riêng lẻ.");
+                await OnGetAsync(id); // Tải lại dữ liệu cho form
+                return Page();
+            }
+            // ===== KẾT THÚC LOGIC NGHIỆP VỤ DỊCH VỤ =====
+
             existingOrder.VehicleId = Booking.VehicleId;
             existingOrder.ChecklistNote = Booking.ChecklistNote;
             existingOrder.AppointmentDate = Booking.AppointmentDate.Date + SelectedTime;

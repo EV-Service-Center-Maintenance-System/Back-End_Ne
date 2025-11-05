@@ -1,4 +1,4 @@
-using EVCenterService.Data;
+Ôªøusing EVCenterService.Data;
 using EVCenterService.Service.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -24,39 +24,39 @@ namespace EVCenterService.Pages.Customer.Invoices
             _emailSender = emailSender;
         }
 
-        // OnGet vÏ VNPay tr? v? b?ng QueryString
+        // OnGet v√¨ VNPay tr? v? b?ng QueryString
         public async Task<IActionResult> OnGetAsync()
         {
-            // 1. Th?c thi thanh to·n
+            // 1. Th?c thi thanh to√°n
             var response = _vnPayService.PaymentExecute(Request.Query);
 
             if (response == null)
             {
-                TempData["ErrorMessage"] = "Ph?n h?i thanh to·n khÙng h?p l?.";
+                TempData["ErrorMessage"] = "Ph·∫£n h·ªìi thanh to√°n kh√¥ng h·ª£p l·ªá.";
                 return RedirectToPage("/Customer/Index"); // V? trang ch? customer
             }
 
-            // 1. L?y paymentAttemptId t? ph?n h?i VNPay (nÛ n?m trong response.OrderId)
+            // 1. L?y paymentAttemptId t? ph?n h?i VNPay (n√≥ n?m trong response.OrderId)
             var paymentAttemptId = response.OrderId;
 
             // 2. Tra c?u InvoiceId th?t t? Cache
             if (!_memoryCache.TryGetValue(paymentAttemptId, out int invoiceId))
             {
-                // KhÙng tÏm th?y mapping trong cache (cÛ th? h?t h?n ho?c l?i)
-                TempData["ErrorMessage"] = "KhÙng th? x·c minh giao d?ch ho?c phiÍn thanh to·n ?„ h?t h?n.";
-                // Chuy?n h??ng v? trang Index c?a hÛa ??n thay vÏ Details
+                // Kh√¥ng t√¨m th?y mapping trong cache (c√≥ th? h?t h?n ho?c l?i)
+                TempData["ErrorMessage"] = "Kh√¥ng th·ªÉ x√°c minh giao d·ªãch ho·∫∑c phi√™n thanh to√°n ƒë√£ h·∫øt h·∫°n.";
+                // Chuy?n h??ng v? trang Index c?a h√≥a ??n thay v√¨ Details
                 return RedirectToPage("./Index");
             }
-            // Optional: XÛa kh?i cache sau khi l?y ???c ?? gi?i phÛng b? nh?
+            // Optional: X√≥a kh?i cache sau khi l?y ???c ?? gi?i ph√≥ng b? nh?
             _memoryCache.Remove(paymentAttemptId);
 
-            // 2. Ki?m tra k?t qu? thanh to·n
+            // 2. Ki?m tra k?t qu? thanh to√°n
             if (response.Success && response.VnPayResponseCode == "00")
             {
                 using var transaction = await _context.Database.BeginTransactionAsync();
                 try
                 {
-                    // D˘ng invoiceId l?y t? cache ?? tÏm hÛa ??n
+                    // D√πng invoiceId l?y t? cache ?? t√¨m h√≥a ??n
                     var invoice = await _context.Invoices
                         .Include(i => i.Order)
                         .Include(i => i.Subscription)
@@ -72,22 +72,22 @@ namespace EVCenterService.Pages.Customer.Invoices
                         {
                             // === LOGIC C? (CHO D?CH V? S?A CH?A) ===
                             invoice.Order.Status = "ReadyForRepair";
-                            TempData["StatusMessage"] = $"Thanh to·n th‡nh cÙng cho HÛa ??n D?ch V? #{invoiceId}.";
+                            TempData["StatusMessage"] = $"Thanh to√°n th√†nh c√¥ng cho H√≥a ƒê∆°n D·ªãch V·ª• #{invoiceId}.";
                         }
                         else if (invoice.SubscriptionId != null && invoice.Subscription != null)
                         {
-                            // === LOGIC M?I (CHO G”I D?CH V?) ===
+                            // === LOGIC M?I (CHO G√ìI D?CH V?) ===
                             invoice.Subscription.Status = "active";
-                            TempData["StatusMessage"] = $"??ng k˝ gÛi {invoice.Subscription.Plan.Name} th‡nh cÙng!";
+                            TempData["StatusMessage"] = $"ƒêƒÉng k√Ω g√≥i {invoice.Subscription.Plan.Name} th√†nh c√¥ng!";
 
                             // G?I EMAIL C?M ?N
                             var user = invoice.Subscription.User;
-                            var subject = "C?m ?n b?n ?„ ??ng k˝ gÛi d?ch v? EV Center";
+                            var subject = "C·∫£m ∆°n b·∫°n ƒë√£ ƒëƒÉng k√Ω g√≥i d·ªãch v·ª• EV Center";
                             var message = $@"
-                            <p>Ch‡o {user.FullName},</p>
-                            <p>C?m ?n b?n ?„ ??ng k˝ th‡nh cÙng gÛi <strong>{invoice.Subscription.Plan.Name}</strong>.</p>
-                            <p>GÛi d?ch v? c?a b?n cÛ hi?u l?c t? {invoice.Subscription.StartDate:dd/MM/yyyy} ??n {invoice.Subscription.EndDate:dd/MM/yyyy}.</V>
-                            <p>Tr‚n tr?ng,<br>??i ng? EV Service Center</p>";
+                            <p>Ch√†o {user.FullName},</p>
+                            <p>C·∫£m ∆°n b·∫°n ƒë√£ ƒëƒÉng k√Ω th√†nh c√¥ng g√≥i <strong>{invoice.Subscription.Plan.Name}</strong>.</p>
+                            <p>G√≥i d·ªãch v·ª• c·ªßa b·∫°n c√≥ hi·ªáu l·ª±c t·ª´ {invoice.Subscription.StartDate:dd/MM/yyyy} ƒë·∫øn {invoice.Subscription.EndDate:dd/MM/yyyy}.</V>
+                            <p>Tr√¢n tr·ªçng,<br> EV Service Center</p>";
 
                             await _emailSender.SendEmailAsync(user.Email, subject, message);
                         }
@@ -97,29 +97,29 @@ namespace EVCenterService.Pages.Customer.Invoices
                     }
                     else if (invoice != null && invoice.Status == "Paid")
                     {
-                        TempData["StatusMessage"] = "HÛa ??n n‡y ?„ ???c thanh to·n.";
+                        TempData["StatusMessage"] = "H√≥a ƒë∆°n n√†y ƒë√£ ƒë∆∞·ª£c thanh to√°n.";
                     }
                     else if (invoice == null)
                     {
-                        TempData["ErrorMessage"] = $"KhÙng tÏm th?y hÛa ??n #{invoiceId} trong h? th?ng.";
-                        return RedirectToPage("./Index"); // KhÙng cÛ hÛa ??n thÏ v? trang Index
+                        TempData["ErrorMessage"] = $"Kh√¥ng t√¨m th·∫•y h√≥a ƒë∆°n #{invoiceId} trong h·ªá th·ªëng.";
+                        return RedirectToPage("./Index"); // Kh√¥ng c√≥ h√≥a ??n th√¨ v? trang Index
                     }
 
-                    // Chuy?n h??ng v? trang Details c?a ?˙ng hÛa ??n
+                    // Chuy?n h??ng v? trang Details c?a ?√∫ng h√≥a ??n
                     return RedirectToPage("./Details", new { id = invoiceId });
                 }
                 catch (Exception ex)
                 {
                     await transaction.RollbackAsync();
-                    TempData["ErrorMessage"] = $"L?i khi c?p nh?t CSDL: {ex.Message}";
-                    // N?u l?i CSDL, c?ng v? trang Details ?? ng??i d˘ng th?y hÛa ??n
+                    TempData["ErrorMessage"] = $"L·ªói khi c·∫≠p nh·∫≠t CSDL: {ex.Message}";
+                    // N?u l?i CSDL, c?ng v? trang Details ?? ng??i d√πng th?y h√≥a ??n
                     return RedirectToPage("./Details", new { id = invoiceId });
                 }
             }
             else
             {
-                TempData["ErrorMessage"] = "Thanh to·n khÙng th‡nh cÙng. M„ l?i VNPay: " + response.VnPayResponseCode;
-                // N?u thanh to·n l?i, c?ng v? trang Details
+                TempData["ErrorMessage"] = "Thanh to√°n kh√¥ng th√†nh c√¥ng. M√£ l·ªói VNPay: " + response.VnPayResponseCode;
+                // N?u thanh to√°n l?i, c?ng v? trang Details
                 return RedirectToPage("./Details", new { id = invoiceId });
             }
         }

@@ -248,7 +248,7 @@ public partial class EVServiceCenterContext : DbContext
                 Email = "tech1@gmail.com",
                 Phone = "0902000002",
                 Role = "Technician",
-                Certification = "Brake System Certified",
+                Certification = "Battery System Certified;Brake System Certified",
                 Status = "Active",
                 Password = passwordHasher.HashPassword(null, "123456")
             },
@@ -259,7 +259,7 @@ public partial class EVServiceCenterContext : DbContext
                 Email = "tech2@gmail.com",
                 Phone = "0903000003",
                 Role = "Technician",
-                Certification = "Battery System Certified",
+                Certification = "Brake System Certified;Thermal & Cooling System Certified",
                 Status = "Active",
                 Password = passwordHasher.HashPassword(null, "123456")
             },
@@ -300,7 +300,7 @@ public partial class EVServiceCenterContext : DbContext
                 Email = "tech3@gmail.com",
                 Phone = "0908000008",
                 Role = "Technician",
-                Certification = "Thermal & Cooling System Certified", 
+                Certification = "Battery System Certified;Thermal & Cooling System Certified", 
                 Status = "Active",
                 Password = passwordHasher.HashPassword(null, "123456") 
             },
@@ -350,10 +350,10 @@ public partial class EVServiceCenterContext : DbContext
 
         // --- BẢNG: ServiceCatalog ---
         modelBuilder.Entity<ServiceCatalog>().HasData(
-            new ServiceCatalog { ServiceId = 1, Name = "Battery Replacement", Description = "Replace entire battery pack", BasePrice = 20000000m, DurationMinutes = 180 },
-            new ServiceCatalog { ServiceId = 2, Name = "Brake Check", Description = "Inspect and replace brake pads if needed", BasePrice = 1500000m, DurationMinutes = 60 },
+            new ServiceCatalog { ServiceId = 1, Name = "Battery Replacement", Description = "Replace entire battery pack", BasePrice = 10000000m, DurationMinutes = 240 },
+            new ServiceCatalog { ServiceId = 2, Name = "Brake Check", Description = "Inspect and replace brake pads if needed", BasePrice = 750000m, DurationMinutes = 60 },
             new ServiceCatalog { ServiceId = 3, Name = "Cooling System Check", Description = "Check coolant and thermal management", BasePrice = 800000m, DurationMinutes = 45 },
-            new ServiceCatalog { ServiceId = 4, Name = "General Inspection", Description = "Full vehicle health check", BasePrice = 1000000m, DurationMinutes = 90 }
+            new ServiceCatalog { ServiceId = 4, Name = "General Inspection", Description = "Full vehicle health check", BasePrice = 1000000m, DurationMinutes = 180 }
         );
 
         // --- BẢNG: Vehicle ---
@@ -394,7 +394,7 @@ public partial class EVServiceCenterContext : DbContext
         // --- BẢNG: SubscriptionPlan ---
         modelBuilder.Entity<SubscriptionPlan>().HasData(
             new SubscriptionPlan { PlanId = planBasicId, Code = "BASIC", Name = "Basic Care", PriceVnd = 499000m, DurationDays = 30, Benefits = "1 free inspection/month", IsActive = true },
-            new SubscriptionPlan { PlanId = planPremiumId, Code = "PREMIUM", Name = "Premium Care", PriceVnd = 999000m, DurationDays = 90, Benefits = "Priority booking, 3 free inspections", IsActive = true }
+            new SubscriptionPlan { PlanId = planPremiumId, Code = "PREMIUM", Name = "Premium Care", PriceVnd = 999000m, DurationDays = 90, Benefits = "3 free inspections", IsActive = true }
         );
 
         // --- BẢNG: Subscription ---

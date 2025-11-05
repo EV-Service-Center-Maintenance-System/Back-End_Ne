@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace EVCenterService.Migrations
 {
     /// <inheritdoc />
-    public partial class AddSeedData : Migration
+    public partial class UpdatePremiumPlanBenefits : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -375,15 +375,15 @@ namespace EVCenterService.Migrations
                 columns: new[] { "UserID", "Certification", "Email", "FullName", "Password", "Phone", "Role", "Status" },
                 values: new object[,]
                 {
-                    { new Guid("a1a1a1a1-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), null, "admin@gmail.com", "Admin", "AQAAAAIAAYagAAAAEFvpoKLN92r91qDzs8wTh8ZCSRQboJv4H74ErWT9/qR5r7NtOOHbnKbwYoY/nNvg6w==", "0901000001", "Admin", "Active" },
-                    { new Guid("a3a3a3a3-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), "Thermal & Cooling System Certified", "tech3@gmail.com", "Nguyen Van F", "AQAAAAIAAYagAAAAEA6R7q/kHhUKp7PSdO1sauGRBHZowvi31ofRiNzvgnpi5B6Bn+DqUwPMhgaKAdO4nw==", "0908000008", "Technician", "Active" },
-                    { new Guid("b2b2b2b2-bbbb-bbbb-bbbb-bbbbbbbbbbbb"), "Brake System Certified", "tech1@gmail.com", "Tran Van B", "AQAAAAIAAYagAAAAEDTPGB4Gv3iCxJe9XtlRwauoUTrAYYU9G6ia7WmLQ52xvj8O9XLcbMS9Ov1Il9LDVA==", "0902000002", "Technician", "Active" },
-                    { new Guid("b4b4b4b4-bbbb-bbbb-bbbb-bbbbbbbbbbbb"), null, "staff2@gmail.com", "Hoang Thi G", "AQAAAAIAAYagAAAAEGt0Mi3a/VTQ57InxniOeS1zsiPKOe8XrYus5MkXUfF3ta1axAXLDV3sQf0TUSV5EA==", "0909000009", "Staff", "Active" },
-                    { new Guid("c3c3c3c3-cccc-cccc-cccc-cccccccccccc"), "Battery System Certified", "tech2@gmail.com", "Le Thi C", "AQAAAAIAAYagAAAAEJVT5qzAJS+kOnHiY8exN2awkyH1v5NC6JIrY0qVsgJJvucIfAxIUXLqsG9huQF/+Q==", "0903000003", "Technician", "Active" },
-                    { new Guid("c5c5c5c5-cccc-cccc-cccc-cccccccccccc"), "General Inspection Certified", "tech4@gmail.com", "Vu Dinh H", "AQAAAAIAAYagAAAAEMQdKS4QXm0Wc1GC41JAZfnSniN/yYIpHczjb6YTTVocTrlMDO9bQTr9Qj1kd6mS5w==", "0910000010", "Technician", "Active" },
-                    { new Guid("d4d4d4d4-dddd-dddd-dddd-dddddddddddd"), null, "staff@gmail.com", "Phan Anh C", "AQAAAAIAAYagAAAAELDjQIdNYlWbr+9sFXzIbmrkVmnbvEx+JlzPAObis4bnvcHp0VPB7i+u+oXETzO6Cw==", "0906000006", "Staff", "Active" },
-                    { new Guid("e5e5e5e5-eeee-eeee-eeee-eeeeeeeeeeee"), null, "user1@gmail.com", "Pham Van D", "AQAAAAIAAYagAAAAEDu7LTIDxK4MmeiJb0q5LAsXhQiSws6y7teF5AY+GctTGHuQac7ewAhwU+rsr7M8pA==", "0904000004", "Customer", "Active" },
-                    { new Guid("f6f6f6f6-ffff-ffff-ffff-ffffffffffff"), null, "user2@gmail.com", "Do Thi E", "AQAAAAIAAYagAAAAEBBgoglhZoioZFKM1WqdQzkBiWrLcbM9b2YyXxhHCeVj8R8RYZEWT7vqltIwrU82LQ==", "0905000005", "Customer", "Active" }
+                    { new Guid("a1a1a1a1-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), null, "admin@gmail.com", "Admin", "AQAAAAIAAYagAAAAEFNOCqdgkuzSLyWLvFhGXISqh5/4pfGPx6bzyA2N2pRfnxUd1KusPx9g7pBYS7yNjQ==", "0901000001", "Admin", "Active" },
+                    { new Guid("a3a3a3a3-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), "Battery System Certified;Thermal & Cooling System Certified", "tech3@gmail.com", "Nguyen Van F", "AQAAAAIAAYagAAAAENGIg3jSvVZVj3ZAiTqO5cTReZN8nNfbzCe6Vn7yrQ13LkASs/FaMv478jnkHsCpdQ==", "0908000008", "Technician", "Active" },
+                    { new Guid("b2b2b2b2-bbbb-bbbb-bbbb-bbbbbbbbbbbb"), "Battery System Certified;Brake System Certified", "tech1@gmail.com", "Tran Van B", "AQAAAAIAAYagAAAAEJJu1DczcM7nxUd2eVrruy4wlPC0iLiea8ODg8jZWezMqNFsTvTLmXYWFHCoCmW4/Q==", "0902000002", "Technician", "Active" },
+                    { new Guid("b4b4b4b4-bbbb-bbbb-bbbb-bbbbbbbbbbbb"), null, "staff2@gmail.com", "Hoang Thi G", "AQAAAAIAAYagAAAAENg+98EXSYW53JEIQYcGgwKqQmgk4r8RTnx3o9NshzuJPbqMR5Y4ZhgZepXQALidtQ==", "0909000009", "Staff", "Active" },
+                    { new Guid("c3c3c3c3-cccc-cccc-cccc-cccccccccccc"), "Brake System Certified;Thermal & Cooling System Certified", "tech2@gmail.com", "Le Thi C", "AQAAAAIAAYagAAAAECPdhFuT9tVBPzZ+4gFejvWlojGt52VL50VbrzXa5nYW/yZilHzsA3xcpr7lG3ZJZg==", "0903000003", "Technician", "Active" },
+                    { new Guid("c5c5c5c5-cccc-cccc-cccc-cccccccccccc"), "General Inspection Certified", "tech4@gmail.com", "Vu Dinh H", "AQAAAAIAAYagAAAAEMEfaL9OpEUpy33O05ToNTggDUqoRgVKBxnGu7RgJj8TYiETXfom9JUfXkmZkULBgQ==", "0910000010", "Technician", "Active" },
+                    { new Guid("d4d4d4d4-dddd-dddd-dddd-dddddddddddd"), null, "staff@gmail.com", "Phan Anh C", "AQAAAAIAAYagAAAAED2rlPpXa+VPMog0Cp56bYpHPsaYWBkfuABSAhdP2fAMOlx+DmGKsDlwzpaLLPPgeA==", "0906000006", "Staff", "Active" },
+                    { new Guid("e5e5e5e5-eeee-eeee-eeee-eeeeeeeeeeee"), null, "user1@gmail.com", "Pham Van D", "AQAAAAIAAYagAAAAEHryFXndWrMHqtz7S7LxeHC7v8YF28JMfmfKSXR0cdpwb9HaU9P3HKcVN69fOaYlLw==", "0904000004", "Customer", "Active" },
+                    { new Guid("f6f6f6f6-ffff-ffff-ffff-ffffffffffff"), null, "user2@gmail.com", "Do Thi E", "AQAAAAIAAYagAAAAEAHbTmBEwhxwfFO41xTidMO5q9DWtN8GSHItRoh+nMQWxc+Ta+l014B17dcouPeVDg==", "0905000005", "Customer", "Active" }
                 });
 
             migrationBuilder.InsertData(
@@ -407,10 +407,10 @@ namespace EVCenterService.Migrations
                 columns: new[] { "ServiceID", "BasePrice", "Description", "DurationMinutes", "Name" },
                 values: new object[,]
                 {
-                    { 1, 20000000m, "Replace entire battery pack", 180, "Battery Replacement" },
-                    { 2, 1500000m, "Inspect and replace brake pads if needed", 60, "Brake Check" },
+                    { 1, 10000000m, "Replace entire battery pack", 240, "Battery Replacement" },
+                    { 2, 750000m, "Inspect and replace brake pads if needed", 60, "Brake Check" },
                     { 3, 800000m, "Check coolant and thermal management", 45, "Cooling System Check" },
-                    { 4, 1000000m, "Full vehicle health check", 90, "General Inspection" }
+                    { 4, 1000000m, "Full vehicle health check", 180, "General Inspection" }
                 });
 
             migrationBuilder.InsertData(
@@ -419,7 +419,7 @@ namespace EVCenterService.Migrations
                 values: new object[,]
                 {
                     { new Guid("11111111-1111-1111-1111-111111111111"), "1 free inspection/month", "BASIC", 30, true, "Basic Care", 499000m },
-                    { new Guid("22222222-2222-2222-2222-222222222222"), "Priority booking, 3 free inspections", "PREMIUM", 90, true, "Premium Care", 999000m }
+                    { new Guid("22222222-2222-2222-2222-222222222222"), "3 free inspections", "PREMIUM", 90, true, "Premium Care", 999000m }
                 });
 
             migrationBuilder.InsertData(
@@ -427,8 +427,8 @@ namespace EVCenterService.Migrations
                 columns: new[] { "NotificationID", "Content", "IsRead", "ReceiverID", "TriggerDate", "Type" },
                 values: new object[,]
                 {
-                    { 1, "Your vehicle maintenance is completed.", false, new Guid("e5e5e5e5-eeee-eeee-eeee-eeeeeeeeeeee"), new DateTime(2025, 11, 2, 3, 13, 34, 922, DateTimeKind.Local).AddTicks(7108), "StatusUpdate" },
-                    { 2, "Your appointment is scheduled for tomorrow.", false, new Guid("f6f6f6f6-ffff-ffff-ffff-ffffffffffff"), new DateTime(2025, 11, 2, 3, 13, 34, 922, DateTimeKind.Local).AddTicks(7110), "MaintenanceReminder" }
+                    { 1, "Your vehicle maintenance is completed.", false, new Guid("e5e5e5e5-eeee-eeee-eeee-eeeeeeeeeeee"), new DateTime(2025, 11, 5, 17, 1, 58, 133, DateTimeKind.Local).AddTicks(8330), "StatusUpdate" },
+                    { 2, "Your appointment is scheduled for tomorrow.", false, new Guid("f6f6f6f6-ffff-ffff-ffff-ffffffffffff"), new DateTime(2025, 11, 5, 17, 1, 58, 133, DateTimeKind.Local).AddTicks(8333), "MaintenanceReminder" }
                 });
 
             migrationBuilder.InsertData(
@@ -450,7 +450,7 @@ namespace EVCenterService.Migrations
             migrationBuilder.InsertData(
                 table: "Subscription",
                 columns: new[] { "SubscriptionID", "AutoRenew", "CreatedAt", "EndDate", "PlanID", "StartDate", "Status", "UserID" },
-                values: new object[] { new Guid("33333333-3333-3333-3333-333333333333"), true, new DateTime(2025, 11, 2, 3, 13, 34, 922, DateTimeKind.Local).AddTicks(7048), new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new Guid("22222222-2222-2222-2222-222222222222"), new DateTime(2025, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "active", new Guid("e5e5e5e5-eeee-eeee-eeee-eeeeeeeeeeee") });
+                values: new object[] { new Guid("33333333-3333-3333-3333-333333333333"), true, new DateTime(2025, 11, 5, 17, 1, 58, 133, DateTimeKind.Local).AddTicks(8195), new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new Guid("22222222-2222-2222-2222-222222222222"), new DateTime(2025, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "active", new Guid("e5e5e5e5-eeee-eeee-eeee-eeeeeeeeeeee") });
 
             migrationBuilder.InsertData(
                 table: "Vehicle",
@@ -478,7 +478,7 @@ namespace EVCenterService.Migrations
             migrationBuilder.InsertData(
                 table: "Feedback",
                 columns: new[] { "FeedbackID", "Comment", "CreatedAt", "OrderID", "Rating", "UserID" },
-                values: new object[] { 1, "Excellent service! Technician was professional.", new DateTime(2025, 11, 2, 3, 13, 34, 922, DateTimeKind.Local).AddTicks(7132), 1, 5, new Guid("e5e5e5e5-eeee-eeee-eeee-eeeeeeeeeeee") });
+                values: new object[] { 1, "Excellent service! Technician was professional.", new DateTime(2025, 11, 5, 17, 1, 58, 133, DateTimeKind.Local).AddTicks(8362), 1, 5, new Guid("e5e5e5e5-eeee-eeee-eeee-eeeeeeeeeeee") });
 
             migrationBuilder.InsertData(
                 table: "OrderDetail",

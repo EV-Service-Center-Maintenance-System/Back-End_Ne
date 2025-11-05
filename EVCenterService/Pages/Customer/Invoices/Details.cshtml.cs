@@ -1,4 +1,4 @@
-using EVCenterService.Data;
+﻿using EVCenterService.Data;
 using EVCenterService.Models; 
 using EVCenterService.Service.Interfaces;
 using EVCenterService.ViewModels;
@@ -45,6 +45,8 @@ namespace EVCenterService.Pages.Customer.Invoices
                     .ThenInclude(pu => pu.Part)
                 .Include(i => i.Subscription)
                     .ThenInclude(s => s.Plan)
+                .Include(i => i.Subscription) 
+                    .ThenInclude(s => s.User)
                 .FirstOrDefaultAsync(i => i.InvoiceId == id);
 
             if (Invoice == null)
@@ -66,7 +68,7 @@ namespace EVCenterService.Pages.Customer.Invoices
             return Page();
         }
 
-        // Handler cho n�t "Thanh to�n VNPay"
+        // Handler cho nút "Thanh toán VNPay"
         public async Task<IActionResult> OnPostPayWithVnPayAsync(int id)
         {
             var invoice = await _context.Invoices
@@ -80,7 +82,7 @@ namespace EVCenterService.Pages.Customer.Invoices
 
             if (invoice.Status == "Paid") 
             {
-                TempData["ErrorMessage"] = "H�a ??n n�y ?� ???c thanh to�n.";
+                TempData["ErrorMessage"] = "Hóa đơn này đã được thanh toán.";
                 return RedirectToPage("./Details", new { id = invoice.InvoiceId });
             }
 

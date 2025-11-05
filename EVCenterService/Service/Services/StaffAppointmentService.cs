@@ -37,12 +37,47 @@ namespace EVCenterService.Service.Services
 
         public async Task ConfirmAppointmentAsync(int orderId)
         {
-            // Dùng GetByIdAsync cơ bản vì chỉ cần cập nhật Status
-            var appointment = await _appointmentRepository.GetByIdAsync(orderId)
+            var appointment = await _context.OrderServices
+                                    .Include(o => o.User)
+                                    .Include(o => o.OrderDetails)
+                                        .ThenInclude(od => od.Service)
+                                    .FirstOrDefaultAsync(o => o.OrderId == orderId)
                 ?? throw new KeyNotFoundException("Không tìm thấy lịch hẹn.");
 
             appointment.Status = "Confirmed";
-            await _appointmentRepository.UpdateAsync(appointment);
+            // Sử dụng _context.SaveChangesAsync() thay vì _appointmentRepository.UpdateAsync()
+            // để đảm bảo tính nhất quán (vì chúng ta đã dùng _context để tải)
+            _context.OrderServices.Update(appointment);
+
+            // ===== BẮT ĐẦU GỬI EMAIL XÁC NHẬN =====
+            try
+            {
+                if (appointment.User != null)
+                {
+                    var serviceNames = string.Join(", ", appointment.OrderDetails.Select(od => od.Service?.Name ?? "N/A"));
+                    var subject = $"Lịch hẹn #{appointment.OrderId} của bạn đã được Xác nhận!";
+                    var message = $@"
+                        <p>Chào {appointment.User.FullName},</p>
+                        <p>Chúng tôi vui mừng thông báo lịch hẹn của bạn đã được <strong>xác nhận</strong>:</p>
+                        <ul>
+                            <li><strong>Mã lịch hẹn:</strong> #{appointment.OrderId}</li>
+                            <li><strong>Ngày giờ:</strong> {appointment.AppointmentDate:dd/MM/yyyy HH:mm}</li>
+                            <li><strong>Dịch vụ:</strong> {serviceNames}</li>
+                        </ul>
+                        <p>Vui lòng đến trung tâm đúng hẹn. Chúng tôi rất mong được phục vụ bạn.</p>
+                        <p>Trân trọng,<br>Đội ngũ EV Service Center</p>";
+
+                    await _emailSender.SendEmailAsync(appointment.User.Email, subject, message);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Lỗi gửi mail Xác nhận lịch: {ex.Message}");
+                // Không dừng lại nếu gửi mail lỗi, chỉ log
+            }
+            // ===== KẾT THÚC GỬI EMAIL =====
+
+            await _context.SaveChangesAsync();
         }
 
         public async Task CancelAppointmentByStaffAsync(int orderId, string cancellationReason)
@@ -87,11 +122,38 @@ namespace EVCenterService.Service.Services
 
         public async Task RejectAppointmentAsync(int orderId)
         {
-            var appointment = await _appointmentRepository.GetByIdAsync(orderId)
+            var appointment = await _context.OrderServices
+                                    .Include(o => o.User)
+                                    .FirstOrDefaultAsync(o => o.OrderId == orderId)
                 ?? throw new KeyNotFoundException("Không tìm thấy lịch hẹn.");
 
             appointment.Status = "Cancelled";
-            await _appointmentRepository.UpdateAsync(appointment);
+            _context.OrderServices.Update(appointment);
+
+            // ===== BẮT ĐẦU GỬI EMAIL TỪ CHỐI =====
+            // (Lưu ý: Bạn nên nâng cấp để Staff nhập lý do)
+            try
+            {
+                if (appointment.User != null)
+                {
+                    var subject = $"Thông báo về Lịch hẹn #{appointment.OrderId}";
+                    var message = $@"
+                        <p>Chào {appointment.User.FullName},</p>
+                        <p>Chúng tôi rất tiếc phải thông báo rằng yêu cầu đặt lịch hẹn của bạn (Mã #{appointment.OrderId}) vào lúc {appointment.AppointmentDate:dd/MM/yyyy HH:mm} đã không thể được chấp nhận.</p>
+                        <p><strong>Lý do:</strong> Hiện tại trung tâm không thể tiếp nhận thêm lịch hẹn vào khung giờ này.</p>
+                        <p>Chúng tôi thành thật xin lỗi vì sự bất tiện này. Vui lòng đặt lại lịch hẹn mới vào thời gian khác thuận tiện hơn, hoặc liên hệ chúng tôi qua chat/hotline.</p>
+                        <p>Trân trọng,<br>Đội ngũ EV Service Center</p>";
+
+                    await _emailSender.SendEmailAsync(appointment.User.Email, subject, message);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Lỗi gửi mail Từ chối lịch: {ex.Message}");
+            }
+            // ===== KẾT THÚC GỬI EMAIL =====
+
+            await _context.SaveChangesAsync();
         }
 
         public async Task AssignTechnicianAsync(int orderId, Guid technicianId)
@@ -117,6 +179,29 @@ namespace EVCenterService.Service.Services
             DateTime startTime = appointment.AppointmentDate; // Lấy thời gian bắt đầu từ lịch hẹn
             DateTime endTime = startTime.AddMinutes(totalDurationMinutes);
 
+            var technicianSlots = await _context.Slots
+                .Include(s => s.Order)
+                .Where(s => s.TechnicianId == technicianId &&
+                            s.OrderId != orderId &&
+                            s.Order != null &&
+                            s.Order.Status != "Cancelled" &&
+                            s.Order.Status != "Completed")
+                .ToListAsync();
+
+            bool isOverlapping = false;
+            foreach (var existingSlot in technicianSlots)
+            {
+                if (startTime < existingSlot.EndTime && endTime > existingSlot.StartTime)
+                {
+                    isOverlapping = true;
+                    break;
+                }
+            }
+
+            if (isOverlapping)
+            {
+                throw new Exception($"Kỹ thuật viên này đã có lịch hẹn khác trùng vào khung giờ {startTime:HH:mm} - {endTime:HH:mm}.");
+            }
 
 
             if (slot == null)
