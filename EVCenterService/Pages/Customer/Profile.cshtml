@@ -1,7 +1,7 @@
 ﻿@page
 @model EVCenterService.Pages.Customer.ProfileModel
 @{
-    ViewData["Title"] = "Profile Information";
+    ViewData["Title"] = "Thông tin Cá nhân";
 }
 
 <style>
@@ -34,8 +34,7 @@
 
 @if (!string.IsNullOrEmpty(Model.StatusMessage))
 {
-    var statusMessageClass = Model.StatusMessage.StartsWith("Lỗi") ? "danger" : "success";
-    <div class="alert alert-@statusMessageClass alert-dismissible fade show" role="alert">
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
         @Model.StatusMessage
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
@@ -45,82 +44,48 @@
     <div class="card-header pt-3">
         <ul class="nav nav-tabs profile-tabs" id="profileTab" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="info-tab" data-bs-toggle="tab" data-bs-target="#tab-info" type="button" role="tab" aria-controls="tab-info" aria-selected="true">
+                <button class="nav-link active" id="info-tab" type="button">
                     <i class="bi bi-person-fill me-2"></i>Thông tin Tài khoản
                 </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="password-tab" data-bs-toggle="tab" data-bs-target="#tab-password" type="button" role="tab" aria-controls="tab-password" aria-selected="false">
+                <a class="nav-link" id="password-tab" asp-page="ChangePassword">
                     <i class="bi bi-key-fill me-2"></i>Bảo mật & Mật khẩu
-                </button>
+                </a>
             </li>
         </ul>
     </div>
 
     <div class="card-body p-4">
-        <div class="tab-content" id="profileTabContent">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger small mb-3" role="alert"></div>
 
-            <div class="tab-pane fade show active" id="tab-info" role="tabpanel" aria-labelledby="info-tab">
-                <form method="post" asp-page-handler="UpdateInfo">
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-floating mb-3">
-                                <input class="form-control" disabled value="@Model.Email" />
-                                <label>Email (không thể thay đổi)</label>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-floating mb-3">
-                                <input asp-for="Input.FullName" class="form-control" placeholder="Họ và tên" />
-                                <label asp-for="Input.FullName"></label>
-                                <span asp-validation-for="Input.FullName" class="text-danger small"></span>
-                            </div>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="form-floating mb-3">
-                                <input asp-for="Input.PhoneNumber" class="form-control" placeholder="Số điện thoại" />
-                                <label asp-for="Input.PhoneNumber"></label>
-                                <span asp-validation-for="Input.PhoneNumber" class="text-danger small"></span>
-                            </div>
-                        </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-floating mb-3">
+                        <input class="form-control" disabled value="@Model.Email" />
+                        <label>Email (không thể thay đổi)</label>
                     </div>
-                    <button type="submit" class="btn btn-primary w-100 py-2 fw-bold mt-3">
-                        <i class="bi bi-check-circle me-2"></i>
-                        Lưu Thay đổi Thông tin
-                    </button>
-                </form>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-floating mb-3">
+                        <input asp-for="Input.FullName" class="form-control" placeholder="Họ và tên" />
+                        <label asp-for="Input.FullName"></label>
+                        <span asp-validation-for="Input.FullName" class="text-danger small"></span>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-floating mb-3">
+                        <input asp-for="Input.PhoneNumber" class="form-control" placeholder="Số điện thoại" />
+                        <label asp-for="Input.PhoneNumber"></label>
+                        <span asp-validation-for="Input.PhoneNumber" class="text-danger small"></span>
+                    </div>
+                </div>
             </div>
-
-            <div class="tab-pane fade" id="tab-password" role="tabpanel" aria-labelledby="password-tab">
-                <form method="post" asp-page-handler="ChangePassword">
-                    <p class="text-muted">Để đảm bảo an toàn, vui lòng không chia sẻ mật khẩu cho bất kỳ ai.</p>
-
-                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3" role="alert"></div>
-
-                    <div class="form-floating mb-3">
-                        <input asp-for="PasswordInput.OldPassword" class="form-control" placeholder="Mật khẩu cũ" />
-                        <label asp-for="PasswordInput.OldPassword"></label>
-                        <span asp-validation-for="PasswordInput.OldPassword" class="text-danger small"></span>
-                    </div>
-                    <div class="form-floating mb-3">
-                        <input asp-for="PasswordInput.NewPassword" class="form-control" placeholder="Mật khẩu mới" />
-                        <label asp-for="PasswordInput.NewPassword"></label>
-                        <span asp-validation-for="PasswordInput.NewPassword" class="text-danger small"></span>
-                    </div>
-                    <div class="form-floating mb-3">
-                        <input asp-for="PasswordInput.ConfirmPassword" class="form-control" placeholder="Xác nhận Mật khẩu mới" />
-                        <label asp-for="PasswordInput.ConfirmPassword"></label>
-                        <span asp-validation-for="PasswordInput.ConfirmPassword" class="text-danger small"></span>
-                    </div>
-
-                    <button type="submit" class="btn btn-outline-light w-100 py-2 mt-3">
-                        <i class="bi bi-lock me-2"></i>
-                        Thay đổi Mật khẩu
-                    </button>
-                </form>
-            </div>
-
-        </div>
+            <button type="submit" class="btn btn-primary w-100 py-2 fw-bold mt-3">
+                <i class="bi bi-check-circle me-2"></i>
+                Lưu Thay đổi Thông tin
+            </button>
+        </form>
     </div>
 </div>
