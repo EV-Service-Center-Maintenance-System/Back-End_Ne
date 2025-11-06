@@ -82,7 +82,7 @@ namespace EVCenterService.Pages.Account
                 var message = $"Chào {newAccount.FullName},<br><br>" +
                               "Cảm ơn bạn đã đăng ký tài khoản thành công tại EV Service Center.<br>" +
                               "Chúc bạn có những trải nghiệm dịch vụ tốt nhất!<br><br>" +
-                              "Trân trongng,<br> đội ngũ EV Service Center";
+                              "Trân trọng,<br> đội ngũ EV Service Center";
                 await _emailSender.SendEmailAsync(newAccount.Email, subject, message);
             }
             catch (Exception ex)
