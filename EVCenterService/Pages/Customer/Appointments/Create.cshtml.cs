@@ -100,29 +100,41 @@ namespace EVCenterService.Pages.Customer.Appointments
             Booking.AppointmentDate = Booking.AppointmentDate.Date + SelectedTime;
             Booking.Status = "Pending";
 
-            // LẤY MÚI GIỜ VIỆT NAM TỪ appsettings.json
+            // 1. Lấy thông số giờ
             var timeZoneId = _configuration["TimeZoneId"] ?? "SE Asia Standard Time";
             var vietnamTimeZone = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
-
-            // LẤY GIỜ HIỆN TẠI CHÍNH XÁC CỦA VIỆT NAM
             var vietnamNow = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, vietnamTimeZone);
 
+            var workStart = new TimeSpan(7, 0, 0); // 7:00 AM
+            var workEnd = new TimeSpan(19, 0, 0); // 19:00 (7:00 PM)
+            var bufferHours = 2; // Thời gian đệm 2 tiếng
 
-            // 1. Kiểm tra tổng thể xem lịch hẹn có ở quá khứ không
-            // (Booking.AppointmentDate là giờ khách chọn, ví dụ: 07:00 06/11)
-            // (vietnamNow là giờ hiện tại, ví dụ: 08:00 06/11)
-            if (Booking.AppointmentDate < vietnamNow)
+            // 2. Kiểm tra khung giờ làm việc cơ bản (7:00 -> 18:59)
+            if (SelectedTime < workStart || SelectedTime >= workEnd)
             {
-                // (07:00 < 08:00) -> ĐÚNG -> Lỗi
-                ModelState.AddModelError(string.Empty, "Không thể đặt lịch vào thời gian đã qua. Vui lòng chọn ngày và giờ trong tương lai.");
+                ModelState.AddModelError("SelectedTime", "Giờ làm việc của trung tâm là từ 07:00 đến 19:00.");
             }
 
-            // 2. Kiểm tra khung giờ làm việc (vẫn giữ)
-            var workStart = new TimeSpan(7, 0, 0);
-            var workEnd = new TimeSpan(19, 0, 0);
-            if (SelectedTime < workStart || SelectedTime > workEnd)
+            // 3. KIỂM TRA LỖI GẦN GIỜ ĐÓNG CỬA (ƯU TIÊN LỖI NÀY TRƯỚC)
+            // Giờ đặt lịch muộn nhất = 19:00 - 2 tiếng = 17:00
+            var latestBookingTime = workEnd.Subtract(new TimeSpan(bufferHours, 0, 0)); // 17:00
+
+            if (SelectedTime > latestBookingTime)
             {
-                ModelState.AddModelError("SelectedTime", "Giờ hẹn phải nằm trong khung 07:00 – 19:00.");
+                // Nếu khách chọn 18:21 (như trong ảnh), lỗi này sẽ được kích hoạt
+                ModelState.AddModelError("SelectedTime", $"Quý khách vui lòng chọn giờ cách {bufferHours} tiếng trước khi trung tâm đóng cửa (trước 17:00). Vui lòng đặt lịch ngày hôm sau.");
+            }
+            else
+            {
+                // 4. CHỈ KIỂM TRA LỖI 2 TIẾNG ĐỆM (NẾU GIỜ HẸN HỢP LỆ (TRƯỚC 17:00))
+                // Giờ đặt lịch sớm nhất = Giờ hiện tại + 2 tiếng
+                var earliestBookingTime = vietnamNow.AddHours(bufferHours);
+
+                // Ví dụ: Hiện tại là 14:00, khách đặt 15:30 -> Lỗi
+                if (Booking.AppointmentDate < earliestBookingTime)
+                {
+                    ModelState.AddModelError(string.Empty, $"Bạn phải đặt lịch trước ít nhất {bufferHours} tiếng (tính cả thời gian di chuyển xe).");
+                }
             }
 
             if (!ModelState.IsValid)

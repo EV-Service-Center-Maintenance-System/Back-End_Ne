@@ -5,12 +5,12 @@
     ViewData["Title"] = "Lịch sử Lịch hẹn";
 }
 
-<div class="page-header d-flex justify-content-between align-items-center">
+<div class="page-header header-card-blue d-flex justify-content-between align-items-center">
     <div>
-        <h1>@ViewData["Title"]</h1>
-        <p class="lead mb-0 text-muted">Theo dõi trạng thái các cuộc hẹn và lịch sử dịch vụ của bạn.</p>
+        <h1 class="mb-1">@ViewData["Title"]</h1>
+        <p class="lead mb-0">Theo dõi trạng thái các cuộc hẹn và lịch sử dịch vụ của bạn.</p>
     </div>
-    <a asp-page="Create" class="btn btn-primary">
+    <a asp-page="Create" class="btn btn-light" style="font-weight: 600;">
         <i class="bi bi-plus-lg me-2"></i> Đặt lịch hẹn mới
     </a>
 </div>
@@ -33,73 +33,80 @@
         }
         else
         {
-            <div class="table-responsive">
-                <table class="table table-hover table-custom">
-                    <thead>
-                        <tr>
-                            <th>Xe</th>
-                            <th>Dịch vụ</th>
-                            <th>Ngày hẹn</th>
-                            <th>Trạng thái</th>
-                            <th>Ghi chú / Kỹ thuật viên</th>
-                            <th class="text-end">Tổng tiền</th>
-                            <th class="text-center">Hành động</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var order in Model.Bookings)
-                        {
-                            var badgeClass = order.Status?.ToLower() switch
-                            {
-                                "pending" => "badge-custom bg-warning text-dark",
-                                "pendingquote" => "badge-custom bg-warning text-dark",
-                                "confirmed" => "badge-custom bg-primary",
-                                "inprogress" => "badge-custom bg-info text-dark",
-                                "techniciancompleted" => "badge-custom bg-success",
-                                "completed" => "badge-custom bg-success",
-                                "paid" => "badge-custom bg-success",
-                                "cancelled" => "badge-custom bg-danger",
-                                _ => "badge-custom bg-secondary"
-                            };
+            <div class="appointment-card-list">
+                @foreach (var order in Model.Bookings)
+                {
+                    var badgeClass = order.Status?.ToLower() switch
+                    {
+                        "pending" => "badge-custom bg-warning text-dark",
+                        "pendingquote" => "badge-custom bg-warning text-dark",
+                        "confirmed" => "badge-custom bg-primary",
+                        "inprogress" => "badge-custom bg-info text-dark",
+                        "techniciancompleted" => "badge-custom bg-success",
+                        "completed" => "badge-custom bg-success",
+                        "paid" => "badge-custom bg-success",
+                        "cancelled" => "badge-custom bg-danger",
+                        _ => "badge-custom bg-secondary"
+                    };
+                    string displayNote = order.ChecklistNote ?? "";
+                    if (!string.IsNullOrEmpty(order.TechnicianName))
+                    {
+                        displayNote += $" — 👨‍🔧 KTV: {order.TechnicianName}";
+                    }
 
-                            string displayNote = order.ChecklistNote ?? "";
-                            if (!string.IsNullOrEmpty(order.TechnicianName))
+                    <div class="appointment-card-item">
+
+                        <div class="icon-wrapper">
+                            <i class="bi bi-calendar-check"></i>
+                        </div>
+
+                        <div class="vehicle-info">
+                            <h5>@order.VehicleModel</h5>
+                            <span class="badge @badgeClass">@order.Status?.ToUpperInvariant()</span>
+                        </div>
+
+                        <div class="detail-block">
+                            <span class="label">Ngày hẹn</span>
+                            <span class="value">@order.AppointmentDate.ToString("dd/MM/yyyy")</span>
+                        </div>
+
+                        <div class="detail-block">
+                            <span class="label">Giờ hẹn</span>
+                            <span class="value">@order.AppointmentDate.ToString("HH:mm")</span>
+                        </div>
+
+                        <div class="detail-block">
+                            <span class="label">Tổng tiền</span>
+                            <span class="value fw-bold">@order.TotalCost?.ToString("N0") đ</span>
+                        </div>
+
+                        <div class="detail-block">
+                            <span class="label">Ghi chú / Kỹ thuật viên</span>
+                            <span class="value" style="font-size: 0.85rem;">@displayNote</span>
+                        </div>
+
+                        <div class="action-buttons">
+                            @if (order.Status == "TechnicianCompleted" || order.Status == "Completed" || order.Status == "Paid")
                             {
-                                displayNote += $" — 👨‍🔧 KTV: {order.TechnicianName}";
+                                @if (order.HasFeedback)
+                                {
+                                    <span class="badge-custom badge-active">Đã đánh giá</span>
+                                }
+                                else
+                                {
+                                    <a asp-page="/Customer/Feedback/Create" asp-route-orderId="@order.OrderId" class="btn btn-sm btn-primary" title="Đánh giá dịch vụ">
+                                        <i class="bi bi-star-fill me-1"></i> Đánh giá
+                                    </a>
+                                }
                             }
-
-                            <tr>
-                                <td><span class="fw-bold">@order.VehicleModel</span></td>
-                                <td class="text-muted">@order.ServiceNames</td>
-                                <td class="text-muted">@order.AppointmentDate.ToString("dd/MM/yyyy HH:mm")</td>
-                                <td><span class="badge @badgeClass">@order.Status?.ToUpperInvariant()</span></td>
-                                <td class="text-muted small">@displayNote</td>
-                                <td class="text-end fw-bold">@order.TotalCost?.ToString("N0") đ</td>
-
-                                <td class="text-center">
-                                    @if (order.Status == "TechnicianCompleted" || order.Status == "Completed" || order.Status == "Paid")
-                                    {
-                                        @if (order.HasFeedback)
-                                        {
-                                            <span class="badge-custom badge-active">Đã đánh giá</span>
-                                        }
-                                        else
-                                        {
-                                            <a asp-page="/Customer/Feedback/Create" asp-route-orderId="@order.OrderId" class="btn btn-sm btn-warning fw-bold" title="Đánh giá dịch vụ">
-                                                <i class="bi bi-star-fill"></i> Đánh giá
-                                            </a>
-                                        }
-                                    }
-                                    else if (order.Status?.Equals("Pending", StringComparison.OrdinalIgnoreCase) == true)
-                                    {
-                                        <a asp-page="Edit" asp-route-id="@order.OrderId" class="btn btn-sm btn-secondary" title="Sửa"><i class="bi bi-pencil-square"></i></a>
-                                        <a asp-page="Delete" asp-route-id="@order.OrderId" class="btn btn-sm btn-danger" title="Hủy"><i class="bi bi-trash-fill"></i></a>
-                                    }
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+                            else if (order.Status?.Equals("Pending", StringComparison.OrdinalIgnoreCase) == true)
+                            {
+                                <a asp-page="Edit" asp-route-id="@order.OrderId" class="btn btn-secondary btn-icon" title="Sửa"><i class="bi bi-pencil-square"></i></a>
+                                <a asp-page="Delete" asp-route-id="@order.OrderId" class="btn btn-danger btn-icon" title="Hủy"><i class="bi bi-trash-fill"></i></a>
+                            }
+                        </div>
+                    </div>
+                }
             </div>
         }
     </div>
