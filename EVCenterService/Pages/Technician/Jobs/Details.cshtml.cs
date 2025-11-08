@@ -39,6 +39,7 @@ namespace EVCenterService.Pages.Technician.Jobs
         public List<PartUsageInput> PartsUsedInput { get; set; } = new();
         public bool IsGeneralInspection { get; set; } = false;
 
+
         public async Task<IActionResult> OnGetAsync(int id)
         {
             Job = await _jobService.GetJobDetailAsync(id);
@@ -197,45 +198,84 @@ namespace EVCenterService.Pages.Technician.Jobs
         {
             try
             {
+                // 1. Hoàn thành công việc (code cũ)
                 await _jobService.CompleteJobAsync(id, TechnicianNote);
                 TempData["Message"] = " Công việc đã được đánh dấu hoàn thành.";
 
+                // 2. Lấy thông tin Job VÀ Xe
+                var completedJob = await _context.OrderServices
+                    .Include(o => o.User)
+                    .Include(o => o.Vehicle) // <- Quan trọng: Lấy thông tin Xe
+                    .Include(o => o.OrderDetails)
+                        .ThenInclude(od => od.Service)
+                    .FirstOrDefaultAsync(o => o.OrderId == id);
+
+                if (completedJob == null) return RedirectToPage("Index");
+
+                // 3. SỬA LOGIC: Chỉ cập nhật NGÀY BẢO DƯỠNG
+                if (completedJob.Vehicle != null)
+                {
+                    // Tự động cập nhật ngày bảo dưỡng cuối cùng
+                    completedJob.Vehicle.LastMaintenanceDate = DateOnly.FromDateTime(DateTime.Now);
+                    _context.Vehicles.Update(completedJob.Vehicle);
+                    await _context.SaveChangesAsync(); // Lưu ngày bảo dưỡng
+                }
+
+                // 4. SỬA LOGIC: Gửi Email (với giờ nhận xe dự kiến)
                 try
                 {
-                    // 2. Lấy thông tin đơn hàng và người dùng
-                    var completedJob = await _context.OrderServices
-                        .Include(o => o.User) // Lấy thông tin Account (Customer)
-                        .Include(o => o.OrderDetails)
-                            .ThenInclude(od => od.Service) // Lấy thông tin Dịch vụ
-                        .FirstOrDefaultAsync(o => o.OrderId == id);
-
-                    if (completedJob != null && completedJob.User != null)
+                    if (completedJob.User != null)
                     {
                         var userAccount = completedJob.User;
                         var serviceNames = string.Join(", ", completedJob.OrderDetails.Select(s => s.Service?.Name));
+                        var vehicle = completedJob.Vehicle; // Lấy xe từ Job
+
+                        // ===== BẮT ĐẦU LOGIC TÍNH GIỜ NHẬN XE =====
+                        var vietnamTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+                        var vietnamNow = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, vietnamTimeZone);
+
+                        var pickupBufferHours = 1; // 1 tiếng để chuẩn bị giấy tờ
+                        var projectedPickupTime = vietnamNow.AddHours(pickupBufferHours);
+                        var workCloseTime = new TimeSpan(19, 0, 0); // 19:00
+                        var workOpenTime = new TimeSpan(8, 0, 0); // 8:00 (hôm sau)
+
+                        string pickupMessage;
+
+                        if (projectedPickupTime.TimeOfDay > workCloseTime || projectedPickupTime.Date > vietnamNow.Date)
+                        {
+                            var nextDay = vietnamNow.Date.AddDays(1);
+                            var pickupDate = new DateTime(nextDay.Year, nextDay.Month, nextDay.Day,
+                                                          workOpenTime.Hours, workOpenTime.Minutes, 0);
+
+                            pickupMessage = $"Bạn có thể đến nhận xe vào <strong>sáng ngày hôm sau (từ {pickupDate:HH:mm} ngày {pickupDate:dd/MM/yyyy})</strong>.";
+                        }
+                        else
+                        {
+                            pickupMessage = $"Bạn có thể đến nhận xe <strong>từ {projectedPickupTime:HH:mm} ngày {projectedPickupTime:dd/MM/yyyy}</strong>.";
+                        }
+                        // ===== KẾT THÚC LOGIC TÍNH GIỜ NHẬN XE =====
 
                         var subject = "Thông báo: Dịch vụ xe của bạn đã hoàn tất";
                         var message = $@"
-                    <p>Chào {userAccount.FullName},</p>
-                    <p>Chúng tôi vui mừng thông báo rằng công việc bảo dưỡng/sửa chữa cho xe của bạn đã <strong>hoàn tất</strong>.</p>
-                    <ul>
-                        <li><strong>Mã lịch hẹn:</strong> {completedJob.OrderId}</li>
-                        <li><strong>Dịch vụ:</strong> {serviceNames}</li>
-                        <li><strong>Tổng chi phí:</strong> {completedJob.TotalCost:N0} đ</li>
-                        <li><strong>Trạng thái:</strong> Đã hoàn thành</li>
-                    </ul>
-                    <p>Bạn có thể đến trung tâm dịch vụ của chúng tôi để nhận lại xe.</p>
-                    <p>Cảm ơn bạn đã sử dụng dịch vụ của EV Service Center.</p>
-                    <p>Trân trọng,</p>";
+                            <p>Chào {userAccount.FullName},</p>
+                            <p>Chúng tôi vui mừng thông báo rằng công việc bảo dưỡng/sửa chữa cho xe của bạn đã <strong>hoàn tất</strong>.</p>
+                            <ul>
+                                <li><strong>Mã lịch hẹn:</strong> {completedJob.OrderId}</li>
+                                <li><strong>Dịch vụ:</strong> {serviceNames}</li>
+                                <li><strong>Số Km (ghi nhận khi đặt):</strong> {vehicle?.Mileage:N0} km</li>
+                                <li><strong>Tổng chi phí:</strong> {completedJob.TotalCost:N0} đ</li>
+                                <li><strong>Trạng thái:</strong> Đã hoàn thành</li>
+                            </ul>
+                            <p><strong>Dự kiến nhận xe:</strong> {pickupMessage}</p>
+                            <p>Cảm ơn bạn đã sử dụng dịch vụ của EV Service Center.</p>
+                            <p>Trân trọng,</p>";
 
                         await _emailSender.SendEmailAsync(userAccount.Email, subject, message);
                     }
                 }
                 catch (Exception ex_email)
                 {
-                    // Nếu gửi mail lỗi, không làm dừng chương trình, chỉ log lại
                     Console.WriteLine($"Lỗi gửi mail thông báo hoàn thành: {ex_email.Message}");
-                    // Vẫn redirect thành công
                 }
 
                 return RedirectToPage("Index");
