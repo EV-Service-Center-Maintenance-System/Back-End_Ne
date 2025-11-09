@@ -8,48 +8,48 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
         <h1 class="h2 text-white">Dashboard</h1>
-        <p class="text-muted">Tổng quan hoạt động của trung tâm bảo dưỡng xe điện.</p>
+        <p>Tổng quan hoạt động của trung tâm bảo dưỡng xe điện.</p>
     </div>
 </div>
 
 <div class="row">
     <div class="col-md-3 mb-4">
-        <div class="card text-center shadow-sm border-success">
-            <div class="card-body">
-                <h6 class="text-muted">Doanh thu (VNĐ)</h6>
-                <h3 class="fw-bold text-success">@Model.TotalRevenue.ToString("N0")</h3>
+        <div class="card data-card stat-card green">
+            <div class="card-body text-center">
+                <h6>Doanh thu (VNĐ)</h6>
+                <h3>@Model.TotalRevenue.ToString("N0")</h3>
             </div>
         </div>
     </div>
     <div class="col-md-3 mb-4">
-        <div class="card text-center shadow-sm border-primary">
-            <div class="card-body">
-                <h6 class="text-muted">Tổng Hóa Đơn</h6>
-                <h3 class="fw-bold text-primary">@Model.TotalInvoices</h3>
+        <div class="card data-card stat-card blue">
+            <div class="card-body text-center">
+                <h6>Tổng Hóa Đơn</h6>
+                <h3>@Model.TotalInvoices</h3>
             </div>
         </div>
     </div>
     <div class="col-md-3 mb-4">
-        <div class="card text-center shadow-sm border-warning">
-            <div class="card-body">
-                <h6 class="text-muted">Tổng Dịch Vụ</h6>
-                <h3 class="fw-bold text-warning">@Model.TotalServices</h3>
+        <div class="card data-card stat-card yellow">
+            <div class="card-body text-center">
+                <h6>Tổng Dịch Vụ</h6>
+                <h3>@Model.TotalServices</h3>
             </div>
         </div>
     </div>
     <div class="col-md-3 mb-4">
-        <div class="card text-center shadow-sm border-info">
-            <div class="card-body">
-                <h6 class="text-muted">Nhân Viên & Kỹ Thuật Viên</h6>
-                <h3 class="fw-bold text-info">@Model.TotalStaff</h3>
+        <div class="card data-card stat-card cyan">
+            <div class="card-body text-center">
+                <h6>Nhân Viên & Kỹ Thuật Viên</h6>
+                <h3>@Model.TotalStaff</h3>
             </div>
         </div>
     </div>
 </div>
 
 <!-- 🔹 Biểu đồ doanh thu -->
-<div class="card mt-4 shadow-sm">
-    <div class="card-header bg-dark text-white">
+<div class="card data-card mt-4">
+    <div class="card-header bg-darker text-white">
         <h5 class="mb-0">Biểu đồ doanh thu 6 tháng gần nhất</h5>
     </div>
     <div class="card-body">
@@ -58,13 +58,13 @@
 </div>
 
 <!-- 🔹 Danh sách cuộc hẹn sắp tới -->
-<div class="card mt-4 shadow-sm">
-    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+<div class="card data-card mt-4">
+    <div class="card-header bg-darker text-white d-flex justify-content-between align-items-center">
         <h5 class="mb-0">Lịch hẹn sắp tới</h5>
     </div>
     <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0">
-            <thead class="table-light">
+        <table class="table table-custom table-hover align-middle mb-0">
+            <thead>
                 <tr>
                     <th>Khách hàng</th>
                     <th>Xe</th>

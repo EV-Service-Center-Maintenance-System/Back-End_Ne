@@ -15,10 +15,20 @@
 
         <header class="top-navbar">
             <div class="container-fluid d-flex align-items-center">
-                <a class="navbar-brand d-flex align-items-center text-decoration-none" asp-page="/Index">
-                    <img src="~/images/logo.png" alt="EV Service Center Logo" class="top-logo">
-                    <span class="fs-5 fw-bold text-white ms-2">Dịch vụ</span>
-                </a>
+                @if (User.IsInRole("Technician"))
+                {
+                    <span class="navbar-brand d-flex align-items-center text-decoration-none" style="cursor: default;">
+                        <img src="~/images/logo.png" alt="EV Service Center Logo" class="top-logo">
+                        <span class="fs-5 fw-bold text-white ms-2">EV Auto Center</span>
+                    </span>
+                }
+                else
+                {
+                    <a class="navbar-brand d-flex align-items-center text-decoration-none" asp-page="/Index">
+                        <img src="~/images/logo.png" alt="EV Service Center Logo" class="top-logo">
+                        <span class="fs-5 fw-bold text-white ms-2">EV Auto Center</span>
+                    </a>
+                }
 
                 <ul class="navbar-nav ms-auto auth-buttons">
                     @if (User.Identity != null && User.Identity.IsAuthenticated)
@@ -35,8 +45,9 @@
                                 else if (User.IsInRole("Staff"))
                                 {
                                     <li><a class="dropdown-item" asp-page="/Staff/Index">Quản lý Lịch hẹn</a></li>
+                                    <li><a class="dropdown-item" asp-page="/Staff/Chat">Chat với khách hàng</a></li> 
                                 }
-                                else
+                                else if (User.IsInRole("Customer"))
                                 {
                                     <li><a class="dropdown-item" asp-page="/Customer/Profile">Trang cá nhân</a></li>
                                 }

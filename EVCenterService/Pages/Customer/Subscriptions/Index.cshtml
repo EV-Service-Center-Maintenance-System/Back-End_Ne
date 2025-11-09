@@ -6,8 +6,10 @@
 }
 
 <div class="container mt-4">
-    <h1 class="text-white">@ViewData["Title"]</h1>
-    <p class="text-muted">Chọn gói dịch vụ phù hợp với nhu cầu của bạn.</p>
+    <div class="page-header header-card-blue">
+        <h1 class="mb-0">@ViewData["Title"]</h1>
+        <p class="lead mb-0">Chọn gói dịch vụ phù hợp với nhu cầu của bạn.</p>
+    </div>
 
     @if (Model.UserHasActivePlan)
     {

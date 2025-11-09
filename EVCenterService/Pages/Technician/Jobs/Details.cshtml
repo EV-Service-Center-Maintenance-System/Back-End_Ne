@@ -15,12 +15,12 @@
     {
         <span>Chi tiết Công việc</span>
     }
-    <small class="text-muted fw-normal">#@Model.Job.OrderId</small>
+    <small class="fw-normal">#@Model.Job.OrderId</small>
 </h2>
 
 @if (Model.Job.Status == "InProgress")
 {
-    <p class="text-muted">
+    <p class="text-white-50">
         Xe: @Model.Job.Vehicle?.Model (@Model.Job.Vehicle?.Vin) - Khách hàng: @Model.Job.User?.FullName
     </p>
     <form method="post">
@@ -35,7 +35,7 @@
                             <h5 class="mb-0 text-white">Checklist Bảo dưỡng Tổng quát</h5>
                         </div>
                         <div class="card-body">
-                            <p class="text-muted">Đánh giá tình trạng các bộ phận chính. Nếu không ổn (❌), hệ thống sẽ yêu cầu bạn báo giá phụ tùng ở bước tiếp theo.</p>
+                            <p>Đánh giá tình trạng các bộ phận chính. Nếu không ổn (❌), hệ thống sẽ yêu cầu bạn báo giá phụ tùng ở bước tiếp theo.</p>
 
                             <div class="d-flex justify-content-between align-items-center p-3 border-bottom border-secondary">
                                 <h5 class="mb-0 text-white">1. Hệ thống Pin (Battery)</h5>

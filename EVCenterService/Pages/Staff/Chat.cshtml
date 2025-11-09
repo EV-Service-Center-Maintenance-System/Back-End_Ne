@@ -5,64 +5,14 @@
     Layout = "_AppLayout";
 }
 
-<style>
-    .chat-card-body {
-        height: 500px; /* Giới hạn chiều cao */
-        overflow-y: auto; /* Tự cuộn */
-        display: flex;
-        flex-direction: column;
-        background-color: #161b22; /* Màu nền trong ô chat (tối hơn) */
-        padding: 1rem;
-    }
-
-    .list-group-item.active {
-        background-color: #1f6feb; /* Màu active của sidebar */
-        border-color: #1f6feb;
-    }
-
-    /* Style bong bóng chat (Giống Customer nhưng đảo ngược) */
-    .chat-card-body strong {
-        font-size: 0.8rem;
-        color: #8b949e;
-        display: block;
-        margin-bottom: 2px;
-    }
-
-    .chat-card-body .msg-customer {
-        text-align: left;
-    }
-
-        .chat-card-body .msg-customer span {
-            background: #30363d; /* Màu xám (Customer) */
-            color: #f0f6fc;
-            padding: 8px 12px;
-            border-radius: 12px 12px 12px 0;
-            display: inline-block;
-        }
-
-    .chat-card-body .msg-staff {
-        text-align: right;
-    }
-
-        .chat-card-body .msg-staff strong {
-            display: none;
-        }
-        /* Ẩn chữ "Bạn:" */
-        .chat-card-body .msg-staff span {
-            background: #1f6feb; /* Màu xanh (Staff) */
-            color: white;
-            padding: 8px 12px;
-            border-radius: 12px 12px 0 12px;
-            display: inline-block;
-        }
-</style>
-
-<h2 class="mb-4 text-white">@ViewData["Title"]</h2>
+<div class="page-header header-card-blue">
+    <h1 class="mb-0"><i class="bi bi-chat-dots-fill me-2"></i> @ViewData["Title"]</h1>
+</div>
 
 <div class="row g-4">
     <div class="col-lg-4">
         <div class="card data-card border-0">
-            <div class="card-header bg-dark">
+            <div class="card-header bg-darker">
                 <h5 class="mb-0 text-white">Khách hàng đang chờ</h5>
             </div>
             <div class="list-group list-group-flush" id="customerList">
@@ -75,14 +25,14 @@
 
     <div class="col-lg-8">
         <div class="card data-card border-0" id="chatWindow" style="display: none;">
-            <div class="card-header bg-dark text-white">
+            <div class="card-header bg-darker text-white">
                 <h5 class="mb-0" id="chatWithCustomerName">...</h5>
             </div>
 
             <div class="chat-card-body" id="staffChatMessages">
             </div>
 
-            <div class="card-footer d-flex p-3 bg-dark">
+            <div class="card-footer d-flex p-3 bg-darker">
                 <input type="text" id="staffReplyInput" class="form-control" placeholder="Nhập tin nhắn trả lời..." />
                 <button class="btn btn-primary ms-2" id="staffSendButton">Gửi</button>
             </div>
