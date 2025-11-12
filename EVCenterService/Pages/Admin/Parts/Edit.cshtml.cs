@@ -1,4 +1,4 @@
-using EVCenterService.Data;
+﻿using EVCenterService.Data;
 using EVCenterService.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -56,7 +56,7 @@ namespace EVCenterService.Pages.Admin.Parts
                 }
             }
 
-            TempData["StatusMessage"] = $"Th�ng tin ph? t�ng '{Part.Name}' ?� ???c c?p nh?t.";
+            TempData["StatusMessage"] = $"Thông tin phụ tùng '{Part.Name}' đã được cập nhật.";
             return RedirectToPage("./Index");
         }
 

@@ -5,10 +5,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
-using System; // <-- Thêm
-using System.Collections.Generic; // <-- Thêm
-using System.Linq; // <-- Thêm
-using System.Threading.Tasks; // <-- Thêm
+using System; 
+using System.Collections.Generic; 
+using System.Linq; 
+using System.Threading.Tasks; 
 
 namespace EVCenterService.Pages.Customer.Subscriptions
 {

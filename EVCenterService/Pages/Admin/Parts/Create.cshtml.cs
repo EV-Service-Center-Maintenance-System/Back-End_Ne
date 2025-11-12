@@ -1,4 +1,4 @@
-using EVCenterService.Data;
+Ôªøusing EVCenterService.Data;
 using EVCenterService.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -27,10 +27,10 @@ namespace EVCenterService.Pages.Admin.Parts
 
         public async Task<IActionResult> OnPostAsync()
         {
-            //// Ki?m tra xem PartId ?„ t?n t?i ch?a (vÏ PartId KH‘NG t? t?ng trong DB c?a b?n)
+            //// Ki?m tra xem PartId ?√£ t?n t?i ch?a (v√¨ PartId KH√îNG t? t?ng trong DB c?a b?n)
             //if (await _context.Parts.AnyAsync(p => p.PartId == Part.PartId))
             //{
-            //    ModelState.AddModelError("Part.PartId", "M„ Ph? t˘ng (ID) n‡y ?„ t?n t?i.");
+            //    ModelState.AddModelError("Part.PartId", "M√£ Ph? t√πng (ID) n√†y ?√£ t?n t?i.");
             //}
 
             if (!ModelState.IsValid)
@@ -42,43 +42,43 @@ namespace EVCenterService.Pages.Admin.Parts
             using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
-                // 1. ThÍm Part m?i
+                // 1. Th√™m Part m?i
                 _context.Parts.Add(Part);
                 // L?u Part tr??c ?? ??m b?o PartId h?p l? cho b??c sau
-                // (Quan tr?ng vÏ PartId khÙng t? t?ng, b?n ph?i cung c?p nÛ t? form)
+                // (Quan tr?ng v√¨ PartId kh√¥ng t? t?ng, b?n ph?i cung c?p n√≥ t? form)
                 await _context.SaveChangesAsync();
 
-                // 2. L?y danh s·ch t?t c? c·c CenterID
+                // 2. L?y danh s√°ch t?t c? c√°c CenterID
                 var centerIds = await _context.MaintenanceCenters.Select(c => c.CenterId).ToListAsync();
 
-                // 3. T?o c·c b?n ghi Storage t??ng ?ng (KH‘NG c?n tÌnh to·n StorageID)
+                // 3. T?o c√°c b?n ghi Storage t??ng ?ng (KH√îNG c?n t√≠nh to√°n StorageID)
                 foreach (var centerId in centerIds)
                 {
                     var storageEntry = new Storage
                     {
-                        // StorageId = nextStorageId++, // <-- X”A D“NG N¿Y V¿ C¡C D“NG TÕNH TO¡N ID ? TR N
+                        // StorageId = nextStorageId++, // <-- X√ìA D√íNG N√ÄY V√Ä C√ÅC D√íNG T√çNH TO√ÅN ID ? TR√äN
                         CenterId = centerId,
-                        PartId = Part.PartId, // PartId l?y t? ??i t??ng Part v?a ???c thÍm
+                        PartId = Part.PartId, // PartId l?y t? ??i t??ng Part v?a ???c th√™m
                         Quantity = 0, // S? l??ng ban ??u
                         MinThreshold = 5 // Ng??ng m?c ??nh
                     };
                     _context.Storages.Add(storageEntry);
                 }
-                // L?u c·c b?n ghi Storage (database s? t? t?o StorageID)
+                // L?u c√°c b?n ghi Storage (database s? t? t?o StorageID)
                 await _context.SaveChangesAsync();
 
-                // N?u m?i th? th‡nh cÙng, commit transaction
+                // N?u m?i th? th√†nh c√¥ng, commit transaction
                 await transaction.CommitAsync();
 
-                TempData["StatusMessage"] = $"Ph? t˘ng '{Part.Name}' ?„ ???c t?o v‡ thÍm v‡o kho c·c trung t‚m.";
+                TempData["StatusMessage"] = $"Ph·ª• t√πng '{Part.Name}' ƒê√£ ƒë∆∞·ª£c t·∫°o v√† th√™m v√†o kho c√°c trung t√¢m.";
                 return RedirectToPage("./Index");
             }
             catch (Exception ex)
             {
-                // N?u cÛ l?i, rollback transaction
+                // N?u c√≥ l?i, rollback transaction
                 await transaction.RollbackAsync();
                 Console.WriteLine($"Error creating part: {ex.Message}");
-                ModelState.AddModelError(string.Empty, "?„ x?y ra l?i khi t?o ph? t˘ng. Vui lÚng th? l?i ho?c liÍn h? qu?n tr? viÍn.");
+                ModelState.AddModelError(string.Empty, "ƒê√£ x·∫£y ra l·ªói khi t·∫°o ph·ª• t√πng. Vui l√≤ng th·ª≠ l·∫°i ho·∫∑c li√™n h·ªá qu·∫£n tr·ªã vi√™n.");
                 return Page();
             }
         }

@@ -15,7 +15,7 @@ namespace EVCenterService.Pages.Account
     public class LoginModel : PageModel
     {
         private readonly EVServiceCenterContext _context;
-        private readonly IPasswordHasher<AccountEntity> _passwordHasher; // Dùng l?i Hasher
+        private readonly IPasswordHasher<AccountEntity> _passwordHasher; 
 
         public LoginModel(EVServiceCenterContext context, IPasswordHasher<AccountEntity> passwordHasher)
         {
@@ -26,7 +26,7 @@ namespace EVCenterService.Pages.Account
         [BindProperty]
         public InputModel Input { get; set; } = new();
 
-        [BindProperty(SupportsGet = true)] // L?y returnUrl t? query string
+        [BindProperty(SupportsGet = true)] 
         public string? ReturnUrl { get; set; }
 
         public class InputModel

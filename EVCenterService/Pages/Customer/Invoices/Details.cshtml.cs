@@ -96,7 +96,7 @@ namespace EVCenterService.Pages.Customer.Invoices
             {
                 Amount = (double)invoice.Amount.Value,
                 InvoiceId = paymentAttemptId,
-                OrderDescription = $"Thanh toan cho don hang #{invoice.OrderId}",
+                OrderDescription = $"Thanh toán cho đơn hàng #{invoice.OrderId}",
                 Name = "EV Center Service",
                 OrderType = "other" 
             };

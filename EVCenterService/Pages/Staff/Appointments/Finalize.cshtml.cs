@@ -48,7 +48,7 @@ namespace EVCenterService.Pages.Staff.Appointments
 
             if (Appointment.Status != "PendingQuote")
             {
-                TempData["ErrorMessage"] = "Báo giá này không ở trạng thái chờ duy?t.";
+                TempData["ErrorMessage"] = "Báo giá này không ở trạng thái chờ duyệt.";
                 return RedirectToPage("./Index");
             }
 
@@ -140,7 +140,7 @@ namespace EVCenterService.Pages.Staff.Appointments
                                 <li><strong>Trạng thái:</strong> CHƯA THANH TOÁN</li>
                             </ul>
                             <p>Vui lòng đăng nhập vào tài khoản của bạn để xem chi tiết hóa đơn và tiến hành thanh toán.</p>
-                            <p>Trân trọng,<br>Đội ngũ EV Service Center</p>";
+                            <p>Trân trọng,<br>Đội ngũ EV Auto Center</p>";
 
                         await _emailSender.SendEmailAsync(user.Email, subject, message);
                     }

@@ -267,7 +267,7 @@ namespace EVCenterService.Pages.Technician.Jobs
                                 <li><strong>Trạng thái:</strong> Đã hoàn thành</li>
                             </ul>
                             <p><strong>Dự kiến nhận xe:</strong> {pickupMessage}</p>
-                            <p>Cảm ơn bạn đã sử dụng dịch vụ của EV Service Center.</p>
+                            <p>Cảm ơn bạn đã sử dụng dịch vụ của EV Auto Center.</p>
                             <p>Trân trọng,</p>";
 
                         await _emailSender.SendEmailAsync(userAccount.Email, subject, message);

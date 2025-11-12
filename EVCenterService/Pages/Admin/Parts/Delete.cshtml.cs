@@ -1,4 +1,4 @@
-using EVCenterService.Data;
+Ôªøusing EVCenterService.Data;
 using EVCenterService.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -39,48 +39,48 @@ namespace EVCenterService.Pages.Admin.Parts
             var partToDelete = await _context.Parts.FindAsync(id);
             if (partToDelete == null) return NotFound();
 
-            // KI?M TRA R¿NG BU?C 1: Ph? t˘ng ?„ ???c s? d?ng ch?a?
+            // KI?M TRA R√ÄNG BU?C 1: Ph? t√πng ?√£ ???c s? d?ng ch?a?
             var isPartUsed = await _context.PartsUseds.AnyAsync(pu => pu.PartId == id);
             if (isPartUsed)
             {
-                ErrorMessage = $"KhÙng th? xÛa ph? t˘ng '{partToDelete.Name}' vÏ nÛ ?„ ???c s? d?ng trong c·c l?n d?ch v? tr??c ?‚y.";
+                ErrorMessage = $"Kh√¥ng th·ªÉ x√≥a ph·ª• t√πng '{partToDelete.Name}' v√¨ n√≥ ƒë√£ ƒë∆∞·ª£c s·ª≠ d·ª•ng trong c√°c l·∫ßn d·ªãch v·ª• tr∆∞·ªõc ƒë√¢y.";
                 Part = partToDelete;
                 return Page();
             }
 
-            // KI?M TRA R¿NG BU?C 2: Ph? t˘ng cÚn t?n kho khÙng? (Ki?m tra c? Storage)
+            // KI?M TRA R√ÄNG BU?C 2: Ph? t√πng c√≤n t?n kho kh√¥ng? (Ki?m tra c? Storage)
             var isInStorage = await _context.Storages.AnyAsync(s => s.PartId == id && s.Quantity > 0);
             if (isInStorage)
             {
-                ErrorMessage = $"KhÙng th? xÛa ph? t˘ng '{partToDelete.Name}' vÏ v?n cÚn t?n kho ({_context.Storages.Where(s => s.PartId == id).Sum(s => s.Quantity)} c·i). Vui lÚng ?i?u ch?nh kho v? 0 tr??c khi xÛa.";
+                ErrorMessage = $"Kh√¥ng th·ªÉ x√≥a ph·ª• t√πng '{partToDelete.Name}' v√¨ v·∫´n c√≤n t·ªìn kho ({_context.Storages.Where(s => s.PartId == id).Sum(s => s.Quantity)} c√°i). Vui l√≤ng ƒëi·ªÅu ch·ªânh kho v·ªÅ 0 tr∆∞·ªõc khi x√≥a.";
                 Part = partToDelete;
                 return Page();
             }
 
-            // N?u khÙng cÛ r‡ng bu?c, ti?n h‡nh xÛa
+            // N?u kh√¥ng c√≥ r√†ng bu?c, ti?n h√†nh x√≥a
             using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
-                // XÛa c·c b?n ghi trong Storage (n?u cÛ, d˘ Quantity = 0)
+                // X√≥a c√°c b?n ghi trong Storage (n?u c√≥, d√π Quantity = 0)
                 var storageEntries = await _context.Storages.Where(s => s.PartId == id).ToListAsync();
                 if (storageEntries.Any())
                 {
                     _context.Storages.RemoveRange(storageEntries);
                 }
 
-                // XÛa Part
+                // X√≥a Part
                 _context.Parts.Remove(partToDelete);
 
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
 
-                TempData["StatusMessage"] = $"Ph? t˘ng '{partToDelete.Name}' ?„ ???c xÛa th‡nh cÙng.";
+                TempData["StatusMessage"] = $"Ph·ª• t√πng '{partToDelete.Name}' ƒë√£ ƒë∆∞·ª£c x√≥a th√†nh c√¥ng.";
                 return RedirectToPage("./Index");
             }
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                ErrorMessage = $"?„ x?y ra l?i khi xÛa ph? t˘ng. Vui lÚng th? l?i.";
+                ErrorMessage = $"ƒê√£ x·∫£y ra l·ªói khi x√≥a ph·ª• t√πng. Vui l√≤ng th·ª≠ l·∫°i.";
                 Part = partToDelete;
                 return Page();
             }
