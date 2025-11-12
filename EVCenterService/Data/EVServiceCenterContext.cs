@@ -364,15 +364,23 @@ public partial class EVServiceCenterContext : DbContext
 
         // --- BẢNG: OrderService ---
         modelBuilder.Entity<OrderService>().HasData(
-            new OrderService { OrderId = 1, VehicleId = 1, UserId = customer1Id, TechnicianId = tech1Id, AppointmentDate = new DateTime(2025, 10, 5), Status = "Completed", ChecklistNote = "Replaced brake pads, coolant check", TotalCost = 2500000m },
-            new OrderService { OrderId = 2, VehicleId = 2, UserId = customer2Id, TechnicianId = null, AppointmentDate = new DateTime(2025, 10, 7), Status = "Pending", ChecklistNote = "General checkup", TotalCost = 1000000m }
+            new OrderService { OrderId = 1, VehicleId = 1, UserId = customer1Id, TechnicianId = tech1Id, AppointmentDate = new DateTime(2025, 10, 5), Status = "TechnicianCompleted", ChecklistNote = "Replaced brake pads, coolant check", TotalCost = 2500000m },
+            new OrderService { OrderId = 2, VehicleId = 2, UserId = customer2Id, TechnicianId = null, AppointmentDate = new DateTime(2025, 10, 7), Status = "Pending", ChecklistNote = "General checkup", TotalCost = 1000000m },
+            new OrderService { OrderId = 3, VehicleId = 1, UserId = customer1Id, TechnicianId = tech2Id, AppointmentDate = new DateTime(2025, 9, 12), Status = "TechnicianCompleted", ChecklistNote = "Replaced brake pads", TotalCost = 2500000m },
+            new OrderService { OrderId = 4, VehicleId = 2, UserId = customer2Id, TechnicianId = tech3Id, AppointmentDate = new DateTime(2025, 8, 15), Status = "TechnicianCompleted", ChecklistNote = "Coolant check", TotalCost = 2500000m },
+            new OrderService { OrderId = 5, VehicleId = 1, UserId = customer1Id, TechnicianId = tech1Id, AppointmentDate = new DateTime(2025, 7, 10), Status = "TechnicianCompleted", ChecklistNote = "General checkup", TotalCost = 1000000m }
         );
 
         // --- BẢNG: OrderDetail ---
         modelBuilder.Entity<OrderDetail>().HasData(
             new OrderDetail { OrderDetailId = 1, OrderId = 1, ServiceId = 2, Quantity = 1, UnitPrice = 1500000m },
             new OrderDetail { OrderDetailId = 2, OrderId = 1, ServiceId = 3, Quantity = 1, UnitPrice = 1000000m },
-            new OrderDetail { OrderDetailId = 3, OrderId = 2, ServiceId = 4, Quantity = 1, UnitPrice = 1000000m }
+            new OrderDetail { OrderDetailId = 3, OrderId = 2, ServiceId = 4, Quantity = 1, UnitPrice = 1000000m },
+            new OrderDetail { OrderDetailId = 4, OrderId = 3, ServiceId = 2, Quantity = 1, UnitPrice = 1500000m },
+            new OrderDetail { OrderDetailId = 5, OrderId = 3, ServiceId = 3, Quantity = 1, UnitPrice = 1000000m },
+            new OrderDetail { OrderDetailId = 6, OrderId = 4, ServiceId = 2, Quantity = 1, UnitPrice = 1500000m },
+            new OrderDetail { OrderDetailId = 7, OrderId = 4, ServiceId = 3, Quantity = 1, UnitPrice = 1000000m },
+            new OrderDetail { OrderDetailId = 8, OrderId = 5, ServiceId = 4, Quantity = 1, UnitPrice = 1000000m }
         );
 
         // --- BẢNG: PartsUsed ---
@@ -404,7 +412,11 @@ public partial class EVServiceCenterContext : DbContext
 
         // --- BẢNG: Invoice ---
         modelBuilder.Entity<Invoice>().HasData(
-            new Invoice { InvoiceId = 1, SubscriptionId = subscription1Id, Amount = 999000m, Status = "Paid", IssueDate = new DateTime(2025, 9, 1), DueDate = new DateTime(2025, 9, 7) }
+            new Invoice { InvoiceId = 1, SubscriptionId = subscription1Id, Amount = 999000m, Status = "Paid", IssueDate = new DateTime(2025, 9, 1), DueDate = new DateTime(2025, 9, 7) },
+            new Invoice { InvoiceId = 2, OrderId = 1, Amount = 2500000m, Status = "Paid", IssueDate = new DateTime(2025, 10, 5), DueDate = new DateTime(2025, 10, 12) }, 
+            new Invoice { InvoiceId = 3, OrderId = 3, Amount = 2500000m, Status = "Paid", IssueDate = new DateTime(2025, 9, 12), DueDate = new DateTime(2025, 9, 19) }, 
+            new Invoice { InvoiceId = 4, OrderId = 4, Amount = 2500000m, Status = "Paid", IssueDate = new DateTime(2025, 8, 15), DueDate = new DateTime(2025, 8, 22) }, 
+            new Invoice { InvoiceId = 5, OrderId = 5, Amount = 1000000m, Status = "Paid", IssueDate = new DateTime(2025, 7, 10), DueDate = new DateTime(2025, 7, 17) }  
         );
 
         // --- BẢNG: Notification ---
