@@ -1575,3 +1575,49 @@ body.app-body {
             border-radius: 12px 12px 0 12px;
             display: inline-block;
         }
+
+/* ======================================================= */
+/* == HOTFIX: SỬA LỖI LAYOUT CUSTOMER BỊ VỠ (DO .wrapper) == */
+/* ======================================================= */
+
+/* Reset lại style .wrapper cho Customer/Tech layout.
+  Class .customer-layout lấy từ file _CustomerLayout.cshtml 
+*/
+.wrapper.customer-layout {
+    display: block; /* <-- Trả về block (không flex) */
+    padding: 0; /* <-- Xóa padding hông */
+    gap: 0; /* <-- Xóa gap */
+}
+
+    /* Reset lại .main-content bên trong customer layout */
+    .wrapper.customer-layout .main-content {
+        padding: 1.5rem; /* Giữ padding cho nội dung */
+        width: 100%; /* Đảm bảo nó rộng 100% */
+        flex-grow: 0; /* Tắt flex-grow */
+    }
+
+/* ======================================================= */
+/* == HOTFIX: SỬA LỖI ICON SỬA/XÓA BỊ MỜ (ADMIN) == */
+/* ======================================================= */
+
+/* Ép màu cho các nút icon Sửa (outline-primary) */
+.main-content a.btn-outline-primary,
+.main-content a.btn-outline-primary i {
+    color: #0d6efd; /* Màu xanh biển */
+}
+
+    .main-content a.btn-outline-primary:hover,
+    .main-content a.btn-outline-primary:hover i {
+        color: #ffffff; /* Chữ trắng khi hover (giữ nguyên) */
+    }
+
+/* Ép màu cho các nút icon Xóa (outline-danger) */
+.main-content a.btn-outline-danger,
+.main-content a.btn-outline-danger i {
+    color: #dc3545; /* Màu đỏ */
+}
+
+    .main-content a.btn-outline-danger:hover,
+    .main-content a.btn-outline-danger:hover i {
+        color: #ffffff; /* Chữ trắng khi hover (giữ nguyên) */
+    }
