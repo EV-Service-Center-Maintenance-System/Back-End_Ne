@@ -365,3 +365,4 @@ FodyWeavers.xsd
 # --- TÙY CHỈNH IGNORE ---
 # Bỏ qua các file "key" (khóa) bí mật của Firebase/Google
 EVCenterService/*.firebase-adminsdk-*.json
+/EVCenterService/ev-service-chat-firebase-adminsdk-fbsvc-34d2b9a675.json
