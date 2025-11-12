@@ -1,14 +1,16 @@
-using EVCenterService.Data;
+Ôªøusing EVCenterService.Data;
 using EVCenterService.Models;
-using EVCenterService.Service;
 using EVCenterService.Repository.Interfaces;
 using EVCenterService.Repository.Repositories;
+using EVCenterService.Service;
 using EVCenterService.Service.Interfaces;
 using EVCenterService.Service.Services;
+using Google.Cloud.Firestore;
+using Google.Cloud.Firestore.V1;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authentication.Google;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,14 +52,14 @@ builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 builder.Services.AddMemoryCache();
 
-// --- ??NG K› L?I EmailSender (d˘ng Mailjet API) ---
+// --- ??NG K√ù L?I EmailSender (d√πng Mailjet API) ---
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 
 // DI for migrationcd EVCenterService
 builder.Services.AddDbContext<EVServiceCenterContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme) // ??t Cookie l‡ scheme m?c ??nh
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme) // ??t Cookie l√† scheme m?c ??nh
     .AddCookie(options =>
     {
         options.LoginPath = "/Account/Login";
@@ -66,13 +68,24 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.ExpireTimeSpan = TimeSpan.FromDays(30);
         options.SlidingExpiration = true;
     })
-    .AddGoogle(googleOptions => // ThÍm Google
+    .AddGoogle(googleOptions => // Th√™m Google
     {
         googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"];
         googleOptions.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
     });
 
 builder.Services.AddSignalR();
+
+var firestoreProjectId = builder.Configuration["Firestore:ProjectId"];
+var firestoreKeyFileName = builder.Configuration["Firestore:KeyFileName"];
+string firestoreKeyPath = Path.Combine(builder.Environment.ContentRootPath, firestoreKeyFileName);
+
+builder.Services.AddSingleton<FirestoreClient>(provider => new FirestoreClientBuilder
+{
+    CredentialsPath = firestoreKeyPath
+}.Build());
+
+builder.Services.AddSingleton<FirestoreDb>(provider => FirestoreDb.Create(firestoreProjectId, provider.GetService<FirestoreClient>()));
 
 var app = builder.Build();
 

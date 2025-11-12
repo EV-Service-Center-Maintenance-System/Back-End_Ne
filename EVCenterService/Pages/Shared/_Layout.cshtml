@@ -147,7 +147,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
-    @if (User.Identity != null && User.Identity.IsAuthenticated)
+    @if (User.Identity != null && User.Identity.IsAuthenticated && User.IsInRole("Customer"))
     {
         <style>
             .chat-widget-button {
@@ -257,35 +257,74 @@
             const chatInput = document.getElementById("chatInput");
             const chatSendButton = document.getElementById("chatSendButton");
 
-            // ===== PHẦN SỬA LỖI =====
-            // 1. GÁN SỰ KIỆN MỞ/ĐÓNG POPUP LÊN ĐẦU TIÊN
-            // Logic này không phụ thuộc vào SignalR nên sẽ luôn chạy
+            // THÊM MỚI: Cờ (flag) để đảm bảo chỉ tải lịch sử 1 LẦN
+            let isHistoryLoaded = false;
+
+            // 1. SỰ KIỆN MỞ/ĐÓNG POPUP
             chatButton.addEventListener("click", () => {
                 const isDisplayed = chatPopup.style.display === "flex";
                 chatPopup.style.display = isDisplayed ? "none" : "flex";
+
+                // SỬA LỖI: Load lịch sử khi mở chat (chỉ 1 lần)
+                if (!isDisplayed && !isHistoryLoaded) {
+                    loadChatHistory();
+                }
             });
-            // ===== KẾT THÚC PHẦN SỬA LỖI =====
 
-
-            // 2. HÀM THÊM TIN NHẮN (Giữ nguyên)
+            // 2. HÀM THÊM TIN NHẮN (Chống XSS)
             function appendMessage(user, message, isCustomer) {
                 const msgDiv = document.createElement("div");
                 msgDiv.className = isCustomer ? 'msg-customer mb-2' : 'msg-staff mb-2';
-                msgDiv.innerHTML = `<strong>${user}:</strong> <span>${message}</span>`;
+                
+                const safeUser = document.createTextNode(user);
+                const safeMessage = document.createTextNode(message);
+                const strong = document.createElement("strong");
+                strong.appendChild(safeUser);
+                const span = document.createElement("span");
+                span.appendChild(safeMessage);
+
+                msgDiv.appendChild(strong);
+                msgDiv.appendChild(document.createTextNode(": "));
+                msgDiv.appendChild(span);
+                
                 chatMessages.appendChild(msgDiv);
                 chatMessages.scrollTop = chatMessages.scrollHeight; // Tự cuộn xuống
             }
 
-            // 3. KIỂM TRA SIGNALR TRƯỚC KHI KẾT NỐI
+            // 3. HÀM MỚI: TẢI LỊCH SỬ CHAT TỪ BACKEND
+            async function loadChatHistory() {
+                isHistoryLoaded = true; // Đánh dấu đã tải
+                chatMessages.innerHTML = '<div class="text-center text-muted p-3">Đang tải lịch sử...</div>';
+
+                try {
+                    // SỬA LỖI: Gọi handler OnGetMyMessagesAsync trên trang Index
+                    const response = await fetch('/Index?handler=MyMessages'); 
+                    if (!response.ok) throw new Error('Failed to load history.');
+
+                    const messages = await response.json();
+                    
+                    chatMessages.innerHTML = ""; // Xóa "Đang tải"
+                    messages.forEach(msg => {
+                        // msg.isStaffMessage == true -> là của Staff
+                        // msg.isStaffMessage == false -> là của Customer (Bạn)
+                        appendMessage(msg.senderName, msg.message, !msg.isStaffMessage);
+                    });
+                } catch (err) {
+                    chatMessages.innerHTML = '<div class="text-center text-danger p-3">Không thể tải lịch sử chat.</div>';
+                    console.error(err);
+                }
+            }
+
+            // 4. KIỂM TRA SIGNALR
             if (typeof signalR === 'undefined') {
                 console.error("Lỗi: Thư viện SignalR (signalr.min.js) chưa được tải. Chat sẽ không hoạt động.");
                 appendMessage("Hệ thống", "Không thể kết nối máy chủ chat.", false);
-                return; // Dừng, không chạy code kết nối nữa
+                return; 
             }
 
-            // 4. LOGIC KẾT NỐI SIGNALR (Giữ nguyên như cũ)
+            // 5. LOGIC KẾT NỐI SIGNALR (Giữ nguyên như cũ)
             const connection = new signalR.HubConnectionBuilder()
-                .withUrl("/chatHub") // Đường dẫn đã map trong Program.cs
+                .withUrl("/chatHub") 
                 .build();
 
             // Lắng nghe tin nhắn trả lời từ Staff
@@ -299,10 +338,7 @@
                 if (message.trim() === "") return;
 
                 try {
-                    // Gọi hàm "CustomerSendMessage" trên Hub
                     await connection.invoke("CustomerSendMessage", message);
-            
-                    // Hiển thị tin nhắn của chính mình
                     appendMessage("Bạn", message, true);
                     chatInput.value = "";
                 } catch (err) {
@@ -322,7 +358,7 @@
                     console.log("SignalR Connected (Customer).");
                 } catch (err) {
                     console.error(err);
-                    setTimeout(startConnection, 5000); // Thử kết nối lại sau 5 giây
+                    setTimeout(startConnection, 5000); 
                 }
             }
 
