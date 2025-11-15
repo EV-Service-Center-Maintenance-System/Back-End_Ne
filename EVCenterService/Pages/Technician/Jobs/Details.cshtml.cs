@@ -302,7 +302,7 @@ namespace EVCenterService.Pages.Technician.Jobs
                                    .Select(p => new SelectListItem
                                    {
                                        Value = p.PartId.ToString(),
-                                       Text = $"{p.Name} ({p.Brand ?? "N/A"}) - {p.UnitPrice:N0} ?"
+                                       Text = $"{p.Name} ({p.Brand ?? "N/A"}) - {p.UnitPrice:N0} vnd"
                                    }).ToListAsync();
         }
     }

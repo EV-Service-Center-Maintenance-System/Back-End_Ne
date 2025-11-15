@@ -231,9 +231,9 @@ namespace EVCenterService.Pages.Staff.Appointments
                 if (vehicle != null)
                 {
                     var currentMileage = vehicle.Mileage ?? 0;
-                    var nextMileage = currentMileage + 3000;
+                    var nextMileage = currentMileage + 5000;
                     var lastMaintenance = (vehicle.LastMaintenanceDate ?? DateOnly.FromDateTime(DateTime.Now));
-                    var nextDate = lastMaintenance.AddMonths(3);
+                    var nextDate = lastMaintenance.AddMonths(6);
 
                     maintenanceSchedule = $@"
                         <p>Dựa trên lần bảo dưỡng này (Số Km: {currentMileage:N0} km), chúng tôi khuyến nghị lần bảo dưỡng tiếp theo của bạn là:</p>
