@@ -1621,3 +1621,65 @@ body.app-body {
     .main-content a.btn-outline-danger:hover i {
         color: #ffffff; /* Chữ trắng khi hover (giữ nguyên) */
     }
+
+
+/* ======================================================= */
+/* == NÂNG CẤP DASHBOARD (ĐÁNH GIÁ & SAO TRUNG BÌNH) == */
+/* ======================================================= */
+
+/* 1. Hộp chứa sao trung bình */
+.avg-rating-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.avg-rating-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.avg-rating-count {
+    color: #8b949e;
+    font-size: 0.9rem;
+}
+
+/* 2. Style cho 5 ngôi sao (lồng nhau) */
+.avg-stars {
+    position: relative;
+    display: inline-block;
+    font-size: 1.25rem;
+}
+    /* Lớp sao xám (nền) */
+    .avg-stars div:last-child {
+        color: #495057; /* Màu sao rỗng (xám đậm) */
+    }
+    /* Lớp sao vàng (nổi) */
+    .avg-stars div:first-child {
+        position: absolute;
+        top: 0;
+        left: 0;
+        overflow: hidden; /* Cắt lớp vàng theo % */
+        white-space: nowrap;
+        color: #ffc107; /* Màu sao vàng */
+    }
+
+/* 3. Style cho danh sách Feedback */
+.feedback-item {
+    background-color: transparent !important;
+    border-color: #30363d !important;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.feedback-comment {
+    color: #adb5bd; /* Màu xám mờ */
+    font-style: italic;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Giới hạn 2 dòng */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
