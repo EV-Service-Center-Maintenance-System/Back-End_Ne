@@ -44,5 +44,9 @@ namespace EVCenterService.Repository.Repositories
             _context.Vehicles.Update(vehicle);
             await _context.SaveChangesAsync();
         }
+        public async Task<bool> VinExistsAsync(string vin)
+        {
+            return await _context.Vehicles.AnyAsync(v => v.Vin == vin);
+        }
     }
 }
