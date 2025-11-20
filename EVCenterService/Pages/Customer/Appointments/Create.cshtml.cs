@@ -50,25 +50,40 @@ namespace EVCenterService.Pages.Customer.Appointments
 
             // 1. Kiểm tra xem user có gói "active" không
             var activeSubscription = await _context.Subscriptions
+                .Include(s => s.Plan)
                 .FirstOrDefaultAsync(s => s.UserId == userId &&
                                           s.Status == "active" &&
-                                          s.EndDate >= DateTime.Now); //
+                                          s.EndDate >= DateTime.Now); 
 
             IsEligibleForFreeInspection = false;
             if (activeSubscription != null)
             {
-                // 2. Có gói. Kiểm tra xem đã dùng lần miễn phí tháng này chưa.
+                // 2. Xác định giới hạn của gói
+                int monthlyLimit = 0;
+                if (activeSubscription.Plan.Code == "BASIC")
+                {
+                    monthlyLimit = 1; // Gói Basic: 1 lần/tháng
+                }
+                else if (activeSubscription.Plan.Code == "PREMIUM")
+                {
+                    monthlyLimit = 3; // Gói Premium: 3 lần/tháng (hoặc tổng cộng, tùy bạn định nghĩa)
+                    // Ở đây tôi giả định là 3 lần trong THÁNG này.
+                    // Nếu muốn 3 lần trong suốt chu kỳ gói, hãy thay startOfMonth bằng activeSubscription.StartDate
+                }
+
+                // 3. Đếm số lần đã dùng trong tháng này
                 var startOfMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
 
-                var alreadyUsedFreebie = await _context.OrderDetails
-                    .AnyAsync(od => od.ServiceId == 4 && // ServiceId = 4 là "General Inspection"
+                var usageCount = await _context.OrderDetails
+                    .CountAsync(od => od.ServiceId == 4 && // ServiceId = 4 là "General Inspection"
                                     od.Order.UserId == userId &&
                                     od.Order.AppointmentDate >= startOfMonth &&
+                                    od.Order.Status != "Cancelled" && // Không tính đơn hủy
                                     od.UnitPrice == 0); // Đã được miễn phí
 
-                if (!alreadyUsedFreebie)
+                // 4. So sánh
+                if (usageCount < monthlyLimit)
                 {
-                    // 3. ĐỦ ĐIỀU KIỆN MIỄN PHÍ
                     IsEligibleForFreeInspection = true;
                 }
             }
@@ -173,33 +188,37 @@ namespace EVCenterService.Pages.Customer.Appointments
             // ServiceId = 4 là "General Inspection" 
             var inspectionService = services.FirstOrDefault(s => s.ServiceId == 4);
 
-            if (inspectionService != null) // Kiểm tra xem khách có chọn dịch vụ này không
+            if (inspectionService != null) // Khách chọn General Inspection
             {
-                // 1. Kiểm tra xem user có gói "active" không
+                // 1. Kiểm tra gói Active
                 var activeSubscription = await _context.Subscriptions
+                    .Include(s => s.Plan)
                     .FirstOrDefaultAsync(s => s.UserId == userId &&
                                               s.Status == "active" &&
-                                              s.EndDate >= DateTime.Now); 
+                                              s.EndDate >= DateTime.Now);
 
                 if (activeSubscription != null)
                 {
-                    // 2. Có gói. Kiểm tra xem đã dùng lần miễn phí tháng này chưa.
+                    // 2. Xác định giới hạn
+                    int monthlyLimit = (activeSubscription.Plan.Code == "PREMIUM") ? 3 : 1;
+
+                    // 3. Đếm số lần đã dùng
                     var startOfMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
 
-                    var alreadyUsedFreebie = await _context.OrderDetails
-                        .AnyAsync(od => od.ServiceId == 4 && // Là dịch vụ General Inspection
-                                        od.Order.UserId == userId && // Của user này
-                                        od.Order.AppointmentDate >= startOfMonth && // Trong tháng này
-                                        od.UnitPrice == 0); // Đã được miễn phí (giá 0)
+                    var usageCount = await _context.OrderDetails
+                        .CountAsync(od => od.ServiceId == 4 &&
+                                        od.Order.UserId == userId &&
+                                        od.Order.AppointmentDate >= startOfMonth &&
+                                        od.Order.Status != "Cancelled" &&
+                                        od.UnitPrice == 0);
 
-                    if (!alreadyUsedFreebie)
+                    if (usageCount < monthlyLimit)
                     {
-                        // 3. CHƯA DÙNG -> Áp dụng miễn phí
+                        // 4. ĐỦ ĐIỀU KIỆN -> Miễn phí
                         inspectionService.BasePrice = 0;
 
-                        // Thêm ghi chú để Staff biết
                         Booking.ChecklistNote = (Booking.ChecklistNote ?? "") +
-                                                "\n[Áp dụng miễn phí kiểm tra (Gói dịch vụ)]";
+                                                $"\n[Áp dụng miễn phí kiểm tra ({usageCount + 1}/{monthlyLimit}) - Gói {activeSubscription.Plan.Name}]";
                     }
                 }
             }
