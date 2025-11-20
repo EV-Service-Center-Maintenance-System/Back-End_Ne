@@ -86,7 +86,7 @@
                         </div>
 
                         <div class="action-buttons">
-                            @if (order.Status == "TechnicianCompleted" || order.Status == "Completed" || order.Status == "Paid")
+                            @if (order.Status == "TechnicianCompleted" || order.Status == "Completed" || order.Status == "Paid" || order.Status == "PickedUp")
                             {
                                 @if (order.HasFeedback)
                                 {
