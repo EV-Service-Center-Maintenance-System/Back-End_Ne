@@ -1,7 +1,9 @@
-using EVCenterService.Data;
+﻿using EVCenterService.Data;
 using EVCenterService.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic; 
@@ -22,6 +24,8 @@ namespace EVCenterService.Pages.Admin.Parts
 
         public IList<PartViewModel> PartList { get; set; } = new List<PartViewModel>();
 
+        public List<SelectListItem> Centers { get; set; } = new();
+
         public class PartViewModel
         {
             public int PartId { get; set; }
@@ -40,7 +44,7 @@ namespace EVCenterService.Pages.Admin.Parts
         {
             var date90DaysAgo = DateTime.Now.AddDays(-90);
             var numCenters = await _context.MaintenanceCenters.CountAsync();
-            if (numCenters == 0) numCenters = 1; // Tr�nh chia cho 0
+            if (numCenters == 0) numCenters = 1; // Tránh chia cho 0
 
             var allParts = await _context.Parts.ToListAsync();
 
@@ -100,6 +104,43 @@ namespace EVCenterService.Pages.Admin.Parts
             })
             .OrderBy(p => p.Name)
             .ToList();
+
+            Centers = await _context.MaintenanceCenters
+                .Select(c => new SelectListItem { Value = c.CenterId.ToString(), Text = c.Name })
+                .ToListAsync();
+        }
+
+        // Thêm hàm này vào class IndexModel
+        public async Task<IActionResult> OnPostRefillAsync(int PartId, int CenterId, int Quantity)
+        {
+            if (Quantity <= 0) return RedirectToPage();
+
+            var storage = await _context.Storages
+                .FirstOrDefaultAsync(s => s.PartId == PartId && s.CenterId == CenterId);
+
+            if (storage == null)
+            {
+                // Nếu chưa có bản ghi kho, tạo mới
+                storage = new Storage
+                {
+                    PartId = PartId,
+                    CenterId = CenterId,
+                    Quantity = Quantity,
+                    MinThreshold = 5 // Mặc định
+                };
+                _context.Storages.Add(storage);
+            }
+            else
+            {
+                // Cộng dồn số lượng
+                storage.Quantity += Quantity;
+                _context.Storages.Update(storage);
+            }
+
+            await _context.SaveChangesAsync();
+
+            TempData["StatusMessage"] = $"Đã nhập thêm {Quantity} cái vào kho thành công.";
+            return RedirectToPage();
         }
     }
 }

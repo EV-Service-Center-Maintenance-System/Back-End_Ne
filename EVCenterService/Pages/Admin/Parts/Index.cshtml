@@ -78,6 +78,11 @@
                             </td>
 
                             <td class="text-end">
+                                <button type="button" class="btn btn-outline-success btn-sm me-1"
+                                        data-bs-toggle="modal" data-bs-target="#refillModal"
+                                        data-part-id="@item.PartId" data-part-name="@item.Name">
+                                    <i class="bi bi-plus-lg"></i>
+                                </button>
                                 <a asp-page="./Edit" asp-route-id="@item.PartId" class="btn btn-outline-primary btn-sm me-1" title="Chỉnh sửa"><i class="bi bi-pencil-square"></i></a>
                                 <a asp-page="./Delete" asp-route-id="@item.PartId" class="btn btn-outline-danger btn-sm" title="Xóa"><i class="bi bi-trash-fill"></i></a>
                             </td>
@@ -88,3 +93,54 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="refillModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark text-white border-secondary">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title">Nhập thêm hàng (Refill)</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="post" asp-page-handler="Refill">
+                <div class="modal-body">
+                    <input type="hidden" name="PartId" id="modalPartId" />
+                    <p>Bạn đang nhập thêm hàng cho: <strong id="modalPartName" class="text-info"></strong></p>
+
+                    <div class="mb-3">
+                        <label class="form-label">Chọn Kho (Trung tâm):</label>
+                        <select name="CenterId" class="form-select bg-dark text-white border-secondary" required>
+                            @foreach (var center in Model.Centers)
+                            {
+                                <option value="@center.Value">@center.Text</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Số lượng nhập thêm:</label>
+                        <input type="number" name="Quantity" class="form-control bg-dark text-white border-secondary" min="1" required />
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-success">Xác nhận Nhập</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    var refillModal = document.getElementById('refillModal');
+    refillModal.addEventListener('show.bs.modal', function (event) {
+        var button = event.relatedTarget;
+        var partId = button.getAttribute('data-part-id');
+        var partName = button.getAttribute('data-part-name');
+
+        var modalPartIdInput = refillModal.querySelector('#modalPartId');
+        var modalPartNameText = refillModal.querySelector('#modalPartName');
+
+        modalPartIdInput.value = partId;
+        modalPartNameText.textContent = partName;
+    });
+</script>
