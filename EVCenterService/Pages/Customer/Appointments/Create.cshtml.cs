@@ -34,6 +34,24 @@ namespace EVCenterService.Pages.Customer.Appointments
         public List<ServiceCatalog> ServiceList { get; set; }
         public bool IsEligibleForFreeInspection { get; set; }
 
+        private async Task<int> GetUsageCountAsync(Guid userId, DateTime startDate, DateTime endDate)
+        {
+            return await _context.OrderDetails
+                .Include(od => od.Order)
+                .CountAsync(od =>
+                    od.ServiceId == 4 && // General Inspection
+                    od.Order.UserId == userId &&
+                    // Quan trọng: Chỉ đếm những đơn nằm trong thời hạn của gói hiện tại
+                    od.Order.AppointmentDate >= startDate &&
+                    od.Order.AppointmentDate <= endDate &&
+                    // Không đếm đơn đã hủy
+                    od.Order.Status != "Cancelled" &&
+                    od.Order.Status != "Rejected" &&
+                    // Chỉ đếm những đơn ĐÃ ĐƯỢC miễn phí (giá = 0)
+                    od.UnitPrice == 0
+                );
+        }
+
         public async Task OnGetAsync()
         {
             var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
@@ -55,38 +73,7 @@ namespace EVCenterService.Pages.Customer.Appointments
                                           s.Status == "active" &&
                                           s.EndDate >= DateTime.Now); 
 
-            IsEligibleForFreeInspection = false;
-            if (activeSubscription != null)
-            {
-                // 2. Xác định giới hạn của gói
-                int monthlyLimit = 0;
-                if (activeSubscription.Plan.Code == "BASIC")
-                {
-                    monthlyLimit = 1; // Gói Basic: 1 lần/tháng
-                }
-                else if (activeSubscription.Plan.Code == "PREMIUM")
-                {
-                    monthlyLimit = 3; // Gói Premium: 3 lần/tháng (hoặc tổng cộng, tùy bạn định nghĩa)
-                    // Ở đây tôi giả định là 3 lần trong THÁNG này.
-                    // Nếu muốn 3 lần trong suốt chu kỳ gói, hãy thay startOfMonth bằng activeSubscription.StartDate
-                }
 
-                // 3. Đếm số lần đã dùng trong tháng này
-                var startOfMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
-
-                var usageCount = await _context.OrderDetails
-                    .CountAsync(od => od.ServiceId == 4 && // ServiceId = 4 là "General Inspection"
-                                    od.Order.UserId == userId &&
-                                    od.Order.AppointmentDate >= startOfMonth &&
-                                    od.Order.Status != "Cancelled" && // Không tính đơn hủy
-                                    od.UnitPrice == 0); // Đã được miễn phí
-
-                // 4. So sánh
-                if (usageCount < monthlyLimit)
-                {
-                    IsEligibleForFreeInspection = true;
-                }
-            }
 
             Booking.AppointmentDate = DateTime.Now;
 
@@ -183,14 +170,22 @@ namespace EVCenterService.Pages.Customer.Appointments
             //  Tính tổng giá VÀ TỔNG THỜI GIAN từ tất cả dịch vụ được chọn
             var services = await _context.ServiceCatalogs
                 .Where(s => SelectedServiceIds.Contains(s.ServiceId))
+                .AsNoTracking()
                 .ToListAsync();
 
             // ServiceId = 4 là "General Inspection" 
             var inspectionService = services.FirstOrDefault(s => s.ServiceId == 4);
 
-            if (inspectionService != null) // Khách chọn General Inspection
+            if (inspectionService != null)
             {
-                // 1. Kiểm tra gói Active
+                // 1. Luôn lấy lại giá gốc từ DB để đảm bảo tính đúng đắn (tránh hack form)
+                var originalServiceDB = await _context.ServiceCatalogs.FindAsync(4);
+                decimal standardPrice = originalServiceDB?.BasePrice ?? 1000000;
+
+                // Mặc định là tính tiền
+                inspectionService.BasePrice = standardPrice;
+
+                // 2. Kiểm tra xem user có gói "active" không
                 var activeSubscription = await _context.Subscriptions
                     .Include(s => s.Plan)
                     .FirstOrDefaultAsync(s => s.UserId == userId &&
@@ -199,26 +194,29 @@ namespace EVCenterService.Pages.Customer.Appointments
 
                 if (activeSubscription != null)
                 {
-                    // 2. Xác định giới hạn
-                    int monthlyLimit = (activeSubscription.Plan.Code == "PREMIUM") ? 3 : 1;
+                    bool isPremium = activeSubscription.Plan.Code.Equals("PREMIUM", StringComparison.OrdinalIgnoreCase);
+                    int limit = isPremium ? 3 : 1;
 
-                    // 3. Đếm số lần đã dùng
-                    var startOfMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+                    // 3. Đếm số lần ĐÃ DÙNG (đã đặt thành công và có giá 0đ)
+                    // Lưu ý: Ngày đếm phải tính từ StartDate của gói
+                    var usageCount = await GetUsageCountAsync(userId, activeSubscription.StartDate, activeSubscription.EndDate);
 
-                    var usageCount = await _context.OrderDetails
-                        .CountAsync(od => od.ServiceId == 4 &&
-                                        od.Order.UserId == userId &&
-                                        od.Order.AppointmentDate >= startOfMonth &&
-                                        od.Order.Status != "Cancelled" &&
-                                        od.UnitPrice == 0);
-
-                    if (usageCount < monthlyLimit)
+                    if (usageCount < limit)
                     {
-                        // 4. ĐỦ ĐIỀU KIỆN -> Miễn phí
+                        // CÒN LƯỢT -> MIỄN PHÍ
                         inspectionService.BasePrice = 0;
 
+                        // Ghi chú vào đơn hàng để khách biết tại sao 0đ
                         Booking.ChecklistNote = (Booking.ChecklistNote ?? "") +
-                                                $"\n[Áp dụng miễn phí kiểm tra ({usageCount + 1}/{monthlyLimit}) - Gói {activeSubscription.Plan.Name}]";
+                                                $"\n[SYSTEM: Áp dụng miễn phí kiểm tra lần thứ ({usageCount + 1}/{limit}) - Gói {activeSubscription.Plan.Name}]";
+                    }
+                    else
+                    {
+                        // HẾT LƯỢT -> TÍNH PHÍ BÌNH THƯỜNG
+                        // Không cần làm gì thêm vì bên trên đã gán giá gốc rồi.
+                        // Có thể thêm ghi chú nếu muốn rõ ràng
+                        Booking.ChecklistNote = (Booking.ChecklistNote ?? "") +
+                                                $"\n[SYSTEM: Đã dùng hết {limit}/{limit} lượt miễn phí. Áp dụng phí tiêu chuẩn.]";
                     }
                 }
             }

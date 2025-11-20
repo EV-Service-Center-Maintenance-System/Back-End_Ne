@@ -28,17 +28,17 @@
 
             @foreach (var svc in Model.ServiceList)
             {
-                // Mặc định
-                var price = svc.BasePrice ?? 0;
-                var priceText = $"{price.ToString("N0")} đ";
-                var labelClass = ""; // Class CSS để làm nổi bật (tùy chọn)
+                // 1. LUÔN LUÔN lấy giá gốc từ DB để hiển thị
+                var originalPrice = svc.BasePrice ?? 0;
+                var priceText = $"{originalPrice.ToString("N0")} đ";
 
-                // Nếu là "General Inspection" (ID=4) VÀ đủ điều kiện
-                if (svc.ServiceId == 4 && Model.IsEligibleForFreeInspection)
+                var note = "";
+                // Nếu là General Inspection (ID=4), hiển thị dòng nhắc nhở
+                if (svc.ServiceId == 4)
                 {
-                    price = 0; 
-                    priceText = "Free general service"; 
-                    labelClass = "text-success fw-bold"; 
+                    note = " (Hệ thống sẽ tự động giảm còn 0đ nếu bạn còn lượt miễn phí)";
+                    /* Mẹo: Có thể tô màu dòng này cho dễ thấy */
+                    note = $"<span class='text-success fst-italic'>{note}</span>";
                 }
 
                 <div class="col-md-6 mb-2">
@@ -47,9 +47,14 @@
                                type="checkbox"
                                name="SelectedServiceIds"
                                value="@svc.ServiceId"
-                               data-price="@price" id="svc_@svc.ServiceId" />
-                        <label class="form-check-label @labelClass" for="svc_@svc.ServiceId">
+                               data-price="@originalPrice"
+                               id="svc_@svc.ServiceId" />
+
+                        @* data-price phải là giá gốc để JS tính tổng tiền dự kiến là 1tr *@
+
+                        <label class="form-check-label" for="svc_@svc.ServiceId">
                             @svc.Name (@priceText)
+                            <small>@Html.Raw(note)</small>
                         </label>
                     </div>
                 </div>
