@@ -36,9 +36,9 @@
                 // Nếu là "General Inspection" (ID=4) VÀ đủ điều kiện
                 if (svc.ServiceId == 4 && Model.IsEligibleForFreeInspection)
                 {
-                    price = 0; // Sửa giá data-price thành 0
-                    priceText = "Miễn phí (Gói dịch vụ)"; // Sửa nhãn
-                    labelClass = "text-success fw-bold"; // Đổi màu nhãn (tùy chọn)
+                    price = 0; 
+                    priceText = "Free general service"; 
+                    labelClass = "text-success fw-bold"; 
                 }
 
                 <div class="col-md-6 mb-2">

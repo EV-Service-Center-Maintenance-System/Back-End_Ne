@@ -55,7 +55,7 @@ namespace EVCenterService.Pages.Customer.Feedback
                 return NotFound("Không tìm thấy đơn hàng hoặc bạn không có quyền truy cập.");
             }
 
-            if (OrderToReview.Status != "Completed" && OrderToReview.Status != "Paid" && OrderToReview.Status != "TechnicianCompleted" && OrderToReview.Status != "PickedUp")
+            if (OrderToReview.Status != "PickedUp")
             {
                 TempData["ErrorMessage"] = "Bạn chỉ có thể đánh giá các dịch vụ đã hoàn thành.";
                 return RedirectToPage("/Customer/Appointments/Index");
