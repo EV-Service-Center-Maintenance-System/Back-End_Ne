@@ -21,7 +21,6 @@ namespace EVCenterService.Pages.Customer.Appointments
             _context = context;
         }
 
-        //public IEnumerable<OrderService> Bookings { get; set; }
 
         public List<AppointmentHistoryViewModel> Bookings { get; set; } = new();
 

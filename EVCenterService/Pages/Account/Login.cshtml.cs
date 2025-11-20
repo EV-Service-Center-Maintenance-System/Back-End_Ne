@@ -43,39 +43,31 @@ namespace EVCenterService.Pages.Account
         public async Task OnGetAsync(string? returnUrl = null)
         {
             ReturnUrl = returnUrl;
-            // Xóa cookie bên ngoài n?u có (?? ??m b?o login Google s?ch)
-            //await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
         }
 
-        // --- HANDLER ??NG NH?P TH??NG ---
         public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid) return Page();
 
             var account = await _context.Accounts.FirstOrDefaultAsync(a => a.Email == Input.Email);
 
-            // Ki?m tra tài kho?n và m?t kh?u
             if (account == null || string.IsNullOrEmpty(account.Password) || _passwordHasher.VerifyHashedPassword(account, account.Password, Input.Password) == PasswordVerificationResult.Failed)
             {
                 ModelState.AddModelError(string.Empty, "Email hoặc mật khẩu không đúng.");
                 return Page();
             }
 
-            // Ki?m tra tr?ng thái tài kho?n (Thêm ki?m tra này)
             if (account.Status != "Active")
             {
                 ModelState.AddModelError(string.Empty, "Tài khoản của bạn đã bị khóa hoặc chưa kích hoạt.");
                 return Page();
             }
 
-            // Dùng hàm helper ?? ??ng nh?p
             return await SignInUserAsync(account, ReturnUrl);
         }
 
-        // --- HANDLER CHO NÚT GOOGLE ---
         public IActionResult OnPostGoogleLogin()
         {
-            // ???ng d?n callback s? g?i OnGetGoogleCallbackAsync
             var redirectUrl = Url.Page("./Login", pageHandler: "GoogleCallback", values: new { ReturnUrl });
             var properties = new AuthenticationProperties
             {
@@ -85,7 +77,6 @@ namespace EVCenterService.Pages.Account
             return Challenge(properties, GoogleDefaults.AuthenticationScheme);
         }
 
-        // --- HANDLER X? LÝ CALLBACK T? GOOGLE ---
         public async Task<IActionResult> OnGetGoogleCallbackAsync(string? remoteError = null)
         {
             if (remoteError != null)
@@ -94,11 +85,9 @@ namespace EVCenterService.Pages.Account
                 return Page();
             }
 
-            // L?y thông tin t? cookie Google tr? v?
             var info = await HttpContext.AuthenticateAsync(GoogleDefaults.AuthenticationScheme);
             if (info?.Principal == null)
             {
-                // Th? l?y t? cookie chính n?u Google scheme không có
                 info = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
                 if (info?.Principal == null)
                 {
@@ -116,15 +105,10 @@ namespace EVCenterService.Pages.Account
                 return Page();
             }
 
-            // Tìm tài kho?n trong DB
             var account = await _context.Accounts.FirstOrDefaultAsync(a => a.Email == email);
-
-            // ??ng xu?t kh?i cookie t?m th?i c?a Google
-            //await HttpContext.SignOutAsync(GoogleDefaults.AuthenticationScheme);
 
             if (account != null)
             {
-                // Tài kho?n t?n t?i, ki?m tra tr?ng thái r?i ??ng nh?p
                 if (account.Status != "Active")
                 {
                     ModelState.AddModelError(string.Empty, "Tài khoản Google này đã liên kết với một tài khoản bị khóa.");
@@ -134,18 +118,14 @@ namespace EVCenterService.Pages.Account
             }
             else
             {
-                // Tài kho?n ch?a t?n t?i -> T? ??ng t?o tài kho?n Customer m?i
                 var newAccount = new AccountEntity
                 {
                     UserId = Guid.NewGuid(),
-                    FullName = name ?? email.Split('@')[0], // L?y tên n?u có, n?u không thì l?y ph?n tr??c @
+                    FullName = name ?? email.Split('@')[0], 
                     Email = email,
-                    // Không l?y S?T t? Google
-                    Role = "Customer", // M?c ??nh
+                    Role = "Customer", 
                     Status = "Active",
-                    Password = "" // Quan tr?ng: ??t m?t kh?u r?ng ho?c m?t giá tr? ??c bi?t
-                                  // vì không có m?t kh?u khi ??ng nh?p b?ng Google
-                                  // Không c?n hash
+                    Password = ""                
                 };
 
                 _context.Accounts.Add(newAccount);
@@ -160,13 +140,10 @@ namespace EVCenterService.Pages.Account
                     return Page();
                 }
 
-                // ??ng nh?p tài kho?n v?a t?o
                 return await SignInUserAsync(newAccount, ReturnUrl);
             }
         }
-        // --- K?T THÚC HANDLER GOOGLE ---
 
-        // --- HÀM HELPER ??NG NH?P (Dùng chung) ---
         private async Task<IActionResult> SignInUserAsync(AccountEntity account, string? returnUrl = null)
         {
             var claims = new List<Claim>
@@ -175,24 +152,20 @@ namespace EVCenterService.Pages.Account
                 new Claim(ClaimTypes.GivenName, account.FullName ?? string.Empty),
                 new Claim(ClaimTypes.NameIdentifier, account.UserId.ToString()),
                 new Claim(ClaimTypes.Role, account.Role)
-                // Thêm các Claim khác n?u c?n (ví d?: S? ?i?n tho?i)
-                // new Claim(ClaimTypes.MobilePhone, account.Phone ?? string.Empty)
             };
 
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var authProperties = new AuthenticationProperties
             {
-                IsPersistent = true, // Gi? ??ng nh?p
+                IsPersistent = true,
                 ExpiresUtc = DateTimeOffset.UtcNow.AddDays(30)
             };
 
-            // Th?c hi?n ??ng nh?p, t?o cookie
             await HttpContext.SignInAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme,
                 new ClaimsPrincipal(claimsIdentity),
                 authProperties);
 
-            // Chuy?n h??ng
             if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
             {
                 return LocalRedirect(returnUrl);
@@ -208,6 +181,5 @@ namespace EVCenterService.Pages.Account
                 }
             }
         }
-        // --- K?T THÚC HELPER ---
     }
 }

@@ -143,7 +143,6 @@ namespace EVCenterService.Pages.Customer.Appointments
                 return Page();
             }
 
-            // ===== BẮT ĐẦU LOGIC NGHIỆP VỤ DỊCH VỤ =====
             const int generalInspectionId = 4;
             var mainServiceIds = new List<int> { 1, 2, 3 }; // Battery, Brake, Cooling
 
@@ -165,14 +164,13 @@ namespace EVCenterService.Pages.Customer.Appointments
                 await OnGetAsync();
                 return Page();
             }
-            // ===== KẾT THÚC LOGIC NGHIỆP VỤ DỊCH VỤ =====
 
-            // 🔹 Tính tổng giá VÀ TỔNG THỜI GIAN từ tất cả dịch vụ được chọn
+            //  Tính tổng giá VÀ TỔNG THỜI GIAN từ tất cả dịch vụ được chọn
             var services = await _context.ServiceCatalogs
                 .Where(s => SelectedServiceIds.Contains(s.ServiceId))
                 .ToListAsync();
 
-            // ServiceId = 4 là "General Inspection" trong CSDL của bạn
+            // ServiceId = 4 là "General Inspection" 
             var inspectionService = services.FirstOrDefault(s => s.ServiceId == 4);
 
             if (inspectionService != null) // Kiểm tra xem khách có chọn dịch vụ này không
@@ -181,7 +179,7 @@ namespace EVCenterService.Pages.Customer.Appointments
                 var activeSubscription = await _context.Subscriptions
                     .FirstOrDefaultAsync(s => s.UserId == userId &&
                                               s.Status == "active" &&
-                                              s.EndDate >= DateTime.Now); //
+                                              s.EndDate >= DateTime.Now); 
 
                 if (activeSubscription != null)
                 {
@@ -217,7 +215,6 @@ namespace EVCenterService.Pages.Customer.Appointments
             var totalDuration = services.Sum(s => s.DurationMinutes ?? 0); // Lấy tổng thời gian
             Booking.TotalCost = total;
 
-            // ===== BẮT ĐẦU LOGIC KIỂM TRA CHỒNG CHÉO LỊCH =====
             var newStartTime = Booking.AppointmentDate; // Đã bao gồm giờ
             var newEndTime = newStartTime.AddMinutes(totalDuration);
 
@@ -235,8 +232,6 @@ namespace EVCenterService.Pages.Customer.Appointments
                 var existingDuration = existingOrder.OrderDetails.Sum(od => od.Service?.DurationMinutes ?? 0);
                 var existingEndTime = existingStartTime.AddMinutes(existingDuration);
 
-                // Đây là logic kiểm tra chồng chéo:
-                // (Bắt đầu MỚI < Kết thúc CŨ) VÀ (Kết thúc MỚI > Bắt đầu CŨ)
                 if (newStartTime < existingEndTime && newEndTime > existingStartTime)
                 {
                     isOverlapping = true;
@@ -250,12 +245,12 @@ namespace EVCenterService.Pages.Customer.Appointments
                 await OnGetAsync(); // Tải lại danh sách
                 return Page();
             }
-            // ===== KẾT THÚC LOGIC KIỂM TRA CHỒNG CHÉO LỊCH =====
 
-            // 🔹 Tạo OrderService
-            var newOrder = await _bookingService.CreateBookingAsync(Booking, 0); // serviceId không dùng nữa
 
-            // 🔹 Tạo nhiều OrderDetail
+            //  Tạo OrderService
+            var newOrder = await _bookingService.CreateBookingAsync(Booking, 0); 
+
+            //  Tạo nhiều OrderDetail
             foreach (var s in services)
             {
                 _context.OrderDetails.Add(new OrderDetail

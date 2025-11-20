@@ -87,16 +87,13 @@ namespace EVCenterService.Pages.Technician.Jobs
                 await LoadAvailableParts();
             };
 
-            // DELIVERABLE: Bắt đầu Transaction
             using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
-                // SỬA LỖI: Lấy CenterID từ Slot
-                // Giả định rằng Staff đã phân công KTV và Slot đã được tạo (Task 1.8)
+                // Giả định rằng Staff đã phân công KTV và Slot đã được tạo 
                 var centerId = Job.Slot?.CenterId;
                 if (centerId == null)
                 {
-                    // Lỗi này xảy ra do Staff chưa gán Slot đúng cách
                     throw new InvalidOperationException("Lỗi: Không thể xác định trung tâm dịch vụ cho đơn hàng này. Không thể trừ kho.");
                 }
 
@@ -115,7 +112,6 @@ namespace EVCenterService.Pages.Technician.Jobs
                     var part = await _context.Parts.FindAsync(inputPart.PartId);
                     if (part == null) throw new Exception($"Không tìm thấy phụ tùng ID {inputPart.PartId}");
 
-                    // === BẮT ĐẦU LOGIC TASK 2.7 ===
 
                     // 1. Kiểm tra kho
                     var storageItem = await _context.Storages
@@ -128,14 +124,13 @@ namespace EVCenterService.Pages.Technician.Jobs
 
                     if (storageItem.Quantity < inputPart.Quantity)
                     {
-                        // 2. DELIVERABLE: Báo lỗi không đủ hàng
+                        // 2. Báo lỗi không đủ hàng
                         throw new Exception($"Không đủ tồn kho cho '{part.Name}'. Yêu cầu: {inputPart.Quantity}, Chỉ còn: {storageItem.Quantity}. Vui lòng báo cáo Admin.");
                     }
 
-                    // 3. DELIVERABLE: Trừ kho
+                    // 3. Trừ kho
                     storageItem.Quantity -= inputPart.Quantity;
                     _context.Storages.Update(storageItem);
-                    // === KẾT THÚC LOGIC TASK 2.7 ===
 
 
                     // Ghi nhận phụ tùng đã dùng (PartsUsed)
@@ -151,7 +146,7 @@ namespace EVCenterService.Pages.Technician.Jobs
                     // Tính toán chi phí
                     totalPartsCost += (part.UnitPrice ?? 0) * inputPart.Quantity;
 
-                    // 4. DELIVERABLE: Kiểm tra ngưỡng và cảnh báo Admin
+                    // 4. Kiểm tra ngưỡng và cảnh báo Admin
                     if (storageItem.MinThreshold.HasValue && storageItem.Quantity <= storageItem.MinThreshold)
                     {
                         var adminUser = await _context.Accounts.FirstOrDefaultAsync(a => a.Role == "Admin");
@@ -177,7 +172,6 @@ namespace EVCenterService.Pages.Technician.Jobs
                     Job.ChecklistNote = (Job.ChecklistNote ?? "") + $"\nTechnician note: {TechnicianNote}";
                 }
 
-                // DELIVERABLE: Lưu tất cả thay đổi
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
 
@@ -186,7 +180,6 @@ namespace EVCenterService.Pages.Technician.Jobs
             }
             catch (Exception ex)
             {
-                // DELIVERABLE: Rollback nếu có lỗi
                 await transaction.RollbackAsync();
                 ModelState.AddModelError(string.Empty, $"Lỗi: {ex.Message}");
                 await reloadDataOnError();
@@ -198,21 +191,21 @@ namespace EVCenterService.Pages.Technician.Jobs
         {
             try
             {
-                // 1. Hoàn thành công việc (code cũ)
+                // 1. Hoàn thành công việc 
                 await _jobService.CompleteJobAsync(id, TechnicianNote);
                 TempData["Message"] = " Công việc đã được đánh dấu hoàn thành.";
 
                 // 2. Lấy thông tin Job VÀ Xe
                 var completedJob = await _context.OrderServices
                     .Include(o => o.User)
-                    .Include(o => o.Vehicle) // <- Quan trọng: Lấy thông tin Xe
+                    .Include(o => o.Vehicle) 
                     .Include(o => o.OrderDetails)
                         .ThenInclude(od => od.Service)
                     .FirstOrDefaultAsync(o => o.OrderId == id);
 
                 if (completedJob == null) return RedirectToPage("Index");
 
-                // 3. SỬA LOGIC: Chỉ cập nhật NGÀY BẢO DƯỠNG
+                // 3. Chỉ cập nhật NGÀY BẢO DƯỠNG
                 if (completedJob.Vehicle != null)
                 {
                     // Tự động cập nhật ngày bảo dưỡng cuối cùng
@@ -221,7 +214,7 @@ namespace EVCenterService.Pages.Technician.Jobs
                     await _context.SaveChangesAsync(); // Lưu ngày bảo dưỡng
                 }
 
-                // 4. SỬA LOGIC: Gửi Email (với giờ nhận xe dự kiến)
+                // 4. Gửi Email (với giờ nhận xe dự kiến)
                 try
                 {
                     if (completedJob.User != null)
@@ -230,7 +223,6 @@ namespace EVCenterService.Pages.Technician.Jobs
                         var serviceNames = string.Join(", ", completedJob.OrderDetails.Select(s => s.Service?.Name));
                         var vehicle = completedJob.Vehicle; // Lấy xe từ Job
 
-                        // ===== BẮT ĐẦU LOGIC TÍNH GIỜ NHẬN XE =====
                         var vietnamTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
                         var vietnamNow = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, vietnamTimeZone);
 
@@ -253,7 +245,6 @@ namespace EVCenterService.Pages.Technician.Jobs
                         {
                             pickupMessage = $"Bạn có thể đến nhận xe <strong>từ {projectedPickupTime:HH:mm} ngày {projectedPickupTime:dd/MM/yyyy}</strong>.";
                         }
-                        // ===== KẾT THÚC LOGIC TÍNH GIỜ NHẬN XE =====
 
                         var subject = "Thông báo: Dịch vụ xe của bạn đã hoàn tất";
                         var message = $@"

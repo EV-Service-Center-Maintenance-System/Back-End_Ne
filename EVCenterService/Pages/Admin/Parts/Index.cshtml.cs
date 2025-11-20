@@ -42,10 +42,8 @@ namespace EVCenterService.Pages.Admin.Parts
             var numCenters = await _context.MaintenanceCenters.CountAsync();
             if (numCenters == 0) numCenters = 1; // Tránh chia cho 0
 
-            // 1. L?y t?t c? Parts
             var allParts = await _context.Parts.ToListAsync();
 
-            // 2. L?y t?t c? d? li?u Storage (gom nhóm theo PartId)
             var allStorageData = await _context.Storages
                 .GroupBy(s => s.PartId)
                 .Select(g => new
@@ -56,9 +54,8 @@ namespace EVCenterService.Pages.Admin.Parts
                 })
                 .ToDictionaryAsync(x => x.PartId);
 
-            // 3. L?y t?t c? d? li?u s? d?ng trong 90 ngày (gom nhóm theo PartId)
             var allUsageData = await _context.PartsUseds
-                .Where(pu => pu.Order.AppointmentDate >= date90DaysAgo) // L?c theo ngày
+                .Where(pu => pu.Order.AppointmentDate >= date90DaysAgo) 
                 .GroupBy(pu => pu.PartId)
                 .Select(g => new
                 {
@@ -67,34 +64,27 @@ namespace EVCenterService.Pages.Admin.Parts
                 })
                 .ToDictionaryAsync(x => x.PartId);
 
-            // 4. K?t h?p logic
             PartList = allParts.Select(p =>
             {
-                // L?y d? li?u t?n kho
                 allStorageData.TryGetValue(p.PartId, out var storage);
                 var totalQuantity = storage?.TotalQuantity ?? 0;
                 var currentTotalMinThreshold = storage?.CurrentTotalMinThreshold ?? 0;
 
-                // L?y d? li?u s? d?ng
                 allUsageData.TryGetValue(p.PartId, out var usage);
                 var totalUsedLast90Days = usage?.TotalUsedLast90Days ?? 0;
 
-                // ===== LOGIC G?I Ý (THAY TH? AI) =====
-                // 1. Nhu c?u trung bình 30 ngày (t?ng)
                 var averageMonthlyDemandTotal = totalUsedLast90Days / 3.0;
-                // 2. Nhu c?u trung bình 30 ngày (cho m?i trung tâm)
+
                 var averageMonthlyDemandPerCenter = averageMonthlyDemandTotal / numCenters;
-                // 3. H? s? an toàn (VD: mu?n t?n kho ?? dùng 1.5 tháng)
+
                 var safetyStockFactor = 1.5;
-                // 4. Ng??ng t?i thi?u g?i ý (cho m?i trung tâm)
+
                 var suggestedThresholdPerCenter = (int)Math.Ceiling(averageMonthlyDemandPerCenter * safetyStockFactor);
 
-                // Luôn gi? ít nh?t 2 cái (ng??ng t?i thi?u)
                 if (suggestedThresholdPerCenter < 2) suggestedThresholdPerCenter = 2;
 
-                // 5. T?ng ng??ng t?i thi?u g?i ý (cho t?t c? trung tâm)
                 var suggestedTotalMinThreshold = suggestedThresholdPerCenter * numCenters;
-                // ===== K?T THÚC LOGIC =====
+
 
                 return new PartViewModel
                 {

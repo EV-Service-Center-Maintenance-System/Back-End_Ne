@@ -22,8 +22,6 @@ namespace EVCenterService.Service.Services
             var timeZoneById = TimeZoneInfo.FindSystemTimeZoneById(_configuration["TimeZoneId"]);
             var timeNow = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, timeZoneById);
 
-            // SỬA: DÙNG model.InvoiceId THAY VÌ tick
-            // var tick = DateTime.Now.Ticks.ToString(); 
             var pay = new VnPayLibrary();
             var urlCallBack = _configuration["Vnpay:PaymentBackReturnUrl"];
 
@@ -41,7 +39,6 @@ namespace EVCenterService.Service.Services
             pay.AddRequestData("vnp_OrderType", model.OrderType);
             pay.AddRequestData("vnp_ReturnUrl", urlCallBack);
 
-            // SỬA: DÙNG model.InvoiceId THAY VÌ tick
             pay.AddRequestData("vnp_TxnRef", model.InvoiceId);
 
             var paymentUrl =

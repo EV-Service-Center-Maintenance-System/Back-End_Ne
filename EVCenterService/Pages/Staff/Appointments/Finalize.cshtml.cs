@@ -27,21 +27,18 @@ namespace EVCenterService.Pages.Staff.Appointments
         public OrderService Appointment { get; set; } = default!;
         public decimal ServiceTotalCost { get; set; }
 
-        // THÊM M?I: Danh sách ph? tùng Tech ?ã báo giá
         public List<PartsUsed> PartsToReview { get; set; } = new();
 
-        // XÓA: Không c?n AvailableParts và PartsUsedInput n?a
 
         public async Task<IActionResult> OnGetAsync(int id)
         {
-            // T?i thông tin, BAO G?M ph? tùng Tech ?ã báo giá
             Appointment = await _context.OrderServices
                 .Include(o => o.User)
                 .Include(o => o.Vehicle)
                 .Include(o => o.OrderDetails)
                     .ThenInclude(od => od.Service)
-                .Include(o => o.PartsUseds) // <--- THÊM M?I
-                    .ThenInclude(pu => pu.Part) // <--- THÊM M?I
+                .Include(o => o.PartsUseds)
+                    .ThenInclude(pu => pu.Part) 
                 .FirstOrDefaultAsync(o => o.OrderId == id);
 
             if (Appointment == null) return NotFound();
@@ -52,16 +49,13 @@ namespace EVCenterService.Pages.Staff.Appointments
                 return RedirectToPage("./Index");
             }
 
-            // L?y danh sách ph? tùng Tech ?ã báo giá
             PartsToReview = Appointment.PartsUseds.ToList();
 
-            // Tính ti?n d?ch v?
             ServiceTotalCost = Appointment.OrderDetails.Sum(od => (od.UnitPrice ?? 0) * (od.Quantity ?? 1));
 
             return Page();
         }
 
-        // THAY TH? HOÀN TOÀN LOGIC OnPostAsync
         public async Task<IActionResult> OnPostAsync(int id)
         {
             Appointment = await _context.OrderServices
@@ -75,21 +69,18 @@ namespace EVCenterService.Pages.Staff.Appointments
 
             if (Appointment == null) return NotFound();
 
-            // L?y CenterID (Gi?ng logic c? c?a b?n)
             var slot = await _context.Slots.FirstOrDefaultAsync(s => s.OrderId == id);
             var centerId = slot?.CenterId;
 
             if (centerId == null)
             {
                 ModelState.AddModelError(string.Empty, $"Không thể xác minh trung tâm dịch vụ. Không thể trừ kho.");
-                return await ReloadPageDataOnErrorAsync(id); // T?i l?i d? li?u khi l?i
+                return await ReloadPageDataOnErrorAsync(id); 
             }
 
             using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
-                // 1. TR? KHO (Logic quan tr?ng)
-                // L?p qua các ph? tùng Tech ?ã báo giá (?ã l?u trong DB)
                 foreach (var partUsed in Appointment.PartsUseds)
                 {
                     var storageItem = await _context.Storages
@@ -106,13 +97,11 @@ namespace EVCenterService.Pages.Staff.Appointments
                         throw new Exception($"Không đủ số lượng tồn kho cho '{part?.Name}'.");
                     }
 
-                    storageItem.Quantity -= partUsed.Quantity; // Tr? kho
+                    storageItem.Quantity -= partUsed.Quantity; // Tru kho
                 }
 
-                // 2. T?O HÓA ??N (Invoice) - Dùng DB ?ã s?a
                 var newInvoice = new Invoice
                 {
-                    // Liên k?t v?i OrderService (nh? b??c s?a DB)
                     OrderId = Appointment.OrderId,
                     Amount = Appointment.TotalCost,
                     Status = "Unpaid",
@@ -121,10 +110,8 @@ namespace EVCenterService.Pages.Staff.Appointments
                 };
                 _context.Invoices.Add(newInvoice);
 
-                // 3. C?p nh?t tr?ng thái Order -> Ch? khách thanh toán
                 Appointment.Status = "PendingPayment";
 
-                // ===== BẮT ĐẦU GỬI EMAIL HÓA ĐƠN =====
                 try
                 {
                     var user = Appointment.User;
@@ -148,9 +135,7 @@ namespace EVCenterService.Pages.Staff.Appointments
                 catch (Exception ex)
                 {
                     Console.WriteLine($"Lỗi gửi mail hóa đơn: {ex.Message}");
-                    // Không dừng transaction nếu gửi mail lỗi
                 }
-                // ===== KẾT THÚC GỬI EMAIL =====
 
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();

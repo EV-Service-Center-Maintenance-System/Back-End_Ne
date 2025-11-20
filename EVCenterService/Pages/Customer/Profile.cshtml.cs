@@ -69,13 +69,11 @@ namespace EVCenterService.Pages.Customer
             return Page();
         }
 
-        // Chỉ còn 1 hàm OnPost
         public async Task<IActionResult> OnPostAsync()
         {
             var user = await _context.Accounts.FindAsync(Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)));
             if (user == null) return Page();
 
-            // Chỉ validate Model này, không còn lỗi 2 form
             if (!ModelState.IsValid)
             {
                 await LoadUserDataAsync();

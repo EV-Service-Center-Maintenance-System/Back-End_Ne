@@ -15,14 +15,6 @@ namespace EVCenterService.Repository.Repositories
 
         public async Task<decimal> GetTotalRevenueAsync()
         {
-            // SỬA LỖI: Doanh thu nên được tính trên các hóa đơn đã thanh toán.
-            // Logic cũ (o.Status == "Completed") là quá hẹp.
-            // Chúng ta sẽ sum tất cả các hóa đơn. 
-            // Giả định rằng một hóa đơn chỉ được tạo khi thanh toán thành công.
-            // Nếu bạn có trạng thái hóa đơn (ví dụ: "Paid"), thì query này sẽ tốt hơn:
-            // return await _context.Invoices.Where(i => i.Status == "Paid").SumAsync(i => i.Amount ?? 0);
-
-            // Giải pháp hiện tại: Sum tất cả các hóa đơn
             return await _context.Invoices.SumAsync(i => i.Amount ?? 0);
         }
 
@@ -44,10 +36,8 @@ namespace EVCenterService.Repository.Repositories
 
         public async Task<List<UpcomingAppointmentDto>> GetUpcomingAppointmentsAsync(int top = 5)
         {
-            // SỬA LỖI 1: Dùng giờ Việt Nam (UTC+7) để tránh lỗi múi giờ
             var vietnamNow = DateTime.UtcNow.AddHours(7);
 
-            // SỬA LỖI 2: Loại bỏ các trạng thái không còn liên quan (Đã hủy, Đã hoàn thành)
             var excludedStatuses = new[] { "TechnicianCompleted", "Cancelled" };
 
             return await _context.OrderServices
@@ -74,10 +64,6 @@ namespace EVCenterService.Repository.Repositories
             // Lấy ngày cuối cùng của tháng hiện tại
             DateTime endDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).AddMonths(1).AddDays(-1);
 
-            // SỬA LỖI "Could not be translated":
-
-            // BƯỚC 1: Yêu cầu SQL chỉ làm GroupBy và Sum (việc nó giỏi)
-            // và trả về một danh sách đơn giản (ToList)
             var rawData = await _context.Invoices
                 .Where(i => i.Status == "Paid" &&
                             i.IssueDate >= startDate &&

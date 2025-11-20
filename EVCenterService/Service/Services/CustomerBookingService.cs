@@ -80,7 +80,6 @@ namespace EVCenterService.Service.Services
 
         public async Task<List<AppointmentHistoryViewModel>> GetAppointmentHistoryAsync(Guid userId)
         {
-            // Đây chính là logic query phức tạp mà PageModel không nên biết
             return await _context.OrderServices
                 .Where(o => o.UserId == userId)
                 .Include(o => o.Vehicle)

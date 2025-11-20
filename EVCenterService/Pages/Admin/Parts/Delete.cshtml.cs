@@ -39,7 +39,6 @@ namespace EVCenterService.Pages.Admin.Parts
             var partToDelete = await _context.Parts.FindAsync(id);
             if (partToDelete == null) return NotFound();
 
-            // KI?M TRA RÀNG BU?C 1: Ph? tùng ?ã ???c s? d?ng ch?a?
             var isPartUsed = await _context.PartsUseds.AnyAsync(pu => pu.PartId == id);
             if (isPartUsed)
             {
@@ -48,7 +47,6 @@ namespace EVCenterService.Pages.Admin.Parts
                 return Page();
             }
 
-            // KI?M TRA RÀNG BU?C 2: Ph? tùng còn t?n kho không? (Ki?m tra c? Storage)
             var isInStorage = await _context.Storages.AnyAsync(s => s.PartId == id && s.Quantity > 0);
             if (isInStorage)
             {
@@ -57,11 +55,9 @@ namespace EVCenterService.Pages.Admin.Parts
                 return Page();
             }
 
-            // N?u không có ràng bu?c, ti?n hành xóa
             using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
-                // Xóa các b?n ghi trong Storage (n?u có, dù Quantity = 0)
                 var storageEntries = await _context.Storages.Where(s => s.PartId == id).ToListAsync();
                 if (storageEntries.Any())
                 {

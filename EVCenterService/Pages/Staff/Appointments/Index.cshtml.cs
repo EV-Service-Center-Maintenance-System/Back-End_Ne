@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace EVCenterService.Pages.Staff.Appointments
 {
-    [Authorize(Roles = "Staff, Admin")] // Cho phép cả Admin
+    [Authorize(Roles = "Staff, Admin")] 
     public class IndexModel : PageModel
     {
         private readonly IStaffAppointmentService _staffService;
@@ -35,7 +35,6 @@ namespace EVCenterService.Pages.Staff.Appointments
 
         public async Task OnGetAsync()
         {
-            // === PHẦN 1: Tải các đơn hàng (Giữ nguyên) ===
             var baseQuery = _context.OrderServices
                 .Include(o => o.Vehicle)
                 .Include(o => o.User)
@@ -64,18 +63,16 @@ namespace EVCenterService.Pages.Staff.Appointments
                 .ToListAsync();
 
 
-            // === PHẦN 2: XÂY DỰNG LOGIC LỌC (GIẢI PHÁP B) ===
+            // 1.  Dịch vụ nào -> Cần chứng chỉ đó
 
-            // 1. Bản đồ logic: Dịch vụ nào -> Cần chứng chỉ đó
-            // Tên phải khớp 100% với CSDL
             var serviceCertMap = new Dictionary<string, string>
             {
-                { "Battery Replacement", "Battery System Certified" }, //
-                { "Brake Check", "Brake System Certified" }, //
-                { "Cooling System Check", "Thermal & Cooling System Certified" }, //
-                { "General Inspection", "General Inspection Certified" } //
+                { "Battery Replacement", "Battery System Certified" }, 
+                { "Brake Check", "Brake System Certified" }, 
+                { "Cooling System Check", "Thermal & Cooling System Certified" }, 
+                { "General Inspection", "General Inspection Certified" } 
             };
-            // (Lưu ý: Bạn phải đảm bảo tên chuỗi ở đây khớp với CSDL của bạn)
+
 
             // 2. Tải TẤT CẢ KTV đang "Active"
             var allTechnicians = await _context.Accounts
@@ -94,7 +91,7 @@ namespace EVCenterService.Pages.Staff.Appointments
                     .Distinct()
                     .ToList();
 
-                // === LOGIC MỚI: Bỏ qua "General Inspection" NẾU có dịch vụ khác ===
+                // Bỏ qua "General Inspection" NẾU có dịch vụ khác
                 var generalCert = "General Inspection Certified";
                 bool needsGeneral = requiredCerts.Contains(generalCert);
 
@@ -109,7 +106,6 @@ namespace EVCenterService.Pages.Staff.Appointments
 
                 List<SelectListItem> availableTechList;
 
-                // ===== BẮT ĐẦU LOGIC GIẢI PHÁP B =====
 
                 if (requiredCerts.Any())
                 {
@@ -143,10 +139,7 @@ namespace EVCenterService.Pages.Staff.Appointments
             }
         }
 
-        // === PHẦN 3: CÁC HÀM POST (Giữ nguyên) ===
-        // Các hàm này không thay đổi vì chúng chỉ nhận 1 OrderID và (nếu cần) 1 TechnicianID
-
-        // XỬ LÝ CHO TAB 1: Chờ duyệt đơn
+        // Chờ duyệt đơn
         public async Task<IActionResult> OnPostConfirmAsync(int id)
         {
             await _staffService.ConfirmAppointmentAsync(id);
@@ -162,7 +155,7 @@ namespace EVCenterService.Pages.Staff.Appointments
             return RedirectToPage();
         }
 
-        // XỬ LÝ CHO TAB 2: Cần phân công
+        // Cần phân công
         public async Task<IActionResult> OnPostAssignAsync(int id, Guid technicianId)
         {
             if (technicianId == Guid.Empty)
@@ -185,7 +178,7 @@ namespace EVCenterService.Pages.Staff.Appointments
             return RedirectToPage();
         }
 
-        // XỬ LÝ HỦY LỊCH (Đã thêm ở lượt trước)
+        // XỬ LÝ HỦY LỊCH 
         public async Task<IActionResult> OnPostCancelAsync(int id, string cancellationReason)
         {
             if (string.IsNullOrWhiteSpace(cancellationReason))

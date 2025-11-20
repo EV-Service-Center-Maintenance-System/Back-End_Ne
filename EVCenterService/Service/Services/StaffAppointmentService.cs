@@ -45,11 +45,9 @@ namespace EVCenterService.Service.Services
                 ?? throw new KeyNotFoundException("Không tìm thấy lịch hẹn.");
 
             appointment.Status = "Confirmed";
-            // Sử dụng _context.SaveChangesAsync() thay vì _appointmentRepository.UpdateAsync()
-            // để đảm bảo tính nhất quán (vì chúng ta đã dùng _context để tải)
+
             _context.OrderServices.Update(appointment);
 
-            // ===== BẮT ĐẦU GỬI EMAIL XÁC NHẬN =====
             try
             {
                 if (appointment.User != null)
@@ -73,9 +71,7 @@ namespace EVCenterService.Service.Services
             catch (Exception ex)
             {
                 Console.WriteLine($"Lỗi gửi mail Xác nhận lịch: {ex.Message}");
-                // Không dừng lại nếu gửi mail lỗi, chỉ log
             }
-            // ===== KẾT THÚC GỬI EMAIL =====
 
             await _context.SaveChangesAsync();
         }
@@ -130,8 +126,6 @@ namespace EVCenterService.Service.Services
             appointment.Status = "Cancelled";
             _context.OrderServices.Update(appointment);
 
-            // ===== BẮT ĐẦU GỬI EMAIL TỪ CHỐI =====
-            // (Lưu ý: Bạn nên nâng cấp để Staff nhập lý do)
             try
             {
                 if (appointment.User != null)
@@ -151,7 +145,6 @@ namespace EVCenterService.Service.Services
             {
                 Console.WriteLine($"Lỗi gửi mail Từ chối lịch: {ex.Message}");
             }
-            // ===== KẾT THÚC GỬI EMAIL =====
 
             await _context.SaveChangesAsync();
         }

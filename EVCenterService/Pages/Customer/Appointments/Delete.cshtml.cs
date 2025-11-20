@@ -41,7 +41,6 @@ namespace EVCenterService.Pages.Customer.Appointments
 
             if (Booking == null) return NotFound();
 
-            // S?A: Ki?m tra n?u không ph?i Pending thì không cho h?y
             if (Booking.Status != "Pending")
             {
                 TempData["ErrorMessage"] = "Không thể hủy lịch hẹn đã được xác nhận hoặc đang xử lý.";
@@ -63,16 +62,12 @@ namespace EVCenterService.Pages.Customer.Appointments
 
             if (booking == null) return NotFound();
 
-            // S?A: Ch? cho phép h?y n?u là "Pending"
             if (booking.Status != "Pending")
             {
                 TempData["ErrorMessage"] = "Không thể hủy lịch hẹn đã được xác nhận hoặc đang xử lý.";
                 return RedirectToPage("Index");
             }
 
-            // S?A: Thay vì xóa, chúng ta c?p nh?t tr?ng thái
-            // _context.OrderDetails.RemoveRange(booking.OrderDetails);
-            // _context.OrderServices.Remove(booking);
 
             booking.Status = "Cancelled";
             _context.OrderServices.Update(booking);

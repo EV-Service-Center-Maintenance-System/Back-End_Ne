@@ -44,7 +44,7 @@ namespace EVCenterService.Hubs
             await base.OnConnectedAsync();
         }
 
-        // 1. Customer gửi tin nhắn (Đã sửa)
+        // 1. Customer gửi tin nhắn 
         public async Task CustomerSendMessage(string message)
         {
             var customerId = Context.User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -76,7 +76,7 @@ namespace EVCenterService.Hubs
             };
             await GetConversationsCol().Document(customerId).SetAsync(conversationData, SetOptions.MergeAll);
 
-            // 4. Gửi real-time cho Staff (như cũ)
+            // 4. Gửi real-time cho Staff 
             await Clients.Group("StaffSupport").SendAsync(
                 "ReceiveCustomerMessage",
                 Context.ConnectionId, // ConnectionId của khách
@@ -86,7 +86,7 @@ namespace EVCenterService.Hubs
             );
         }
 
-        // 2. Staff trả lời (Đã sửa)
+        // 2. Staff trả lời 
         // (Lưu ý: JS phải gửi customerId (Guid), không phải connectionId)
         public async Task StaffReplyMessage(string customerId, string message)
         {

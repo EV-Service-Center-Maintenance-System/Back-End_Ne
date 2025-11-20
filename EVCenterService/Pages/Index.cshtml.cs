@@ -13,7 +13,6 @@ namespace EVCenterService.Pages
         private readonly ILogger<IndexModel> _logger;
         private readonly FirestoreDb _firestoreDb; 
 
-        // SỬA HÀM KHỞI TẠO (Constructor)
         public IndexModel(ILogger<IndexModel> logger, FirestoreDb firestoreDb)
         {
             _logger = logger;
