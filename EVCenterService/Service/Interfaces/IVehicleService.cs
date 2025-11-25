@@ -9,5 +9,6 @@ namespace EVCenterService.Service.Interfaces
         Task AddVehicleAsync(Vehicle vehicle);
         Task UpdateVehicleAsync(Vehicle vehicle, Guid userId);
         Task DeleteVehicleAsync(int id, Guid userId);
+        Task<bool> IsVinDuplicateAsync(string vin);
     }
 }

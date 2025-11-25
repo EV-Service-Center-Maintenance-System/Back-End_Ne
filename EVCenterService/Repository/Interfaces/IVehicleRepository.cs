@@ -10,5 +10,6 @@ namespace EVCenterService.Repository.Interfaces
         Task UpdateAsync(Vehicle vehicle);
         Task DeleteAsync(Vehicle vehicle);
         Task<bool> IsVehicleOwnedByUserAsync(int id, Guid userId);
+        Task<bool> VinExistsAsync(string vin);
     }
 }

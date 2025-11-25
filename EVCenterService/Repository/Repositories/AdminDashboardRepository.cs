@@ -15,14 +15,6 @@ namespace EVCenterService.Repository.Repositories
 
         public async Task<decimal> GetTotalRevenueAsync()
         {
-            // SỬA LỖI: Doanh thu nên được tính trên các hóa đơn đã thanh toán.
-            // Logic cũ (o.Status == "Completed") là quá hẹp.
-            // Chúng ta sẽ sum tất cả các hóa đơn. 
-            // Giả định rằng một hóa đơn chỉ được tạo khi thanh toán thành công.
-            // Nếu bạn có trạng thái hóa đơn (ví dụ: "Paid"), thì query này sẽ tốt hơn:
-            // return await _context.Invoices.Where(i => i.Status == "Paid").SumAsync(i => i.Amount ?? 0);
-
-            // Giải pháp hiện tại: Sum tất cả các hóa đơn
             return await _context.Invoices.SumAsync(i => i.Amount ?? 0);
         }
 
@@ -44,10 +36,8 @@ namespace EVCenterService.Repository.Repositories
 
         public async Task<List<UpcomingAppointmentDto>> GetUpcomingAppointmentsAsync(int top = 5)
         {
-            // SỬA LỖI 1: Dùng giờ Việt Nam (UTC+7) để tránh lỗi múi giờ
             var vietnamNow = DateTime.UtcNow.AddHours(7);
 
-            // SỬA LỖI 2: Loại bỏ các trạng thái không còn liên quan (Đã hủy, Đã hoàn thành)
             var excludedStatuses = new[] { "TechnicianCompleted", "Cancelled" };
 
             return await _context.OrderServices
@@ -69,52 +59,48 @@ namespace EVCenterService.Repository.Repositories
 
         public async Task<List<MonthlyRevenueDto>> GetMonthlyRevenueAsync(int months = 6)
         {
+            // Lấy ngày đầu tiên của (tháng hiện tại - 5 tháng)
             DateTime startDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).AddMonths(-months + 1);
-            DateTime endDate = DateTime.Now.Date.AddDays(1).AddTicks(-1);
+            // Lấy ngày cuối cùng của tháng hiện tại
+            DateTime endDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).AddMonths(1).AddDays(-1);
 
-            // SỬA LỖI: Logic tính doanh thu phải nhất quán với GetTotalRevenueAsync.
-            // Chúng ta sẽ truy vấn thẳng vào Bảng Hóa đơn (Invoices).
-            // Giả định Bảng Invoice của bạn có một trường ngày tháng (ví dụ: CreatedAt hoặc PaymentDate)
-            // và một Foreign Key `OrderId` để join ngược lại `OrderService` lấy ngày hẹn.
-
-            // === GIẢI PHÁP 1: NẾU BẢNG INVOICE CÓ NGÀY TẠO (VÍ DỤ: CreatedAt) ===
-            // (Bạn sẽ cần thêm `public DateTime CreatedAt { get; set; }` vào model Invoice)
-            /* return await _context.Invoices
-                .Where(i => i.CreatedAt >= startDate && i.CreatedAt <= endDate)
-                .GroupBy(i => new { i.CreatedAt.Year, i.CreatedAt.Month })
-                .Select(g => new MonthlyRevenueDto
-                {
-                    Month = new DateTime(g.Key.Year, g.Key.Month, 1),
+            var rawData = await _context.Invoices
+                .Where(i => i.Status == "Paid" &&
+                            i.IssueDate >= startDate &&
+                            i.IssueDate <= endDate)
+                .GroupBy(i => new { i.IssueDate.Value.Year, i.IssueDate.Value.Month })
+                .Select(g => new {
+                    g.Key.Year,
+                    g.Key.Month,
                     TotalRevenue = g.Sum(i => i.Amount ?? 0)
                 })
-                .OrderBy(r => r.Month)
-                .ToListAsync();
-            */
+                .OrderBy(r => r.Year).ThenBy(r => r.Month)
+                .ToListAsync(); // <-- Chuyển sang C# (Client evaluation)
 
-            // === GIẢI PHÁP 2: GIỮ LOGIC CŨ NHƯNG MỞ RỘNG TRẠNG THÁI (NHẤT QUÁN) ===
-            // Dùng logic này nếu bạn muốn group theo Ngày hẹn (AppointmentDate)
+            // BƯỚC 2: Dùng C# để định dạng lại dữ liệu (việc nó giỏi)
+            var monthlyRevenue = rawData.Select(r => new MonthlyRevenueDto
+            {
+                Month = new DateTime(r.Year, r.Month, 1),
+                TotalRevenue = r.TotalRevenue
+            }).ToList();
 
-            // Lấy các trạng thái mà hóa đơn đã được tạo/thanh toán
-            var validStatuses = new[] { "TechnicianCompleted", "ReadyForRepair", "InProgress", "PendingPayment" };
+            // (Phần này để đảm bảo 6 tháng luôn hiển thị, kể cả tháng 0đ)
+            var result = new List<MonthlyRevenueDto>();
+            for (int i = 0; i < months; i++)
+            {
+                var monthToDisplay = startDate.AddMonths(i);
+                var existingData = monthlyRevenue.FirstOrDefault(m => m.Month.Year == monthToDisplay.Year && m.Month.Month == monthToDisplay.Month);
 
-            var ordersWithRevenue = await _context.OrderServices
-                .Include(o => o.Invoices)
-                .Where(o => validStatuses.Contains(o.Status) // Mở rộng trạng thái
-                            && o.AppointmentDate >= startDate
-                            && o.AppointmentDate <= endDate)
-                .ToListAsync();
-
-            var monthlyRevenue = ordersWithRevenue
-                .GroupBy(o => new { o.AppointmentDate.Year, o.AppointmentDate.Month })
-                .Select(g => new MonthlyRevenueDto
+                if (existingData != null)
                 {
-                    Month = new DateTime(g.Key.Year, g.Key.Month, 1),
-                    TotalRevenue = g.Sum(o => o.Invoices.Sum(i => i.Amount ?? 0)) // Giữ logic sum invoice
-                })
-                .OrderBy(r => r.Month)
-                .ToList();
-
-            return monthlyRevenue;
+                    result.Add(existingData);
+                }
+                else
+                {
+                    result.Add(new MonthlyRevenueDto { Month = monthToDisplay, TotalRevenue = 0 });
+                }
+            }
+            return result;
         }
     }
 }

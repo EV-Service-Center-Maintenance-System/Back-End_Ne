@@ -1,4 +1,4 @@
-using EVCenterService.Data;
+﻿using EVCenterService.Data;
 using EVCenterService.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -32,11 +32,11 @@ namespace EVCenterService.Pages.Customer.Feedback
             [Required]
             public int OrderId { get; set; }
 
-            [Required(ErrorMessage = "Vui l�ng ch?n s? sao ?�nh gi�.")]
-            [Range(1, 5, ErrorMessage = "Vui l�ng ch?n t? 1 ??n 5 sao.")]
+            [Required(ErrorMessage = "Vui lòng chọn số sao đánh giá.")]
+            [Range(1, 5, ErrorMessage = "Vui lòng chọn từ 1 đến 5 sao.")]
             public int Rating { get; set; }
 
-            [StringLength(500, ErrorMessage = "N?i dung kh�ng v??t qu� 500 k� t?.")]
+            [StringLength(500, ErrorMessage = "Nội dung không vượt quá 500 ký tự.")]
             public string? Comment { get; set; }
         }
 
@@ -52,19 +52,19 @@ namespace EVCenterService.Pages.Customer.Feedback
 
             if (OrderToReview == null)
             {
-                return NotFound("Kh�ng t�m th?y ??n h�ng ho?c b?n kh�ng c� quy?n truy c?p.");
+                return NotFound("Không tìm thấy đơn hàng hoặc bạn không có quyền truy cập.");
             }
 
-            if (OrderToReview.Status != "Completed" && OrderToReview.Status != "Paid" && OrderToReview.Status != "TechnicianCompleted")
+            if (OrderToReview.Status != "PickedUp")
             {
-                TempData["ErrorMessage"] = "B?n ch? c� th? ?�nh gi� c�c d?ch v? ?� ho�n th�nh.";
+                TempData["ErrorMessage"] = "Bạn chỉ có thể đánh giá các dịch vụ đã hoàn thành.";
                 return RedirectToPage("/Customer/Appointments/Index");
             }
 
             bool hasFeedback = await _context.Feedbacks.AnyAsync(f => f.OrderId == orderId);
             if (hasFeedback)
             {
-                TempData["StatusMessage"] = "B?n ?� ?�nh gi� ?on h�ng n�y r?i.";
+                TempData["StatusMessage"] = "Bạn đã đánh giá đơn hàng này rồi.";
                 return RedirectToPage("/Customer/Appointments/Index");
             }
 
@@ -105,7 +105,7 @@ namespace EVCenterService.Pages.Customer.Feedback
             _context.Feedbacks.Add(feedback);
             await _context.SaveChangesAsync();
 
-            TempData["StatusMessage"] = "C?m ?n b?n ?� g?i ?�nh gi�!";
+            TempData["StatusMessage"] = "Cảm ơn bạn đã gửi đánh giá!";
             return RedirectToPage("/Customer/Appointments/Index");
         }
     }

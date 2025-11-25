@@ -29,7 +29,7 @@ public partial class OrderService
     [Unicode(false)]
     public string? Status { get; set; }
 
-    [Column(TypeName = "text")]
+    [Column(TypeName = "nvarchar(max)")]
     public string? ChecklistNote { get; set; }
 
     [Column(TypeName = "decimal(10, 2)")]

@@ -48,7 +48,6 @@ namespace EVCenterService.Pages.Account
         {
             if (!ModelState.IsValid) return Page();
 
-            // Ki?m tra Email và S?T t?n t?i
             if (await _context.Accounts.AnyAsync(a => a.Email == Input.Email))
             {
                 ModelState.AddModelError("Input.Email", "Địa chỉ email này đã được sử dụng.");
@@ -75,7 +74,6 @@ namespace EVCenterService.Pages.Account
             _context.Accounts.Add(newAccount);
             await _context.SaveChangesAsync();
 
-            // --- G?I EMAIL CHÀO M?NG (Dùng Mailjet) ---
             try
             {
                 var subject = "Chào mừng bạn đến với EV Service Center!";
@@ -88,11 +86,8 @@ namespace EVCenterService.Pages.Account
             catch (Exception ex)
             {
                 Console.WriteLine($"Lỗi gửi mail đăng ký: {ex.Message}");
-                // Không d?ng l?i n?u g?i mail l?i, ch? log
             }
-            // --- K?T THÚC G?I MAIL ---
 
-            // T? ??ng ??ng nh?p ng??i dùng sau khi ??ng ký
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, newAccount.Email),
@@ -104,7 +99,7 @@ namespace EVCenterService.Pages.Account
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var authProperties = new AuthenticationProperties
             {
-                IsPersistent = true, // Gi? ??ng nh?p
+                IsPersistent = true, 
                 ExpiresUtc = DateTimeOffset.UtcNow.AddDays(30)
             };
 
@@ -113,8 +108,7 @@ namespace EVCenterService.Pages.Account
                 new ClaimsPrincipal(claimsIdentity),
                 authProperties);
 
-            // Chuy?n h??ng ??n trang Customer Dashboard
-            return RedirectToPage("/Customer/Index");
+            return RedirectToPage("/Index");
         }
     }
 }

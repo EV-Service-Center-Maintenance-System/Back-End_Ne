@@ -39,9 +39,7 @@ namespace EVCenterService.Repository.Repositories
 
         public async Task UpdateAsync(OrderService order)
         {
-            // Update nên dùng Attach để hiệu quả hơn nếu đối tượng đã được theo dõi
             _context.Attach(order).State = EntityState.Modified;
-            // _context.OrderServices.Update(order); // Hoặc dùng Update nếu chắc chắn nó chưa được theo dõi
             await _context.SaveChangesAsync();
         }
     }

@@ -1,7 +1,9 @@
-using EVCenterService.Data;
+Ôªøusing EVCenterService.Data;
 using EVCenterService.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic; 
@@ -22,6 +24,8 @@ namespace EVCenterService.Pages.Admin.Parts
 
         public IList<PartViewModel> PartList { get; set; } = new List<PartViewModel>();
 
+        public List<SelectListItem> Centers { get; set; } = new();
+
         public class PartViewModel
         {
             public int PartId { get; set; }
@@ -40,12 +44,10 @@ namespace EVCenterService.Pages.Admin.Parts
         {
             var date90DaysAgo = DateTime.Now.AddDays(-90);
             var numCenters = await _context.MaintenanceCenters.CountAsync();
-            if (numCenters == 0) numCenters = 1; // Tr·nh chia cho 0
+            if (numCenters == 0) numCenters = 1; // Tr√°nh chia cho 0
 
-            // 1. L?y t?t c? Parts
             var allParts = await _context.Parts.ToListAsync();
 
-            // 2. L?y t?t c? d? li?u Storage (gom nhÛm theo PartId)
             var allStorageData = await _context.Storages
                 .GroupBy(s => s.PartId)
                 .Select(g => new
@@ -56,9 +58,8 @@ namespace EVCenterService.Pages.Admin.Parts
                 })
                 .ToDictionaryAsync(x => x.PartId);
 
-            // 3. L?y t?t c? d? li?u s? d?ng trong 90 ng‡y (gom nhÛm theo PartId)
             var allUsageData = await _context.PartsUseds
-                .Where(pu => pu.Order.AppointmentDate >= date90DaysAgo) // L?c theo ng‡y
+                .Where(pu => pu.Order.AppointmentDate >= date90DaysAgo) 
                 .GroupBy(pu => pu.PartId)
                 .Select(g => new
                 {
@@ -67,34 +68,27 @@ namespace EVCenterService.Pages.Admin.Parts
                 })
                 .ToDictionaryAsync(x => x.PartId);
 
-            // 4. K?t h?p logic
             PartList = allParts.Select(p =>
             {
-                // L?y d? li?u t?n kho
                 allStorageData.TryGetValue(p.PartId, out var storage);
                 var totalQuantity = storage?.TotalQuantity ?? 0;
                 var currentTotalMinThreshold = storage?.CurrentTotalMinThreshold ?? 0;
 
-                // L?y d? li?u s? d?ng
                 allUsageData.TryGetValue(p.PartId, out var usage);
                 var totalUsedLast90Days = usage?.TotalUsedLast90Days ?? 0;
 
-                // ===== LOGIC G?I › (THAY TH? AI) =====
-                // 1. Nhu c?u trung bÏnh 30 ng‡y (t?ng)
                 var averageMonthlyDemandTotal = totalUsedLast90Days / 3.0;
-                // 2. Nhu c?u trung bÏnh 30 ng‡y (cho m?i trung t‚m)
+
                 var averageMonthlyDemandPerCenter = averageMonthlyDemandTotal / numCenters;
-                // 3. H? s? an to‡n (VD: mu?n t?n kho ?? d˘ng 1.5 th·ng)
+
                 var safetyStockFactor = 1.5;
-                // 4. Ng??ng t?i thi?u g?i ˝ (cho m?i trung t‚m)
+
                 var suggestedThresholdPerCenter = (int)Math.Ceiling(averageMonthlyDemandPerCenter * safetyStockFactor);
 
-                // LuÙn gi? Ìt nh?t 2 c·i (ng??ng t?i thi?u)
                 if (suggestedThresholdPerCenter < 2) suggestedThresholdPerCenter = 2;
 
-                // 5. T?ng ng??ng t?i thi?u g?i ˝ (cho t?t c? trung t‚m)
                 var suggestedTotalMinThreshold = suggestedThresholdPerCenter * numCenters;
-                // ===== K?T TH⁄C LOGIC =====
+
 
                 return new PartViewModel
                 {
@@ -110,6 +104,43 @@ namespace EVCenterService.Pages.Admin.Parts
             })
             .OrderBy(p => p.Name)
             .ToList();
+
+            Centers = await _context.MaintenanceCenters
+                .Select(c => new SelectListItem { Value = c.CenterId.ToString(), Text = c.Name })
+                .ToListAsync();
+        }
+
+        // Th√™m h√†m n√†y v√†o class IndexModel
+        public async Task<IActionResult> OnPostRefillAsync(int PartId, int CenterId, int Quantity)
+        {
+            if (Quantity <= 0) return RedirectToPage();
+
+            var storage = await _context.Storages
+                .FirstOrDefaultAsync(s => s.PartId == PartId && s.CenterId == CenterId);
+
+            if (storage == null)
+            {
+                // N·∫øu ch∆∞a c√≥ b·∫£n ghi kho, t·∫°o m·ªõi
+                storage = new Storage
+                {
+                    PartId = PartId,
+                    CenterId = CenterId,
+                    Quantity = Quantity,
+                    MinThreshold = 5 // M·∫∑c ƒë·ªãnh
+                };
+                _context.Storages.Add(storage);
+            }
+            else
+            {
+                // C·ªông d·ªìn s·ªë l∆∞·ª£ng
+                storage.Quantity += Quantity;
+                _context.Storages.Update(storage);
+            }
+
+            await _context.SaveChangesAsync();
+
+            TempData["StatusMessage"] = $"ƒê√£ nh·∫≠p th√™m {Quantity} c√°i v√†o kho th√†nh c√¥ng.";
+            return RedirectToPage();
         }
     }
 }

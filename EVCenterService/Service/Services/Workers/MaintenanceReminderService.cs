@@ -129,7 +129,7 @@ namespace EVCenterService.Workers
                     // Thêm thông báo vào DbContext (bất kể thành công hay thất bại)
                     context.Notifications.Add(notification);
 
-                } // Kết thúc vòng lặp foreach
+                } 
 
                 await context.SaveChangesAsync(stoppingToken);
             }

@@ -42,13 +42,11 @@ namespace EVCenterService.Pages.Customer.Appointments
 
             if (Booking == null) return NotFound();
 
-            // SỬA: Thêm kiểm tra trạng thái
             if (Booking.Status != "Pending")
             {
                 TempData["ErrorMessage"] = "Bạn không thể sửa lịch hẹn đã được xác nhận hoặc đang xử lý.";
                 return RedirectToPage("Index");
             }
-            // --- Kết thúc sửa ---
 
             VehicleList = new SelectList(
                 await _context.Vehicles.Where(v => v.UserId == userId).ToListAsync(),
@@ -75,13 +73,11 @@ namespace EVCenterService.Pages.Customer.Appointments
 
             if (existingOrder == null) return NotFound();
 
-            // SỬA: Thêm kiểm tra trạng thái
             if (existingOrder.Status != "Pending")
             {
                 TempData["ErrorMessage"] = "Bạn không thể sửa lịch hẹn đã được xác nhận hoặc đang xử lý.";
                 return RedirectToPage("Index");
             }
-            // --- Kết thúc sửa ---
 
             if (!ModelState.IsValid)
             {
@@ -89,7 +85,6 @@ namespace EVCenterService.Pages.Customer.Appointments
                 return Page();
             }
 
-            // ===== BẮT ĐẦU LOGIC NGHIỆP VỤ DỊCH VỤ (TRANG EDIT) =====
             const int generalInspectionId = 4;
             var mainServiceIds = new List<int> { 1, 2, 3 }; // Battery, Brake, Cooling
 
@@ -111,14 +106,12 @@ namespace EVCenterService.Pages.Customer.Appointments
                 await OnGetAsync(id); // Tải lại dữ liệu cho form
                 return Page();
             }
-            // ===== KẾT THÚC LOGIC NGHIỆP VỤ DỊCH VỤ =====
 
             existingOrder.VehicleId = Booking.VehicleId;
             existingOrder.ChecklistNote = Booking.ChecklistNote;
             existingOrder.AppointmentDate = Booking.AppointmentDate.Date + SelectedTime;
             existingOrder.Status = "Pending"; // Giữ nguyên trạng thái Pending
 
-            // ===== BẮT ĐẦU LOGIC KIỂM TRA CHỒNG CHÉO LỊCH (TRANG EDIT) =====
             var selectedServicesForDuration = await _context.ServiceCatalogs
                 .Where(s => SelectedServiceIds.Contains(s.ServiceId))
                 .ToListAsync();
@@ -133,7 +126,7 @@ namespace EVCenterService.Pages.Customer.Appointments
                     .ThenInclude(od => od.Service)
                 .Where(o => o.Status != "Cancelled" &&
                             o.Status != "Completed" &&
-                            o.OrderId != existingOrder.OrderId) // <--- Bỏ qua chính nó
+                            o.OrderId != existingOrder.OrderId) 
                 .ToListAsync();
 
             bool isOverlapping = false;
@@ -156,7 +149,6 @@ namespace EVCenterService.Pages.Customer.Appointments
                 await OnGetAsync(id); // Tải lại dữ liệu cho form
                 return Page();
             }
-            // ===== KẾT THÚC LOGIC KIỂM TRA CHỒNG CHÉO LỊCH =====
 
             _context.OrderDetails.RemoveRange(existingOrder.OrderDetails);
 

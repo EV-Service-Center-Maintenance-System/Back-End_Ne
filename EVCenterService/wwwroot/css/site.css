@@ -55,7 +55,7 @@ body.body-homepage-dark {
 }
 
     .hero-section-dark h1 {
-        color: #ffffff; /* Ch? tiêu ?? tr?ng */
+        color: #ffffff; 
     }
 
         /* Ch? "?i?n" màu xanh cyan n?i b?t nh? trong ?nh m?u */
@@ -291,147 +291,7 @@ body.body-homepage-dark {
 }
 
 
-/* ============================================= */
-/* == CSS CHO ADMIN LAYOUT (_AppLayout.cshtml) == */
-/* ==           (DARK MODE CHUYÊN NGHI?P)         == */
-/* ============================================= */
 
-
-
-/* 2. Ghi ?è Sidebar (t? tr?ng thành ?en) */
-.sidebar {
-    background-color: #0d1117; /* N?n sidebar ?en k?t */
-    border-right: 1px solid #30363d; /* Vi?n ng?n cách m? */
-}
-
-/* 3. Header c?a Sidebar */
-.sidebar-header {
-    border-bottom: 1px solid #30363d; /* Vi?n chân header m? */
-    padding: 1.25rem 1rem;
-}
-
-/* 4. S?A L?I LOGO TO KH?NG L? */
-.sidebar-logo {
-    height: 36px; /* Gi?i h?n chi?u cao logo */
-    width: auto;
-}
-
-/* 5. Ghi ?è các link trong Sidebar (t? ?en/xám thành tr?ng) */
-.sidebar-nav .nav-link {
-    color: #c9d1d9; /* Màu ch? link (tr?ng m?) */
-    border-left-color: transparent !important;
-    padding: 0.75rem 1.5rem;
-}
-
-    .sidebar-nav .nav-link i {
-        color: #8b949e; /* Màu icon (xám) */
-        margin-right: 0.75rem;
-        font-size: 1rem;
-        width: 20px;
-    }
-
-    /* 6. Style khi Hover và Active */
-    .sidebar-nav .nav-link:hover {
-        color: #ffffff;
-        background-color: #22272e; /* N?n khi hover */
-    }
-
-    .sidebar-nav .nav-link.active {
-        color: #ffffff;
-        font-weight: 600;
-        background-color: #1f6feb; /* Màu xanh active */
-        border-left-color: #1f6feb !important;
-    }
-
-        .sidebar-nav .nav-link.active i {
-            color: #ffffff; /* Icon active màu tr?ng */
-        }
-
-/* 7. Khu v?c n?i dung chính (Dashboard) */
-.main-content {
-    background-color: #161b22; /* ??ng b? n?n xám ?en */
-    padding: 2rem;
-}
-
-    /* 8. Style ch? (h1, p) trong n?i dung chính */
-    .main-content h1, .main-content h2, .main-content h5 {
-        color: #f0f6fc; /* Ch? tiêu ?? màu tr?ng */
-    }
-
-    .main-content p, .main-content .text-muted {
-        color: #8b949e !important; /* Ch? mô t? (xám) */
-    }
-
-    /* 9. Style cho Card (Dark Mode) */
-    .main-content .card {
-        background-color: #0d1117; /* N?n card ?en k?t */
-        border: 1px solid #30363d; /* Vi?n card m? */
-        color: #f0f6fc;
-        border-radius: 0.5rem;
-    }
-
-    .main-content .card-header {
-        background-color: #161b22; /* N?n header c?a card */
-        border-bottom: 1px solid #30363d;
-    }
-
-    /* 10. Style cho B?ng (Dark Mode) */
-    .main-content .table {
-        color: #f0f6fc; /* Ch? trong b?ng màu tr?ng */
-    }
-
-        .main-content .table thead th {
-            border-bottom: 2px solid #30363d;
-            color: #8b949e;
-        }
-
-        .main-content .table tbody tr {
-            border-bottom: 1px solid #22272e;
-        }
-
-    .main-content .table-hover tbody tr:hover {
-        background-color: #161b22; /* Màu khi hover vào hàng */
-    }
-
-    /* 11. S?a các chi ti?t nh? */
-    /* (N?n icon "New Appointments") */
-    .main-content .bg-light {
-        background-color: #22272e !important;
-    }
-    /* (Nút "Details" trong b?ng) */
-    .main-content .btn-light {
-        background-color: #22272e;
-        border-color: #30363d;
-        color: #f0f6fc;
-    }
-
-        .main-content .btn-light:hover {
-            background-color: #30363d;
-            border-color: #8b949e;
-            color: #f0f6fc;
-        }
-
-/* ============================================= */
-/* == S?A L?I B? C?C ADMIN (FIX SIDEBAR VÀ CONTENT) == */
-/* ============================================= */
-
-/* 1. Thi?t l?p Flexbox cho .wrapper */
-.wrapper {
-    display: flex;
-    min-height: 100vh; /* ??m b?o layout cao h?t màn hình */
-}
-
-/* 2. Set kích th??c c? ??nh cho sidebar */
-.sidebar {
-    width: 260px; /* Chi?u r?ng c? ??nh c?a sidebar */
-    flex-shrink: 0; /* Không cho phép sidebar b? co l?i */
-}
-
-/* 3. Cho phép n?i dung chính co giãn và cu?n */
-.main-content {
-    flex-grow: 1; /* Cho phép .main-content chi?m h?t ph?n còn l?i */
-    overflow-y: auto; /* Cho phép cu?n n?i dung chính n?u nó quá dài */
-}
 
 /* ============================================= */
 /* == STYLE CHO FOOTER (SÁNG VÀ T?I) == */
@@ -476,34 +336,7 @@ body.body-homepage-dark {
             color: #ffffff; /* Sáng lên khi hover */
         }
 
-/* ======================================================= */
-/* == CSS CHO CUSTOMER LAYOUT (HEADER TRÊN, KHÔNG SIDEBAR) == */
-/* ======================================================= */
 
-/* * Ghi ?è .wrapper m?c ??nh (display: flex, flex-direction: row)
- * CH? KHI nó c?ng có class là .customer-layout.
- * Layout Admin/Staff s? không b? ?nh h??ng.
-*/
-.wrapper.customer-layout {
-    flex-direction: column; /* ??i thành layout c?t (header trên, content d??i) */
-}
-
-/* Style cho header m?i */  
-.top-navbar {
-    background-color: #0d1117; /* Màu n?n t?i */
-    border-bottom: 1px solid #30363d; /* Vi?n m? */
-    padding: 0.75rem 1.5rem;
-    flex-shrink: 0; /* ??m b?o header không b? co l?i */
-}
-
-.top-logo {
-    height: 44px; 
-    width: 44px; 
-    border-radius: 50%;
-    object-fit: cover;
-    position: relative; 
-    top: 2px;
-}
 
 /* ======================================================= */
 /* == BỔ SUNG HIỆU ỨNG ĐỘNG & TƯƠNG TÁC (NÂNG CẤP) == */
@@ -739,263 +572,7 @@ body.body-account {
         color: #4da3ff; /* Sáng hơn khi hover */
     }
 
-/* ======================================================= */
-/* == NÂNG CẤP GIAO DIỆN APP (GLASSMORPHISM) == */
-/* ======================================================= */
 
-/* 1. Thêm nền "cát đen" cho body để hiệu ứng kính mờ hoạt động */
-body.app-body {
-    background-image: url('../images/dark-sand-bg.jpg') !important;
-    background-color: #0d1117 !important;
-    background-size: cover !important;
-    background-position: center !important;
-    background-attachment: fixed !important; /* QUAN TRỌNG: Cố định nền */
-    color: #adb5bd;
-}
-
-/* 2. Biến .data-card thành "Kính mờ" (bo cong + glass) */
-.main-content .card.data-card,
-.main-content > form.card { /* Áp dụng cho cả form ở trang Create */
-    /* Hiệu ứng Kính mờ */
-    background: rgba(13, 17, 23, 0.85); /* Nền đen mờ 85% */
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-    /* Hiệu ứng Bo cong (iOS) */
-    border-radius: 1.25rem;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
-    overflow: hidden;
-}
-
-/* 3. Làm cho Form (Input, Select) cũng "Kính mờ" */
-.main-content .form-control,
-.main-content .form-select {
-    background-color: rgba(255, 255, 255, 0.05); /* Nền siêu mờ */
-    color: #ffffff;
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    border-radius: 0.5rem; /* Bo cong nhẹ */
-}
-
-    .main-content .form-control::placeholder {
-        color: #8b949e;
-    }
-
-    /* Hiệu ứng "Glow" khi focus (Giữ nguyên) */
-    .main-content .form-control:focus,
-    .main-content .form-select:focus {
-        background-color: rgba(255, 255, 255, 0.1);
-        border-color: #0d6efd;
-        box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.2);
-    }
-
-/* 4. Sửa Checkbox (bỏ nền trắng) */
-.main-content .form-check-input {
-    background-color: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.25);
-}
-
-    .main-content .form-check-input:checked {
-        background-color: #0d6efd;
-        border-color: #0d6efd;
-    }
-
-/* ======================================================= */
-/* == NÂNG CẤP TOM-SELECT (DROPDOWN XỊN - KÍNH MỜ) == */
-/* ======================================================= */
-
-/* 1. Hộp (Control) lúc chưa bấm */
-.main-content .ts-wrapper .ts-control {
-    /* Áp dụng style "kính mờ" */
-    background: rgba(255, 255, 255, 0.05) !important;
-    border: 1px solid rgba(255, 255, 255, 0.25) !important;
-    border-radius: 0.5rem !important; /* Bo cong */
-    box-shadow: none !important; /* Tắt shadow mặc định */
-    padding: 0.55rem 0.75rem !important;
-}
-
-/* 2. Hộp lúc đang focus (thêm "glow") */
-.main-content .ts-wrapper.focus .ts-control {
-    border-color: #0d6efd !important;
-    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.2) !important;
-}
-
-/* 3. Chữ bên trong (màu trắng) */
-.main-content .ts-wrapper .ts-control .item,
-.main-content .ts-wrapper .ts-control .ts-placeholder {
-    color: #ffffff !important;
-}
-
-/* 4. Danh sách thả xuống (Dropdown Menu) - ĐÂY LÀ PHẦN QUAN TRỌNG */
-.main-content .ts-wrapper .ts-dropdown {
-    /* Áp dụng "Kính mờ" (Glassmorphism) */
-    background: rgba(13, 17, 23, 0.95) !important; /* Nền đen mờ 95% */
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    /* Bo cong (iOS style) */
-    border-radius: 0.75rem !important;
-    border: 1px solid rgba(255, 255, 255, 0.15) !important;
-    margin-top: 0.25rem;
-}
-
-    /* 5. Các lựa chọn (Option) bên trong */
-    .main-content .ts-wrapper .ts-dropdown .option {
-        color: #adb5bd; /* Chữ xám */
-        padding: 0.5rem 0.75rem;
-    }
-
-        /* 6. Hiệu ứng Hover/Active (màu xanh) */
-        .main-content .ts-wrapper .ts-dropdown .option:hover,
-        .main-content .ts-wrapper .ts-dropdown .active {
-            background-color: #0d6efd !important;
-            color: #ffffff !important;
-        }
-
-/* ======================================================= */
-/* == NÂNG CẤP BẢNG (TABLE) & BADGE (TRANG INDEX) == */
-/* ======================================================= */
-
-/* 1. Ghi đè .table-custom để đồng bộ dark mode */
-.main-content .table-custom {
-    border-color: #30363d !important; /* Viền mờ */
-    margin-bottom: 0; /* Bỏ margin cuối bảng */
-}
-
-    /* 2. Tiêu đề cột (Header) */
-    .main-content .table-custom thead th {
-        color: #8b949e; /* Màu xám, thay vì trắng */
-        font-weight: 500;
-        text-transform: uppercase; /* Chữ hoa */
-        font-size: 0.75rem; /* Nhỏ hơn */
-        letter-spacing: 0.5px;
-        border-bottom-width: 1px !important;
-        border-color: #30363d !important;
-    }
-
-    .main-content .table-custom tbody tr {
-        background-color: transparent !important;
-    }
-
-    /* 3. Nội dung hàng (Row) */
-    .main-content .table-custom tbody td {
-        color: #495057;
-        vertical-align: middle;
-        border-color: #30363d !important;
-    }
-
-        /* THÊM MỚI: Làm mờ lại các cột text-muted */
-        .main-content .table-custom tbody td.text-muted {
-            color: #8b949e !important; /* Màu xám mờ */
-        }
-
-        /* 4. Chữ "Testla" (in đậm) */
-        .main-content .table-custom tbody td .fw-bold {
-            color: #495057 !important; /* Màu trắng sáng */
-        }
-
-    /* 5. Hiệu ứng Hover (chĩa vào) */
-    .main-content .table-custom.table-hover tbody tr:hover {
-        background-color: rgba(255, 255, 255, 0.03) !important;
-    }
-
-/* 6. Nâng cấp BADGE TRẠNG THÁI (Tinh tế hơn) */
-.badge-custom {
-    padding: 0.4em 0.75em;
-    font-size: 0.7rem;
-    font-weight: 600;
-    letter-spacing: 0.3px;
-    text-transform: uppercase;
-}
-    /* Trạng thái Chờ (Pending) */
-    .badge-custom.bg-warning {
-        background-color: rgba(255, 193, 7, 0.1) !important;
-        color: #ffc107 !important;
-    }
-    /* Trạng thái Thành công (Completed) */
-    .badge-custom.bg-success {
-        background-color: rgba(25, 135, 84, 0.1) !important;
-        color: #198754 !important;
-    }
-    /* Trạng thái Hủy (Cancelled) */
-    .badge-custom.bg-danger {
-        background-color: rgba(220, 53, 69, 0.1) !important;
-        color: #dc3545 !important;
-    }
-    /* Các trạng thái khác (Inprogress) */
-    .badge-custom.bg-info {
-        background-color: rgba(13, 202, 240, 0.1) !important;
-        color: #0dcaf0 !important;
-    }
-    /* Đã đánh giá (Active) */
-    .badge-custom.badge-active {
-        background-color: rgba(25, 135, 84, 0.1) !important;
-        color: #198754 !important;
-        padding: 0.4em 0.75em;
-        font-size: 0.7rem;
-        font-weight: 600;
-    }
-
-/* ======================================================= */
-/* == NÂNG CẤP TRANG GÓI DỊCH VỤ (SUBSCRIPTIONS) == */
-/* ======================================================= */
-
-/* 1. Thêm hiệu ứng "lift" (nâng lên) khi hover */
-.card.sub-card-interactive:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3); /* Bóng to hơn */
-}
-
-.card.sub-card-interactive {
-    /* Thêm transition để hiệu ứng mượt mà */
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-/* 2. Thêm hiệu ứng "Glow" cho gói Active (thay border-primary) */
-@keyframes active-plan-glow {
-    0% {
-        box-shadow: 0 0 5px rgba(13,110,253,0.3), 0 0 10px rgba(13,110,253,0.2);
-    }
-
-    50% {
-        box-shadow: 0 0 20px rgba(13,110,253,0.7), 0 0 30px rgba(13,110,253,0.5);
-    }
-
-    100% {
-        box-shadow: 0 0 5px rgba(13,110,253,0.3), 0 0 10px rgba(13,110,253,0.2);
-    }
-}
-
-.card.sub-card-active {
-    /* Ghi đè border cũ */
-    border: 1px solid rgba(13, 110, 253, 0.7) !important;
-    /* Thêm animation "glow" */
-    animation: active-plan-glow 3s infinite ease-in-out;
-}
-
-/* 3. Style cho danh sách lợi ích (Benefits List) */
-.sub-benefits-list {
-    list-style: none;
-    padding-left: 0;
-    margin-top: 1.5rem;
-    margin-bottom: 1.5rem;
-    color: #adb5bd; /* Màu chữ xám nhạt */
-}
-
-    .sub-benefits-list li {
-        position: relative;
-        padding-left: 30px; /* Khoảng trống cho icon */
-        margin-bottom: 0.75rem;
-        line-height: 1.4;
-    }
-        /* Icon check (màu xanh lá) */
-        .sub-benefits-list li::before {
-            content: '\F26A'; /* Mã icon "check-circle-fill" của Bootstrap Icons */
-            font-family: 'bootstrap-icons'; /* Đảm bảo bạn đã tải font icon */
-            position: absolute;
-            left: 0;
-            top: 0;
-            color: #198754; /* Màu xanh lá (success) */
-            font-size: 1.1rem;
-        }
 
 /* ======================================================= */
 /* == NÂNG CẤP DROPDOWN "DỊCH VỤ CỦA TÔI" (GIỐNG ẢNH MẪU) == */
@@ -1028,3 +605,1081 @@ body.app-body {
         color: #ffffff;
         background-color: transparent;
     }
+
+/* ======================================================= */
+/* == GIAO DIỆN MỚI "DARK & BLUE" (DARK SIDEBAR) == */
+/* ======================================================= */
+
+/* 1. NỀN CHÍNH (Màu xám "hơi tối" theo yêu cầu) */
+body.app-body {
+    background-color: #161b22 !important; /* Nền xám đen (không phải đen tuyền) */
+    color: #adb5bd; /* Chữ mặc định (xám mờ) */
+    background-image: none !important;
+}
+
+/* 2. LAYOUT (Sidebar & Top-nav) */
+
+/* 2.1. Sidebar (Admin/Staff) -> GIỮ DARK MODE */
+.sidebar {
+    background-color: #212529; /* NỀN XÁM TỐI */
+    border-right: 1px solid #30363d;
+}
+
+.sidebar-header {
+    border-bottom: 1px solid #30363d;
+}
+
+    .sidebar-header .sidebar-logo {
+        height: 40px;
+        width: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .sidebar-header span {
+        color: #ffffff;
+    }
+
+
+/* Thêm padding cho 2 khu vực nav (chính và đăng xuất) */
+.sidebar-nav {
+    padding: 0.75rem; /* Thêm khoảng hở 12px */
+}
+
+    /* 2.1. NÂNG CẤP LINK (THÀNH THẺ NỔI, BO CONG) */
+    .sidebar-nav .nav-link {
+        color: #adb5bd; /* Chữ xám mờ */
+        padding: 0.75rem 1rem; /* Padding 12px 16px */
+        border-radius: 0.75rem; /* Bo cong 12px */
+        margin-bottom: 0.5rem; /* Khoảng cách giữa các thẻ */
+        font-weight: 500;
+        transition: all 0.2s ease; /* Hiệu ứng "nhiều xí" */
+    }
+
+        /* 2.2. Hiệu ứng Hover (Thẻ nổi lên) */
+        .sidebar-nav .nav-link:hover {
+            color: #ffffff;
+            background-color: #343a40; /* Nền hover xám */
+            transform: translateY(-2px); /* Hiệu ứng "nổi" */
+        }
+
+        /* 2.3. Hiệu ứng Active (Thẻ màu xanh, phát sáng) */
+        .sidebar-nav .nav-link.active {
+            color: #ffffff;
+            font-weight: 600;
+            background-color: #0d6efd; /* NỀN XANH BIỂN */
+            border-left-color: transparent !important; /* Xóa viền trái cũ */
+            box-shadow: 0 4px 15px rgba(13, 110, 253, 0.25); /* Thêm "glow" */
+            transform: translateY(-2px);
+        }
+
+            /* 2.4. Style cho Icon (Giữ nguyên) */
+            .sidebar-nav .nav-link.active i {
+                color: #ffffff;
+            }
+
+        .sidebar-nav .nav-link i {
+            color: #8b949e;
+            margin-right: 0.75rem;
+            font-size: 1rem;
+            width: 20px;
+            transition: color 0.2s ease; /* Thêm hiệu ứng cho icon */
+        }
+
+        .sidebar-nav .nav-link:hover i {
+            color: #ffffff; /* Icon sáng lên khi hover */
+        }
+
+/* 2.2. Top-Nav (Customer) -> SỬA THÀNH DARK MODE */
+.top-navbar {
+    background-color: #212529; /* Nền xám tối (giống sidebar) */
+    border-bottom: 1px solid #30363d;
+    padding: 0.75rem 1.5rem;
+}
+
+    .top-navbar .top-logo {
+        height: 48px; /* Logo 48px (đã sửa) */
+        width: 48px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .top-navbar .navbar-brand span {
+        color: #ffffff;
+    }
+    /* Chữ trắng */
+    .top-navbar .nav-link {
+        color: #adb5bd;
+    }
+        /* Chữ xám mờ */
+        .top-navbar .nav-link:hover {
+            color: #ffffff;
+        }
+    /* Chữ trắng */
+    /* Sửa dropdown Chào, hehe */
+    .top-navbar .dropdown-menu {
+        background-color: #212529;
+        border-color: #30363d;
+    }
+
+    .top-navbar .dropdown-item {
+        color: #adb5bd;
+    }
+
+        .top-navbar .dropdown-item:hover {
+            color: #ffffff;
+            background-color: #0d6efd;
+        }
+
+
+/* 3. NỘI DUNG CHÍNH (MAIN CONTENT) */
+.main-content {
+    padding: 1.5rem;
+    animation: none;
+}
+
+/* 4. TIÊU ĐỀ TRANG (Page Header) */
+.page-header {
+    border-bottom: none;
+    margin-bottom: 1.5rem;
+}
+
+    .page-header h1 {
+        color: #ffffff; /* Chữ trắng */
+        font-weight: 700;
+    }
+
+    .page-header p {
+        color: #adb5bd; /* Chữ xám mờ */
+    }
+
+    /* Header card XANH BIỂN (Giữ nguyên, vẫn đẹp) */
+    .page-header.header-card-blue {
+        background: linear-gradient(90deg, #0d6efd 0%, #00c6ff 100%);
+        color: white;
+        padding: 1.5rem 2rem;
+        border-radius: 1rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 15px rgba(13, 110, 253, 0.2);
+    }
+
+        .page-header.header-card-blue h1 {
+            color: white;
+        }
+
+        .page-header.header-card-blue p {
+            color: white !important;
+            opacity: 0.8;
+        }
+
+
+/* 5. CARD (Thẻ .data-card) - SỬA THÀNH DARK */
+.card.data-card,
+.main-content > form.card {
+    background: #212529 !important; /* Nền card (tối hơn body) */
+    backdrop-filter: none !important;
+    border: 1px solid #30363d; /* Viền mờ */
+    border-radius: 1rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+/* 6. FORM (Input, Select) - SỬA THÀNH DARK */
+.main-content .form-control,
+.main-content .form-select {
+    background-color: #161b22; /* Nền input (giống body) */
+    color: #ffffff; /* Chữ trắng */
+    border: 1px solid #30363d; /* Viền mờ */
+    border-radius: 0.5rem;
+}
+
+    .main-content .form-control:focus,
+    .main-content .form-select:focus {
+        background-color: #212529;
+        border-color: #0d6efd; /* VIỀN XANH BIỂN */
+        box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
+    }
+
+.main-content label {
+    color: #f0f6fc; /* Chữ trắng */
+    font-weight: 600;
+}
+
+/* 7. CHECKBOX - SỬA THÀNH DARK */
+.main-content .form-check-input {
+    background-color: transparent;
+    border: 1px solid #30363d;
+}
+
+    .main-content .form-check-input:checked {
+        background-color: #0d6efd; /* XANH BIỂN */
+        border-color: #0d6efd;
+    }
+
+/* 8. BẢNG (TABLE) - SỬA THÀNH DARK */
+.main-content .table-custom {
+    border-color: #30363d !important;
+}
+
+    .main-content .table-custom thead th {
+        color: #8b949e; /* Chữ tiêu đề (xám) */
+        font-weight: 600;
+        background-color: #212529; /* Nền header (giống card) */
+        border-color: #30363d !important;
+    }
+
+    .main-content .table-custom tbody tr {
+        background-color: transparent !important; /* Nền hàng trong suốt */
+    }
+
+    .main-content .table-custom tbody td {
+        color: #adb5bd; 
+        vertical-align: middle;
+        border-color: #30363d !important;
+    }
+
+        .main-content .table-custom tbody td.text-muted {
+            color: #8b949e !important; /* Chữ mờ */
+        }
+
+        .main-content .table-custom tbody td .fw-bold {
+            color: #ffffff !important; /* Chữ in đậm (trắng) */
+        }
+
+    .main-content .table-custom.table-hover tbody tr:hover {
+        background-color: rgba(255, 255, 255, 0.03) !important;
+    }
+
+/* 9. BADGE (Giữ nguyên, vẫn đẹp trên nền tối) */
+.badge-custom {
+    padding: 0.4em 0.75em;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+}
+
+    .badge-custom.bg-warning {
+        background-color: rgba(255, 193, 7, 0.1) !important;
+        color: #ffc107 !important;
+    }
+
+    .badge-custom.bg-success {
+        background-color: rgba(25, 135, 84, 0.1) !important;
+        color: #198754 !important;
+    }
+
+    .badge-custom.bg-danger {
+        background-color: rgba(220, 53, 69, 0.1) !important;
+        color: #dc3545 !important;
+    }
+
+    .badge-custom.bg-info {
+        background-color: rgba(13, 202, 240, 0.1) !important;
+        color: #0dcaf0 !important;
+    }
+
+    .badge-custom.badge-active {
+        background-color: rgba(25, 135, 84, 0.1) !important;
+        color: #198754 !important;
+    }
+
+/* 10. NÚT BẤM (BUTTONS) */
+.main-content .btn-primary {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    box-shadow: 0 4px 10px rgba(13, 110, 253, 0.2);
+    font-weight: 600;
+    padding: 0.6rem 1.25rem;
+    border-radius: 0.5rem;
+}
+
+    .main-content .btn-primary:hover {
+        background-color: #0b5ed7;
+        border-color: #0a58ca;
+    }
+/* SỬA: Nút Secondary thành xám tối */
+.main-content .btn-secondary {
+    background-color: #30363d;
+    border-color: #30363d;
+    color: #f0f6fc;
+    font-weight: 600;
+    padding: 0.6rem 1.25rem;
+    border-radius: 0.5rem;
+}
+
+    .main-content .btn-secondary:hover {
+        background-color: #495057;
+        border-color: #495057;
+    }
+
+/* 11. TOM-SELECT - SỬA THÀNH DARK */
+.main-content .ts-wrapper .ts-control {
+    background: #161b22 !important;
+    border: 1px solid #30363d !important;
+    color: #ffffff !important;
+}
+
+.main-content .ts-wrapper.focus .ts-control {
+    border-color: #0d6efd !important;
+    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15) !important;
+}
+
+.main-content .ts-wrapper .ts-control .item,
+.main-content .ts-wrapper .ts-control .ts-placeholder {
+    color: #ffffff !important;
+}
+
+.main-content .ts-wrapper .ts-dropdown {
+    background: #212529 !important;
+    backdrop-filter: none !important;
+    border-radius: 0.75rem !important;
+    border: 1px solid #30363d !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+    .main-content .ts-wrapper .ts-dropdown .option {
+        color: #adb5bd;
+    }
+
+        .main-content .ts-wrapper .ts-dropdown .option:hover,
+        .main-content .ts-wrapper .ts-dropdown .active {
+            background-color: #0d6efd !important; /* Hover XANH BIỂN */
+            color: #ffffff !important;
+        }
+
+/* 12. ITEM CARD (LIST LỊCH HẸN) - SỬA THÀNH DARK */
+.appointment-card-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.appointment-card-item {
+    background-color: #212529; /* Nền card (xám tối) */
+    border-radius: 1rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    padding: 1.5rem;
+    margin-bottom: 0;
+    display: grid;
+    /* Icon | Xe/Status | Ngày | Giờ | Tiền | Ghi chú | Nút */
+    grid-template-columns: 48px 1.5fr 130px 110px 130px minmax(180px, 2fr) 120px;
+    gap: 1rem;
+    align-items: center;
+    border: 1px solid #30363d; /* Viền mờ */
+    transition: box-shadow 0.2s ease;
+}
+
+    .appointment-card-item:hover {
+        box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+        background-color: #2a2f35; /* Sáng hơn 1 chút khi hover */
+    }
+
+    /* Icon Wrapper (Vẫn giữ nền xanh mờ, rất nổi bật) */
+    .appointment-card-item .icon-wrapper {
+        background-color: #e7f1ff; /* Nền icon xanh mờ */
+        color: #0d6efd; /* Icon xanh */
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 0.75rem;
+        font-size: 1.8rem;
+    }
+
+    .appointment-card-item .vehicle-info h5 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #ffffff; /* Chữ trắng */
+    }
+
+    .appointment-card-item .detail-block {
+        font-size: 0.9rem;
+    }
+
+        .appointment-card-item .detail-block .label {
+            color: #8b949e; /* Chữ nhãn (xám mờ) */
+            font-size: 0.8rem;
+            margin-bottom: 0.25rem;
+            display: block;
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+
+        .appointment-card-item .detail-block .value {
+            color: #f0f6fc; /* Chữ giá trị (trắng) */
+            font-weight: 500;
+        }
+
+    .appointment-card-item .action-buttons {
+        display: flex;
+        gap: 0.5rem;
+        justify-content: flex-end;
+    }
+
+/* ======================================================= */
+/* == SỬA LỖI HIỂN THỊ (CHECKBOX, ICON, PLACEHOLDER) == */
+/* ======================================================= */
+
+/* 1. Sửa Checkbox (ô tích) cho viền sáng hơn */
+.main-content .form-check-input {
+    background-color: transparent; /* Giữ trong suốt */
+    border: 1px solid #8b949e; /* SỬA: Viền xám mờ (thay vì #30363d) */
+}
+    /* Sửa khi đã check (vẫn giữ màu xanh) */
+    .main-content .form-check-input:checked {
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+    }
+
+/* 2. Sửa chữ mờ (placeholder) cho ô "Ghi chú" */
+.main-content .form-control::placeholder {
+    color: #8b949e; /* SỬA: Đặt màu xám mờ */
+    opacity: 1; /* Đảm bảo nó không bị mờ thêm */
+}
+
+/* 3. Sửa icon Lịch & Giờ (bắt buộc trình duyệt dùng icon sáng) */
+.main-content .form-control[type="date"],
+.main-content .form-control[type="time"] {
+    color-scheme: dark;
+}
+/* ======================================================= */
+/* == SỬA NÚT SỬA/XÓA (CHO ĐỒNG ĐỀU) == */
+/* ======================================================= */
+
+.appointment-card-item .action-buttons .btn-icon {
+    width: 32px; /* Đặt chiều rộng cố định */
+    height: 32px; /* Đặt chiều cao cố định */
+    padding: 0; /* Bỏ padding */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem; /* Chỉnh cỡ icon nếu cần */
+}
+
+/* ======================================================= */
+/* == HOTFIX: SỬA LỖI NỀN TRẮNG/CHỮ MỜ (TRANG HÓA ĐƠN) == */
+/* ======================================================= */
+
+/* 1. Ghi đè nền trắng của Bootstrap */
+/* Chúng ta thêm .table để tăng độ ưu tiên */
+.main-content .table.table-custom tbody tr,
+.main-content .table.table-custom tfoot tr,
+.main-content .table.table-custom tbody td,
+.main-content .table.table-custom tfoot td {
+    background-color: transparent !important;
+}
+
+/* 2. Sửa màu chữ "quá mờ" */
+.main-content .table.table-custom tbody td,
+.main-content .table.table-custom tfoot td {
+    color: #f0f6fc !important; /* Sửa thành Chữ trắng sáng */
+}
+
+    /* 3. Giữ style cho chữ mờ (nếu có) */
+    .main-content .table.table-custom tbody td.text-muted,
+    .main-content .table.table-custom tfoot td.text-muted {
+        color: #8b949e !important;
+    }
+
+    /* 4. Giữ style cho chữ in đậm (Tổng cộng) */
+    .main-content .table.table-custom tbody td.fw-bold,
+    .main-content .table.table-custom tfoot td.fw-bold {
+        color: #ffffff !important;
+    }
+
+/* ======================================================= */
+/* == NÂNG CẤP "XỊN" CHO TRANG HÓA ĐƠN (INVOICES) == */
+/* ======================================================= */
+
+.invoice-card-item {
+    /* 1. Copy style "card" từ trang Lịch hẹn */
+    background-color: #212529;
+    border-radius: 1rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    padding: 1.5rem;
+    display: grid;
+    gap: 1rem;
+    align-items: center;
+    border: 1px solid #30363d;
+    transition: background-color 0.2s ease;
+}
+
+    .invoice-card-item:hover {
+        background-color: #2a2f35;
+    }
+
+/* 2. ĐỊNH NGHĨA LƯỚI MỚI (7 CỘT) CHO HÓA ĐƠN */
+.invoice-card-item {
+    /* Icon | Mã HĐ | Tên Xe | Ngày Tạo | Tổng Tiền | Trạng Thái | Nút */
+    grid-template-columns: 48px 1fr 1.5fr 1fr 1fr 1fr 120px;
+}
+
+    /* 3. Style cho các khối con (thay .detail-block) */
+    .invoice-card-item .icon-wrapper {
+        background-color: #e7f1ff; /* Nền icon xanh mờ */
+        color: #0d6efd; /* Icon xanh */
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 0.75rem;
+        font-size: 1.8rem;
+    }
+
+    .invoice-card-item .info-block h5 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #ffffff;
+        margin-bottom: 0.25rem;
+    }
+
+    .invoice-card-item .info-block .label {
+        color: #8b949e;
+        font-size: 0.8rem;
+        margin-bottom: 0.25rem;
+        display: block;
+        text-transform: uppercase;
+        font-weight: 500;
+    }
+
+    .invoice-card-item .info-block .value {
+        color: #f0f6fc;
+        font-weight: 500;
+    }
+
+    .invoice-card-item .action-buttons {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+/* ======================================================= */
+/* == HOTFIX: SỬA LỖI MẤT CHỮ TRANG DETAILS (NGOÀI BẢNG) == */
+/* ======================================================= */
+
+/* 1. Sửa chữ trong phần thân card (VD: tên khách hàng) */
+.main-content .card.data-card .card-body {
+    color: #adb5bd; /* Đặt màu chữ xám mờ (trắng xám) */
+}
+
+/* 2. Sửa tiêu đề (HÓA ĐƠN DỊCH VỤ) */
+.main-content .card.data-card .card-header h2 {
+    color: #ffffff; /* Tiêu đề chính màu trắng */
+}
+
+/* 3. Sửa các nhãn (Khách hàng:, Xe:) */
+.main-content .card.data-card .card-body strong {
+    color: #f0f6fc; /* Chữ in đậm (label) màu trắng sáng */
+}
+
+/* ======================================================= */
+/* == NÂNG CẤP TRANG DETAILS HÓA ĐƠN (SỬA LỖI) == */
+/* ======================================================= */
+
+/* 1. Style cho header của card (bg-darker) */
+.main-content .card.data-card .card-header {
+    background-color: #161b22; /* Nền xám đen (tối hơn card) */
+    border-bottom: 1px solid #30363d;
+    padding: 0.75rem 1.25rem;
+}
+    /* Sửa chữ trong header (nếu lỡ bị ghi đè) */
+    .main-content .card.data-card .card-header.text-white {
+        color: #ffffff !important;
+    }
+
+/* 2. Thêm hiệu ứng "glow" cho badge "ĐÃ THANH TOÁN" */
+.badge-custom.bg-success {
+    box-shadow: 0 0 10px rgba(25, 135, 84, 0.5);
+}
+
+/* 3. Style cho nút Thanh toán (nếu chưa trả) */
+.badge-custom.bg-danger {
+    /* Thêm hiệu ứng "pulse" (nhấp nháy) để thu hút */
+    animation: pulse-danger 2s infinite;
+}
+
+@keyframes pulse-danger {
+    0% {
+        box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7);
+    }
+
+    70% {
+        box-shadow: 0 0 0 10px rgba(220, 53, 69, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(220, 53, 69, 0);
+    }
+}
+
+/* ======================================================= */
+/* == NÂNG CẤP TRANG GÓI DỊCH VỤ (SUBSCRIPTIONS) == */
+/* ======================================================= */
+
+/* 1. Style cho danh sách lợi ích (Benefits List) */
+.sub-benefits-list {
+    list-style: none;
+    padding-left: 0;
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+    color: #adb5bd; /* Màu chữ xám nhạt */
+    flex-grow: 1; /* Giúp đẩy nút "Đăng ký" xuống đáy card */
+}
+
+    .sub-benefits-list li {
+        position: relative;
+        padding-left: 30px; /* Khoảng trống cho icon */
+        margin-bottom: 0.75rem;
+        line-height: 1.4;
+    }
+        /* Icon check (màu xanh biển) */
+        .sub-benefits-list li::before {
+            content: '\F26A'; /* Mã icon "check-circle-fill" của Bootstrap Icons */
+            font-family: 'bootstrap-icons';
+            position: absolute;
+            left: 0;
+            top: 0;
+            color: #0d6efd; /* MÀU XANH BIỂN */
+            font-size: 1.1rem;
+        }
+
+/* 2. Style cho Card (Thêm hiệu ứng hover) */
+.card.sub-card-interactive {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+    .card.sub-card-interactive:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
+    }
+
+/* 3. Style cho Gói Active (Glow) */
+@keyframes active-plan-glow-blue {
+    0% {
+        box-shadow: 0 0 5px rgba(13,110,253,0.3), 0 0 10px rgba(13,110,253,0.2);
+    }
+
+    50% {
+        box-shadow: 0 0 20px rgba(13,110,253,0.7), 0 0 30px rgba(13,110,253,0.5);
+    }
+
+    100% {
+        box-shadow: 0 0 5px rgba(13,110,253,0.3), 0 0 10px rgba(13,110,253,0.2);
+    }
+}
+
+.card.sub-card-active {
+    border: 1px solid rgba(13, 110, 253, 0.7) !important;
+    animation: active-plan-glow-blue 3s infinite ease-in-out;
+}
+
+/* ======================================================= */
+/* == NÂNG CẤP TABS (TRANG STAFF) == */
+/* ======================================================= */
+
+.nav-pills-custom {
+    margin-bottom: 0 !important;
+}
+
+    .nav-pills-custom .nav-link {
+        background-color: #212529; /* Nền card */
+        border: 1px solid #30363d;
+        color: #adb5bd; /* Chữ xám mờ */
+        margin-right: 0.5rem;
+        border-radius: 0.5rem 0.5rem 0 0; /* Bo góc trên */
+        font-weight: 500;
+        border-bottom-color: #212529; /* Khớp màu nền card */
+    }
+
+        /* Tab đang active (màu xanh) */
+        .nav-pills-custom .nav-link.active {
+            background-color: #0d6efd; /* Nền xanh */
+            color: #ffffff;
+            border-color: #0d6efd;
+        }
+
+/* Sửa card để dính liền với Tab */
+.main-content .card.border-top-0 {
+    border-top-left-radius: 0 !important; /* Bẻ góc trái */
+    border-color: #30363d !important;
+}
+
+/* ======================================================= */
+/* == GIAO DIỆN THẺ (CARD) CHO TRANG QUẢN LÝ LỊCH HẸN == */
+/* == SỬA LỖI "CHỤM MỘT CỤC" (GRID 5 CỘT) == */
+/* ======================================================= */
+
+.staff-card-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding-top: 1.5rem;
+}
+
+/* 1. Thẻ (Card) chính (SỬA LẠI GRID 5 CỘT) */
+.staff-card-item {
+    background-color: #212529;
+    border-radius: 1rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    border: 1px solid #30363d;
+    display: grid;
+    /* Grid: Khách Hàng | Xe | Dịch vụ | Ngày hẹn | Hành động */
+    grid-template-columns: 1.5fr 1fr 2fr 1.5fr auto;
+    gap: 1.5rem;
+    align-items: center; /* Căn giữa theo chiều dọc */
+    padding: 1.5rem;
+}
+
+    /* 2. Style cho các CỘT thông tin */
+    .staff-card-item .customer-name {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #ffffff;
+    }
+
+    .staff-card-item .vehicle-info {
+        color: #adb5bd;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    .staff-card-item .service-list {
+        color: #f0f6fc;
+        font-size: 0.9rem;
+    }
+
+    .staff-card-item .appointment-time {
+        color: #8b949e;
+        font-size: 0.9rem;
+    }
+
+    /* 3. Cột Hành động (Bên phải) */
+    .staff-card-item .card-actions {
+        display: flex;
+        flex-direction: column; /* Nút trên nút dưới */
+        gap: 0.5rem;
+        min-width: 200px; /* Đủ chỗ cho dropdown KTV */
+        align-items: stretch;
+    }
+
+    .staff-card-item .card-actions-row {
+        display: flex; /* Nút cạnh nhau (Sửa/Xóa) */
+        gap: 0.5rem;
+        justify-content: flex-end;
+    }
+
+    /* Style riêng cho form "Phân công" */
+    .staff-card-item .card-actions .assign-form {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+        .staff-card-item .card-actions .assign-form .form-select {
+            flex-grow: 1;
+        }
+
+    .staff-card-item .card-actions .btn-icon {
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.9rem;
+    }
+
+/* ======================================================= */
+/* == NÂNG CẤP GIAO DIỆN ADMIN DASHBOARD (SỬA LỖI) == */
+/* ======================================================= */
+
+/* 1. Style cho các thẻ Stat (Doanh thu, Hóa đơn...) */
+.stat-card .card-body {
+    padding: 1.5rem 1rem;
+}
+
+.stat-card h6 {
+    color: #adb5bd; /* Chữ "Doanh thu" (xám) */
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    font-weight: 500;
+}
+
+.stat-card h3 {
+    font-weight: 700;
+    font-size: 2rem;
+    margin-top: 0.5rem;
+}
+
+/* 2. Thêm màu (gradient + viền trái) */
+
+/* Màu Xanh lá (Doanh thu) */
+.stat-card.green {
+    border-left: 5px solid #198754;
+    background: linear-gradient(to right, rgba(25, 135, 84, 0.1), #212529) !important;
+}
+
+    .stat-card.green h3 {
+        color: #198754;
+    }
+
+/* Màu Xanh biển (Hóa đơn) */
+.stat-card.blue {
+    border-left: 5px solid #0d6efd;
+    background: linear-gradient(to right, rgba(13, 110, 253, 0.1), #212529) !important;
+}
+
+    .stat-card.blue h3 {
+        color: #0d6efd;
+    }
+
+/* Màu Vàng (Dịch vụ) */
+.stat-card.yellow {
+    border-left: 5px solid #ffc107;
+    background: linear-gradient(to right, rgba(255, 193, 7, 0.1), #212529) !important;
+}
+
+    .stat-card.yellow h3 {
+        color: #ffc107;
+    }
+
+/* Màu Cyan (Nhân viên) */
+.stat-card.cyan {
+    border-left: 5px solid #0dcaf0;
+    background: linear-gradient(to right, rgba(13, 202, 240, 0.1), #212529) !important;
+}
+
+    .stat-card.cyan h3 {
+        color: #0dcaf0;
+    }
+
+/* ======================================================= */
+/* == NÂNG CẤP SIDEBAR ADMIN (THẺ NỔI, BO CONG) == */
+/* ======================================================= */
+
+.wrapper {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+    /* Thêm padding & gap để tạo không gian "nổi" */
+    padding: 1rem;
+    gap: 1rem;
+}
+
+/* Nâng cấp .sidebar thành "Thẻ nổi" */
+.sidebar {
+    width: 260px;
+    min-width: 260px;
+    background-color: #212529; /* Nền card tối */
+    display: flex;
+    flex-direction: column;
+    /* === BẮT ĐẦU NÂNG CẤP === */
+    border-right: none; /* Bỏ viền phải cũ */
+    border-radius: 1rem; /* "bo cong" (16px) */
+    border: 1px solid #30363d; /* Viền mờ */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); /* "thẻ nổi" */
+    /* Hiệu ứng "nâng" (lift) khi di chuột */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    /* Dính sidebar khi cuộn */
+    height: calc(100vh - 2rem); /* 100% chiều cao - (padding * 2) */
+    position: sticky;
+    top: 1rem; /* Phải khớp với padding của .wrapper */
+}
+
+    /* Hiệu ứng "nâng" (lift) khi hover */
+    .sidebar:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+    }
+
+/* Sửa .main-content để vừa vặn */
+.main-content {
+    flex-grow: 1; /* Tự động chiếm hết phần còn lại */
+    padding: 1.5rem;
+    /* Bỏ width: calc(...) cũ vì flex-grow đã xử lý */
+}
+
+    /* ======================================================= */
+    /* == NÂNG CẤP GIAO DIỆN TRANG CHAT (STAFF) == */
+    /* ======================================================= */
+
+    /* 1. Style cho Card Header/Footer (bg-darker) */
+    .main-content .card.data-card .card-header.bg-darker,
+    .main-content .card.data-card .card-footer.bg-darker {
+        background-color: #161b22; /* Nền xám đen (tối hơn card) */
+        border-color: #30363d;
+    }
+
+    /* 2. Style cho danh sách "Khách hàng đang chờ" */
+    .main-content .list-group-item {
+        background-color: transparent;
+        border-color: #30363d;
+        color: #adb5bd; /* Chữ xám mờ */
+        transition: all 0.2s ease;
+    }
+
+        .main-content .list-group-item:hover {
+            background-color: rgba(255, 255, 255, 0.03);
+            color: #ffffff;
+        }
+
+        .main-content .list-group-item.active {
+            background-color: #0d6efd; /* XANH BIỂN (Đồng bộ) */
+            border-color: #0d6efd;
+            color: #ffffff;
+        }
+
+/* 3. Style cho cửa sổ Chat */
+.chat-card-body {
+    height: 500px; /* Giới hạn chiều cao */
+    overflow-y: auto; /* Tự cuộn */
+    display: flex;
+    flex-direction: column;
+    background-color: #161b22; /* Màu nền trong ô chat (tối hơn) */
+    padding: 1rem;
+}
+
+    /* 4. Style bong bóng chat (Giống Customer nhưng đảo ngược) */
+    .chat-card-body strong {
+        font-size: 0.8rem;
+        color: #8b949e;
+        display: block;
+        margin-bottom: 2px;
+    }
+
+    .chat-card-body .msg-customer {
+        text-align: left;
+    }
+
+        .chat-card-body .msg-customer span {
+            background: #30363d; /* Màu xám (Customer) */
+            color: #f0f6fc;
+            padding: 8px 12px;
+            border-radius: 12px 12px 12px 0;
+            display: inline-block;
+        }
+
+    .chat-card-body .msg-staff {
+        text-align: right;
+    }
+
+        .chat-card-body .msg-staff strong {
+            display: none; /* Ẩn chữ "Bạn:" */
+        }
+
+        .chat-card-body .msg-staff span {
+            background: #0d6efd; /* SỬA: Màu XANH BIỂN (Đồng bộ) */
+            color: white;
+            padding: 8px 12px;
+            border-radius: 12px 12px 0 12px;
+            display: inline-block;
+        }
+
+/* ======================================================= */
+/* == HOTFIX: SỬA LỖI LAYOUT CUSTOMER BỊ VỠ (DO .wrapper) == */
+/* ======================================================= */
+
+/* Reset lại style .wrapper cho Customer/Tech layout.
+  Class .customer-layout lấy từ file _CustomerLayout.cshtml 
+*/
+.wrapper.customer-layout {
+    display: block; /* <-- Trả về block (không flex) */
+    padding: 0; /* <-- Xóa padding hông */
+    gap: 0; /* <-- Xóa gap */
+}
+
+    /* Reset lại .main-content bên trong customer layout */
+    .wrapper.customer-layout .main-content {
+        padding: 1.5rem; /* Giữ padding cho nội dung */
+        width: 100%; /* Đảm bảo nó rộng 100% */
+        flex-grow: 0; /* Tắt flex-grow */
+    }
+
+/* ======================================================= */
+/* == HOTFIX: SỬA LỖI ICON SỬA/XÓA BỊ MỜ (ADMIN) == */
+/* ======================================================= */
+
+/* Ép màu cho các nút icon Sửa (outline-primary) */
+.main-content a.btn-outline-primary,
+.main-content a.btn-outline-primary i {
+    color: #0d6efd; /* Màu xanh biển */
+}
+
+    .main-content a.btn-outline-primary:hover,
+    .main-content a.btn-outline-primary:hover i {
+        color: #ffffff; /* Chữ trắng khi hover (giữ nguyên) */
+    }
+
+/* Ép màu cho các nút icon Xóa (outline-danger) */
+.main-content a.btn-outline-danger,
+.main-content a.btn-outline-danger i {
+    color: #dc3545; /* Màu đỏ */
+}
+
+    .main-content a.btn-outline-danger:hover,
+    .main-content a.btn-outline-danger:hover i {
+        color: #ffffff; /* Chữ trắng khi hover (giữ nguyên) */
+    }
+
+
+/* ======================================================= */
+/* == NÂNG CẤP DASHBOARD (ĐÁNH GIÁ & SAO TRUNG BÌNH) == */
+/* ======================================================= */
+
+/* 1. Hộp chứa sao trung bình */
+.avg-rating-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.avg-rating-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.avg-rating-count {
+    color: #8b949e;
+    font-size: 0.9rem;
+}
+
+/* 2. Style cho 5 ngôi sao (lồng nhau) */
+.avg-stars {
+    position: relative;
+    display: inline-block;
+    font-size: 1.25rem;
+}
+    /* Lớp sao xám (nền) */
+    .avg-stars div:last-child {
+        color: #495057; /* Màu sao rỗng (xám đậm) */
+    }
+    /* Lớp sao vàng (nổi) */
+    .avg-stars div:first-child {
+        position: absolute;
+        top: 0;
+        left: 0;
+        overflow: hidden; /* Cắt lớp vàng theo % */
+        white-space: nowrap;
+        color: #ffc107; /* Màu sao vàng */
+    }
+
+/* 3. Style cho danh sách Feedback */
+.feedback-item {
+    background-color: transparent !important;
+    border-color: #30363d !important;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.feedback-comment {
+    color: #adb5bd; /* Màu xám mờ */
+    font-style: italic;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Giới hạn 2 dòng */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}

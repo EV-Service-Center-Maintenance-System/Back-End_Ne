@@ -1,4 +1,4 @@
-using EVCenterService.Models;
+﻿using EVCenterService.Models;
 using EVCenterService.Service.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -26,6 +26,12 @@ namespace EVCenterService.Pages.Customer.Vehicles
         {
             if (!ModelState.IsValid)
                 return Page();
+
+            if (await _vehicleService.IsVinDuplicateAsync(Vehicle.Vin))
+            {
+                ModelState.AddModelError("Vehicle.Vin", $"Số VIN '{Vehicle.Vin}' đã tồn tại trong hệ thống.");
+                return Page();
+            }
 
             Vehicle.UserId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             await _vehicleService.AddVehicleAsync(Vehicle);

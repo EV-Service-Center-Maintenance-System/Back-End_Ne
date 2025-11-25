@@ -7,6 +7,5 @@ namespace EVCenterService.Repository.Interfaces
     public interface IAccountRepository
     {
         Task<Account?> GetByIdAsync(Guid userId);
-        // Thêm các phương thức khác nếu cần (vd: GetByEmailAsync)
     }
 }

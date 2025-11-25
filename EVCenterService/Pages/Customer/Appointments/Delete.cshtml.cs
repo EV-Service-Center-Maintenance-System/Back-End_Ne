@@ -1,4 +1,4 @@
-using EVCenterService.Data;
+﻿using EVCenterService.Data;
 using EVCenterService.Models;
 using EVCenterService.Service.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -41,10 +41,9 @@ namespace EVCenterService.Pages.Customer.Appointments
 
             if (Booking == null) return NotFound();
 
-            // S?A: Ki?m tra n?u kh�ng ph?i Pending th� kh�ng cho h?y
             if (Booking.Status != "Pending")
             {
-                TempData["ErrorMessage"] = "Kh�ng th? h?y l?ch h?n ?� ???c x�c nh?n ho?c ?ang x? l�.";
+                TempData["ErrorMessage"] = "Không thể hủy lịch hẹn đã được xác nhận hoặc đang xử lý.";
                 return RedirectToPage("Index");
             }
 
@@ -63,16 +62,12 @@ namespace EVCenterService.Pages.Customer.Appointments
 
             if (booking == null) return NotFound();
 
-            // S?A: Ch? cho ph�p h?y n?u l� "Pending"
             if (booking.Status != "Pending")
             {
-                TempData["ErrorMessage"] = "Kh�ng th? h?y l?ch h?n ?� ???c x�c nh?n ho?c ?ang x? l�.";
+                TempData["ErrorMessage"] = "Không thể hủy lịch hẹn đã được xác nhận hoặc đang xử lý.";
                 return RedirectToPage("Index");
             }
 
-            // S?A: Thay v� x�a, ch�ng ta c?p nh?t tr?ng th�i
-            // _context.OrderDetails.RemoveRange(booking.OrderDetails);
-            // _context.OrderServices.Remove(booking);
 
             booking.Status = "Cancelled";
             _context.OrderServices.Update(booking);
@@ -84,27 +79,27 @@ namespace EVCenterService.Pages.Customer.Appointments
                 if (booking.User != null)
                 {
                     var serviceNames = string.Join(", ", booking.OrderDetails.Select(od => od.Service?.Name ?? "N/A"));
-                    var subject = $"X�c nh?n H?y L?ch h?n #{booking.OrderId}";
+                    var subject = $"Xác nhận Hủy Lịch hẹn #{booking.OrderId}";
                     var message = $@"
-                        <p>Ch�o {booking.User.FullName},</p>
-                        <p>Y�u c?u h?y l?ch h?n c?a b?n ?� ???c x�c nh?n:</p>
+                        <p>Chào {booking.User.FullName},</p>
+                        <p>Yêu cầu hủy lịch hẹn của bạn đã được xác nhận:</p>
                         <ul>
-                            <li><strong>M� l?ch h?n:</strong> #{booking.OrderId}</li>
-                            <li><strong>Ng�y gi?:</strong> {booking.AppointmentDate:dd/MM/yyyy HH:mm}</li>
-                            <li><strong>D?ch v?:</strong> {serviceNames}</li>
+                            <li><strong>Mã lịch hẹn:</strong> #{booking.OrderId}</li>
+                            <li><strong>Ngày giờ:</strong> {booking.AppointmentDate:dd/MM/yyyy HH:mm}</li>
+                            <li><strong>Dịch vụ:</strong> {serviceNames}</li>
                         </ul>
-                        <p>N?u b?n h?y nh?m, vui l�ng li�n h? ch�ng t�i ho?c ??t l?i l?ch h?n m?i.</p>
-                        <p>Tr�n tr?ng,<br>??i ng? EV Service Center</p>";
+                        <p>Nếu bạn hủy nhầm, vui lòng liên hệ chúng tôi hoặc đặt lại lịch hẹn mới.</p>
+                        <p>Trân trọng,<br>Đội ngũ EV Auto Center</p>";
 
                     await _emailSender.SendEmailAsync(booking.User.Email, subject, message);
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"L?i g?i mail h?y l?ch: {ex.Message}");
+                Console.WriteLine($"Lỗi gửi mail hủy lịch: {ex.Message}");
             }
 
-            TempData["StatusMessage"] = "?� h?y l?ch h?n th�nh c�ng.";
+            TempData["StatusMessage"] = "Đã hủy lịch hẹn thành công.";
             return RedirectToPage("Index");
         }
     }

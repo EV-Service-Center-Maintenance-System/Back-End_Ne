@@ -5,10 +5,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
-using System; // <-- Thêm
-using System.Collections.Generic; // <-- Thêm
-using System.Linq; // <-- Thêm
-using System.Threading.Tasks; // <-- Thêm
+using System; 
+using System.Collections.Generic; 
+using System.Linq; 
+using System.Threading.Tasks; 
 
 namespace EVCenterService.Pages.Customer.Subscriptions
 {
@@ -34,14 +34,12 @@ namespace EVCenterService.Pages.Customer.Subscriptions
         {
             var userId = GetUserId();
 
-            // S?A L?I 2: So sánh (p.IsActive == true)
             Plans = await _context.SubscriptionPlans.Where(p => p.IsActive == true).ToListAsync();
 
             var activeSubscription = await _context.Subscriptions
                 .Include(s => s.Plan)
                 .FirstOrDefaultAsync(s => s.UserId == userId &&
                                           s.Status == "active" &&
-                                          // S?A L?I 3: So sánh DateTime v?i DateTime
                                           s.EndDate >= DateTime.Now);
 
             if (activeSubscription != null)
@@ -64,7 +62,6 @@ namespace EVCenterService.Pages.Customer.Subscriptions
                 SubscriptionId = Guid.NewGuid(),
                 UserId = userId,
                 PlanId = plan.PlanId,
-                // S?A L?I 4: Gán DateTime (không c?n DateOnly.FromDateTime)
                 StartDate = DateTime.Now,
                 EndDate = DateTime.Now.AddDays(plan.DurationDays),
                 Status = "Pending",

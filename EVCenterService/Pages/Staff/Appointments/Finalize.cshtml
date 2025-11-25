@@ -5,8 +5,10 @@
     Layout = "_AppLayout";
 }
 
-<h2 class="mb-4 text-white">@ViewData["Title"]</h2>
-<p class="text-muted">
+<div class="page-header header-card-blue">
+    <h1 class="mb-0">@ViewData["Title"]</h1>
+</div>
+<p class="text-white-50">
     Xe: @Model.Appointment.Vehicle?.Model (@Model.Appointment.Vehicle?.Vin) - Khách hàng: @Model.Appointment.User?.FullName
 </p>
 
@@ -15,15 +17,15 @@
 
     <div class="row g-4">
         <div class="col-lg-8">
-            <div class="card data-card border-0 mb-4">
-                <div class="card-header bg-dark">
+            <div class="card data-card mb-4">
+                <div class="card-header bg-darker">
                     <h5 class="mb-0 text-white">Phụ tùng Kỹ thuật viên báo giá</h5>
                 </div>
                 <div class="card-body">
                     @if (Model.PartsToReview.Any())
                     {
                         <div class="table-responsive">
-                            <table class="table table-dark table-striped mb-0">
+                            <table class="table table-custom mb-0">
                                 <thead>
                                     <tr>
                                         <th>Tên Phụ tùng</th>
@@ -46,13 +48,13 @@
                     }
                     else
                     {
-                        <p class="text-muted mb-0">Không có phụ tùng nào được báo giá cho dịch vụ này.</p>
+                        <p class="mb-0">Không có phụ tùng nào được báo giá cho dịch vụ này.</p>
                     }
                 </div>
             </div>
         </div>
         <div class="col-lg-4">
-            <div class="card data-card border-0 sticky-top" style="top: 2rem;">
+            <div class="card data-card sticky-top" style="top: 2rem;">
                 <div class="card-header bg-dark text-white">
                     <h5 class="mb-0">Tóm tắt Chi phí</h5>
                 </div>
@@ -71,7 +73,7 @@
                         <dd class="col-sm-5 text-end"><span id="grandTotal">@Model.Appointment.TotalCost?.ToString("N0")</span> đ</dd>
                     </dl>
                     <div class="d-grid mt-4">
-                        <button type="submit" class="btn btn-success btn-lg">
+                        <button type="submit" class="btn btn-primary btn-lg">
                             <i class="bi bi-check-circle-fill me-2"></i> Xác nhận, Trừ kho & Gửi Hóa đơn
                         </button>
                         <a asp-page="./Index" class="btn btn-secondary mt-2">Quay lại</a>

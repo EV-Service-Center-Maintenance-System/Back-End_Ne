@@ -50,8 +50,11 @@ namespace EVCenterService.Service.Services
             existingVehicle.Mileage = vehicle.Mileage;
             existingVehicle.LastMaintenanceDate = vehicle.LastMaintenanceDate;
 
-            // Save changes
             await _vehicleRepository.UpdateAsync(existingVehicle);
+        }
+        public async Task<bool> IsVinDuplicateAsync(string vin)
+        {
+            return await _vehicleRepository.VinExistsAsync(vin);
         }
     }
 }

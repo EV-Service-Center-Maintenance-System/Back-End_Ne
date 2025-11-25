@@ -34,6 +34,24 @@ namespace EVCenterService.Pages.Customer.Appointments
         public List<ServiceCatalog> ServiceList { get; set; }
         public bool IsEligibleForFreeInspection { get; set; }
 
+        private async Task<int> GetUsageCountAsync(Guid userId, DateTime startDate, DateTime endDate)
+        {
+            return await _context.OrderDetails
+                .Include(od => od.Order)
+                .CountAsync(od =>
+                    od.ServiceId == 4 && // General Inspection
+                    od.Order.UserId == userId &&
+                    // Quan trọng: Chỉ đếm những đơn nằm trong thời hạn của gói hiện tại
+                    od.Order.AppointmentDate >= startDate &&
+                    od.Order.AppointmentDate <= endDate &&
+                    // Không đếm đơn đã hủy
+                    od.Order.Status != "Cancelled" &&
+                    od.Order.Status != "Rejected" &&
+                    // Chỉ đếm những đơn ĐÃ ĐƯỢC miễn phí (giá = 0)
+                    od.UnitPrice == 0
+                );
+        }
+
         public async Task OnGetAsync()
         {
             var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
@@ -50,28 +68,12 @@ namespace EVCenterService.Pages.Customer.Appointments
 
             // 1. Kiểm tra xem user có gói "active" không
             var activeSubscription = await _context.Subscriptions
+                .Include(s => s.Plan)
                 .FirstOrDefaultAsync(s => s.UserId == userId &&
                                           s.Status == "active" &&
-                                          s.EndDate >= DateTime.Now); //
+                                          s.EndDate >= DateTime.Now); 
 
-            IsEligibleForFreeInspection = false;
-            if (activeSubscription != null)
-            {
-                // 2. Có gói. Kiểm tra xem đã dùng lần miễn phí tháng này chưa.
-                var startOfMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
 
-                var alreadyUsedFreebie = await _context.OrderDetails
-                    .AnyAsync(od => od.ServiceId == 4 && // ServiceId = 4 là "General Inspection"
-                                    od.Order.UserId == userId &&
-                                    od.Order.AppointmentDate >= startOfMonth &&
-                                    od.UnitPrice == 0); // Đã được miễn phí
-
-                if (!alreadyUsedFreebie)
-                {
-                    // 3. ĐỦ ĐIỀU KIỆN MIỄN PHÍ
-                    IsEligibleForFreeInspection = true;
-                }
-            }
 
             Booking.AppointmentDate = DateTime.Now;
 
@@ -100,29 +102,41 @@ namespace EVCenterService.Pages.Customer.Appointments
             Booking.AppointmentDate = Booking.AppointmentDate.Date + SelectedTime;
             Booking.Status = "Pending";
 
-            // LẤY MÚI GIỜ VIỆT NAM TỪ appsettings.json
+            // 1. Lấy thông số giờ
             var timeZoneId = _configuration["TimeZoneId"] ?? "SE Asia Standard Time";
             var vietnamTimeZone = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
-
-            // LẤY GIỜ HIỆN TẠI CHÍNH XÁC CỦA VIỆT NAM
             var vietnamNow = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, vietnamTimeZone);
 
+            var workStart = new TimeSpan(7, 0, 0); // 7:00 AM
+            var workEnd = new TimeSpan(19, 0, 0); // 19:00 (7:00 PM)
+            var bufferHours = 2; // Thời gian đệm 2 tiếng
 
-            // 1. Kiểm tra tổng thể xem lịch hẹn có ở quá khứ không
-            // (Booking.AppointmentDate là giờ khách chọn, ví dụ: 07:00 06/11)
-            // (vietnamNow là giờ hiện tại, ví dụ: 08:00 06/11)
-            if (Booking.AppointmentDate < vietnamNow)
+            // 2. Kiểm tra khung giờ làm việc cơ bản (7:00 -> 18:59)
+            if (SelectedTime < workStart || SelectedTime >= workEnd)
             {
-                // (07:00 < 08:00) -> ĐÚNG -> Lỗi
-                ModelState.AddModelError(string.Empty, "Không thể đặt lịch vào thời gian đã qua. Vui lòng chọn ngày và giờ trong tương lai.");
+                ModelState.AddModelError("SelectedTime", "Giờ làm việc của trung tâm là từ 07:00 đến 19:00.");
             }
 
-            // 2. Kiểm tra khung giờ làm việc (vẫn giữ)
-            var workStart = new TimeSpan(7, 0, 0);
-            var workEnd = new TimeSpan(19, 0, 0);
-            if (SelectedTime < workStart || SelectedTime > workEnd)
+            // 3. KIỂM TRA LỖI GẦN GIỜ ĐÓNG CỬA (ƯU TIÊN LỖI NÀY TRƯỚC)
+            // Giờ đặt lịch muộn nhất = 19:00 - 2 tiếng = 17:00
+            var latestBookingTime = workEnd.Subtract(new TimeSpan(bufferHours, 0, 0)); // 17:00
+
+            if (SelectedTime > latestBookingTime)
             {
-                ModelState.AddModelError("SelectedTime", "Giờ hẹn phải nằm trong khung 07:00 – 19:00.");
+                // Nếu khách chọn 18:21 (như trong ảnh), lỗi này sẽ được kích hoạt
+                ModelState.AddModelError("SelectedTime", $"Quý khách vui lòng chọn giờ cách {bufferHours} tiếng trước khi trung tâm đóng cửa (trước 17:00). Vui lòng đặt lịch ngày hôm sau.");
+            }
+            else
+            {
+                // 4. CHỈ KIỂM TRA LỖI 2 TIẾNG ĐỆM (NẾU GIỜ HẸN HỢP LỆ (TRƯỚC 17:00))
+                // Giờ đặt lịch sớm nhất = Giờ hiện tại + 2 tiếng
+                var earliestBookingTime = vietnamNow.AddHours(bufferHours);
+
+                // Ví dụ: Hiện tại là 14:00, khách đặt 15:30 -> Lỗi
+                if (Booking.AppointmentDate < earliestBookingTime)
+                {
+                    ModelState.AddModelError(string.Empty, $"Bạn phải đặt lịch trước ít nhất {bufferHours} tiếng (tính cả thời gian di chuyển xe).");
+                }
             }
 
             if (!ModelState.IsValid)
@@ -131,7 +145,6 @@ namespace EVCenterService.Pages.Customer.Appointments
                 return Page();
             }
 
-            // ===== BẮT ĐẦU LOGIC NGHIỆP VỤ DỊCH VỤ =====
             const int generalInspectionId = 4;
             var mainServiceIds = new List<int> { 1, 2, 3 }; // Battery, Brake, Cooling
 
@@ -153,43 +166,57 @@ namespace EVCenterService.Pages.Customer.Appointments
                 await OnGetAsync();
                 return Page();
             }
-            // ===== KẾT THÚC LOGIC NGHIỆP VỤ DỊCH VỤ =====
 
-            // 🔹 Tính tổng giá VÀ TỔNG THỜI GIAN từ tất cả dịch vụ được chọn
+            //  Tính tổng giá VÀ TỔNG THỜI GIAN từ tất cả dịch vụ được chọn
             var services = await _context.ServiceCatalogs
                 .Where(s => SelectedServiceIds.Contains(s.ServiceId))
+                .AsNoTracking()
                 .ToListAsync();
 
-            // ServiceId = 4 là "General Inspection" trong CSDL của bạn
+            // ServiceId = 4 là "General Inspection" 
             var inspectionService = services.FirstOrDefault(s => s.ServiceId == 4);
 
-            if (inspectionService != null) // Kiểm tra xem khách có chọn dịch vụ này không
+            if (inspectionService != null)
             {
-                // 1. Kiểm tra xem user có gói "active" không
+                // 1. Luôn lấy lại giá gốc từ DB để đảm bảo tính đúng đắn (tránh hack form)
+                var originalServiceDB = await _context.ServiceCatalogs.FindAsync(4);
+                decimal standardPrice = originalServiceDB?.BasePrice ?? 1000000;
+
+                // Mặc định là tính tiền
+                inspectionService.BasePrice = standardPrice;
+
+                // 2. Kiểm tra xem user có gói "active" không
                 var activeSubscription = await _context.Subscriptions
+                    .Include(s => s.Plan)
                     .FirstOrDefaultAsync(s => s.UserId == userId &&
                                               s.Status == "active" &&
-                                              s.EndDate >= DateTime.Now); //
+                                              s.EndDate >= DateTime.Now);
 
                 if (activeSubscription != null)
                 {
-                    // 2. Có gói. Kiểm tra xem đã dùng lần miễn phí tháng này chưa.
-                    var startOfMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+                    bool isPremium = activeSubscription.Plan.Code.Equals("PREMIUM", StringComparison.OrdinalIgnoreCase);
+                    int limit = isPremium ? 3 : 1;
 
-                    var alreadyUsedFreebie = await _context.OrderDetails
-                        .AnyAsync(od => od.ServiceId == 4 && // Là dịch vụ General Inspection
-                                        od.Order.UserId == userId && // Của user này
-                                        od.Order.AppointmentDate >= startOfMonth && // Trong tháng này
-                                        od.UnitPrice == 0); // Đã được miễn phí (giá 0)
+                    // 3. Đếm số lần ĐÃ DÙNG (đã đặt thành công và có giá 0đ)
+                    // Lưu ý: Ngày đếm phải tính từ StartDate của gói
+                    var usageCount = await GetUsageCountAsync(userId, activeSubscription.StartDate, activeSubscription.EndDate);
 
-                    if (!alreadyUsedFreebie)
+                    if (usageCount < limit)
                     {
-                        // 3. CHƯA DÙNG -> Áp dụng miễn phí
+                        // CÒN LƯỢT -> MIỄN PHÍ
                         inspectionService.BasePrice = 0;
 
-                        // Thêm ghi chú để Staff biết
+                        // Ghi chú vào đơn hàng để khách biết tại sao 0đ
                         Booking.ChecklistNote = (Booking.ChecklistNote ?? "") +
-                                                "\n[Áp dụng miễn phí kiểm tra (Gói dịch vụ)]";
+                                                $"\n[SYSTEM: Áp dụng miễn phí kiểm tra lần thứ ({usageCount + 1}/{limit}) - Gói {activeSubscription.Plan.Name}]";
+                    }
+                    else
+                    {
+                        // HẾT LƯỢT -> TÍNH PHÍ BÌNH THƯỜNG
+                        // Không cần làm gì thêm vì bên trên đã gán giá gốc rồi.
+                        // Có thể thêm ghi chú nếu muốn rõ ràng
+                        Booking.ChecklistNote = (Booking.ChecklistNote ?? "") +
+                                                $"\n[SYSTEM: Đã dùng hết {limit}/{limit} lượt miễn phí. Áp dụng phí tiêu chuẩn.]";
                     }
                 }
             }
@@ -205,7 +232,6 @@ namespace EVCenterService.Pages.Customer.Appointments
             var totalDuration = services.Sum(s => s.DurationMinutes ?? 0); // Lấy tổng thời gian
             Booking.TotalCost = total;
 
-            // ===== BẮT ĐẦU LOGIC KIỂM TRA CHỒNG CHÉO LỊCH =====
             var newStartTime = Booking.AppointmentDate; // Đã bao gồm giờ
             var newEndTime = newStartTime.AddMinutes(totalDuration);
 
@@ -223,8 +249,6 @@ namespace EVCenterService.Pages.Customer.Appointments
                 var existingDuration = existingOrder.OrderDetails.Sum(od => od.Service?.DurationMinutes ?? 0);
                 var existingEndTime = existingStartTime.AddMinutes(existingDuration);
 
-                // Đây là logic kiểm tra chồng chéo:
-                // (Bắt đầu MỚI < Kết thúc CŨ) VÀ (Kết thúc MỚI > Bắt đầu CŨ)
                 if (newStartTime < existingEndTime && newEndTime > existingStartTime)
                 {
                     isOverlapping = true;
@@ -238,12 +262,12 @@ namespace EVCenterService.Pages.Customer.Appointments
                 await OnGetAsync(); // Tải lại danh sách
                 return Page();
             }
-            // ===== KẾT THÚC LOGIC KIỂM TRA CHỒNG CHÉO LỊCH =====
 
-            // 🔹 Tạo OrderService
-            var newOrder = await _bookingService.CreateBookingAsync(Booking, 0); // serviceId không dùng nữa
 
-            // 🔹 Tạo nhiều OrderDetail
+            //  Tạo OrderService
+            var newOrder = await _bookingService.CreateBookingAsync(Booking, 0); 
+
+            //  Tạo nhiều OrderDetail
             foreach (var s in services)
             {
                 _context.OrderDetails.Add(new OrderDetail

@@ -12,10 +12,10 @@
     <div class="wrapper">
         <nav class="sidebar">
             <div class="sidebar-header">
-                <a asp-page="/Index" class="d-flex align-items-center justify-content-center text-decoration-none">
+                <span class="d-flex align-items-center justify-content-center text-decoration-none" style="cursor: default;">
                     <img src="~/images/logo.png" alt="EV Service Center Logo" class="sidebar-logo">
-                    <span class="fs-5 fw-bold text-white ms-2">EV Center</span>
-                </a>
+                    <span class="fs-5 fw-bold text-white ms-2">EV Auto Center</span>
+                </span>
             </div>
             <ul class="nav flex-column sidebar-nav">
 
@@ -42,13 +42,28 @@
                         </a>
                     </li>
                 }
+                @if (User.IsInRole("Staff"))
+                {
+                    <li class="nav-item">
+                        <a class="nav-link @(Context.Request.Path.StartsWithSegments("/Staff/Appointments") ? "active" : "")" asp-page="/Staff/Appointments/Index">
+                            <i class="bi bi-calendar-check-fill"></i> Quản lý Lịch hẹn
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @(Context.Request.Path.StartsWithSegments("/Staff/Chat") ? "active" : "")" asp-page="/Staff/Chat">
+                            <i class="bi bi-chat-dots-fill"></i> Chat Khách hàng
+                        </a>
+                    </li>
+                }
             </ul>
 
             <ul class="nav flex-column sidebar-nav mt-auto">
                 <li class="nav-item">
-                    <a class="nav-link" asp-page="/Account/Logout">
-                        <i class="bi bi-box-arrow-left"></i> Đăng xuất
-                    </a>
+                    <form asp-page="/Account/Logout" method="post">
+                        <button type="submit" class="nav-link logout-button">
+                            <i class="bi bi-box-arrow-left"></i> Đăng xuất
+                        </button>
+                    </form>
                 </li>
             </ul>
         </nav>
