@@ -76,6 +76,15 @@
                         <h5 class="mb-0">Tóm tắt Chi phí (Báo giá)</h5>
                     </div>
                     <div class="card-body">
+                        <div class="mb-4 p-3 bg-darker rounded border border-secondary">
+                            <label class="form-label text-info fw-bold mb-2">
+                                <i class="bi bi-speedometer2 me-2"></i>Số Km (Odo) thực tế:
+                            </label>
+                            <input asp-for="CurrentMileage" type="number" class="form-control text-end fw-bold" placeholder="Nhập số km trên đồng hồ..." required min="0" />
+                            <div class="form-text text-muted small text-end">Cập nhật theo đồng hồ xe.</div>
+                            <span asp-validation-for="CurrentMileage" class="text-danger small"></span>
+                        </div>
+
                         <dl class="row mb-2">
                             <dt class="col-sm-7">Phí dịch vụ:</dt>
                             <dd class="col-sm-5 text-end text-white">@Model.ServiceTotalCost.ToString("N0") đ</dd>

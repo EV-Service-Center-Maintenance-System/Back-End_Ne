@@ -4,6 +4,7 @@ using EVCenterService.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EVCenterService.Migrations
 {
     [DbContext(typeof(EVServiceCenterContext))]
-    partial class EVServiceCenterContextModelSnapshot : ModelSnapshot
+    [Migration("20251125085510_entitiesToVehicles")]
+    partial class entitiesToVehicles
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -87,7 +90,7 @@ namespace EVCenterService.Migrations
                             UserId = new Guid("a1a1a1a1-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
                             Email = "admin@gmail.com",
                             FullName = "Admin",
-                            Password = "AQAAAAIAAYagAAAAEFDNQCvkUHDnVjcOrVdocoD58XwlUlRnEw6hMLHNPG4JXJiWdLZoAfgjoX7I21i0NA==",
+                            Password = "AQAAAAIAAYagAAAAEKY2dgF4VNPd4Qd8a2SDsFH3bivFwAGSgBAkpTsdyEmWeZNZxzdM/kRKvsP74fSSiA==",
                             Phone = "0901000001",
                             Role = "Admin",
                             Status = "Active"
@@ -98,7 +101,7 @@ namespace EVCenterService.Migrations
                             Certification = "Battery System Certified;Brake System Certified",
                             Email = "tech1@gmail.com",
                             FullName = "Tran Van B",
-                            Password = "AQAAAAIAAYagAAAAENWpGIHQlp/YUvwf6jcjjr1SiB0Vp6t7kiqOpq7xHZxggzgU0ZqAhb9mlAFtEL3EAg==",
+                            Password = "AQAAAAIAAYagAAAAEGgARbnEgK18cvGa5lrcfc6furObiDwXNVp9c3E0ZLf7Rn1Hjb5io5/RAyaXSQQnEw==",
                             Phone = "0902000002",
                             Role = "Technician",
                             Status = "Active"
@@ -109,7 +112,7 @@ namespace EVCenterService.Migrations
                             Certification = "Brake System Certified;Thermal & Cooling System Certified",
                             Email = "tech2@gmail.com",
                             FullName = "Le Thi C",
-                            Password = "AQAAAAIAAYagAAAAEGdEralKeZENTsnO6ZFujLv9MABo22jqbBK6dkl2aMB17/mG2ZYte+mJHXDM39f0QA==",
+                            Password = "AQAAAAIAAYagAAAAEGZz42eKVHAeWVeXjAmd1iO5ZexxgrYDWNmDI2bae79kAzAA/gijsW+Em+Yf3gu8iA==",
                             Phone = "0903000003",
                             Role = "Technician",
                             Status = "Active"
@@ -119,7 +122,7 @@ namespace EVCenterService.Migrations
                             UserId = new Guid("d4d4d4d4-dddd-dddd-dddd-dddddddddddd"),
                             Email = "staff@gmail.com",
                             FullName = "Phan Anh C",
-                            Password = "AQAAAAIAAYagAAAAEGLTzvoDZOsF3pFd7dlNsKYSg97f3QmkYxYxwl3FDBi91n6k19cFihLsq2KVppizHw==",
+                            Password = "AQAAAAIAAYagAAAAEOwBwJy6oCr174135i8X67kl3Hq8MwcsvsNR0qmRdMRy91wBQ6GUnRlVstNByaruag==",
                             Phone = "0906000006",
                             Role = "Staff",
                             Status = "Active"
@@ -129,7 +132,7 @@ namespace EVCenterService.Migrations
                             UserId = new Guid("e5e5e5e5-eeee-eeee-eeee-eeeeeeeeeeee"),
                             Email = "user1@gmail.com",
                             FullName = "Pham Van D",
-                            Password = "AQAAAAIAAYagAAAAEA9h8kwT4veXfQvBEZtLlN2q0B7re16LDU9CWhASvXfdpb9jLxGIaTcJzkUywefoVg==",
+                            Password = "AQAAAAIAAYagAAAAEKPdqU5sfT1RddHYQEKZqUoQjaJDTzChJg7zP8N8ulvGNxDRqSfBH1qxRf7MXxr2Wg==",
                             Phone = "0904000004",
                             Role = "Customer",
                             Status = "Active"
@@ -139,7 +142,7 @@ namespace EVCenterService.Migrations
                             UserId = new Guid("f6f6f6f6-ffff-ffff-ffff-ffffffffffff"),
                             Email = "user2@gmail.com",
                             FullName = "Do Thi E",
-                            Password = "AQAAAAIAAYagAAAAEFB2V4SRs44EJuNXTIsbxzKPy59NHQAW4weQ8f0BHH4dYGtCvnUFbT1uW2ihX/70XQ==",
+                            Password = "AQAAAAIAAYagAAAAECxa6gQ1j5Ap2TEnPUYg61CO22yloMgOKFHfjQNYKXEipwPiLntLk1V0AKdFdOBh0Q==",
                             Phone = "0905000005",
                             Role = "Customer",
                             Status = "Active"
@@ -150,7 +153,7 @@ namespace EVCenterService.Migrations
                             Certification = "Battery System Certified;Thermal & Cooling System Certified",
                             Email = "tech3@gmail.com",
                             FullName = "Nguyen Van F",
-                            Password = "AQAAAAIAAYagAAAAENRHnTY+RYBaQ1GeIjBd2ZhgXb1RmyWN3gzNEi1/FHQhLq+p+ruQtmyA3TH9HtvUSw==",
+                            Password = "AQAAAAIAAYagAAAAEB3rEFrLRUYpOz1iDvWfNP9y/d7kz9nSEwL/UFRRlhdWyh33icD/4Vjk//X0Lnm/DA==",
                             Phone = "0908000008",
                             Role = "Technician",
                             Status = "Active"
@@ -161,7 +164,7 @@ namespace EVCenterService.Migrations
                             Certification = "General Inspection Certified",
                             Email = "tech4@gmail.com",
                             FullName = "Vu Dinh H",
-                            Password = "AQAAAAIAAYagAAAAEIKZUKfAQYewj0hnnovx21j3+po5BMq3CUQkqzzW0pwbDqQBKq5kbCJ7NpGTj22E8g==",
+                            Password = "AQAAAAIAAYagAAAAEHnqBk1gH74ZefwhR/I6LOQniw4P2aM0fOJUTlVlcY2w5cCra0BOBFb9K/ao7SuHvQ==",
                             Phone = "0910000010",
                             Role = "Technician",
                             Status = "Active"
@@ -171,7 +174,7 @@ namespace EVCenterService.Migrations
                             UserId = new Guid("b4b4b4b4-bbbb-bbbb-bbbb-bbbbbbbbbbbb"),
                             Email = "staff2@gmail.com",
                             FullName = "Hoang Thi G",
-                            Password = "AQAAAAIAAYagAAAAELBBCrKuH+dnKjDL85W5N8iGLXruCwHELA44gDh0GiY90kq67VuZshjewkE00gDs+Q==",
+                            Password = "AQAAAAIAAYagAAAAEC/TMqEdwKlc9XeTCR+5QafD6pKa4NWSjegvCKpEEfF1Og0GxM7+/61zwNlceUooRw==",
                             Phone = "0909000009",
                             Role = "Staff",
                             Status = "Active"
@@ -220,7 +223,7 @@ namespace EVCenterService.Migrations
                         {
                             FeedbackId = 1,
                             Comment = "Excellent service! Technician was professional.",
-                            CreatedAt = new DateTime(2025, 11, 25, 16, 56, 9, 81, DateTimeKind.Local).AddTicks(6283),
+                            CreatedAt = new DateTime(2025, 11, 25, 15, 55, 9, 208, DateTimeKind.Local).AddTicks(8139),
                             OrderId = 1,
                             Rating = 5,
                             UserId = new Guid("e5e5e5e5-eeee-eeee-eeee-eeeeeeeeeeee")
@@ -412,7 +415,7 @@ namespace EVCenterService.Migrations
                             Content = "Your vehicle maintenance is completed.",
                             IsRead = false,
                             ReceiverId = new Guid("e5e5e5e5-eeee-eeee-eeee-eeeeeeeeeeee"),
-                            TriggerDate = new DateTime(2025, 11, 25, 16, 56, 9, 81, DateTimeKind.Local).AddTicks(6257),
+                            TriggerDate = new DateTime(2025, 11, 25, 15, 55, 9, 208, DateTimeKind.Local).AddTicks(8118),
                             Type = "StatusUpdate"
                         },
                         new
@@ -421,7 +424,7 @@ namespace EVCenterService.Migrations
                             Content = "Your appointment is scheduled for tomorrow.",
                             IsRead = false,
                             ReceiverId = new Guid("f6f6f6f6-ffff-ffff-ffff-ffffffffffff"),
-                            TriggerDate = new DateTime(2025, 11, 25, 16, 56, 9, 81, DateTimeKind.Local).AddTicks(6259),
+                            TriggerDate = new DateTime(2025, 11, 25, 15, 55, 9, 208, DateTimeKind.Local).AddTicks(8120),
                             Type = "MaintenanceReminder"
                         });
                 });
@@ -541,9 +544,6 @@ namespace EVCenterService.Migrations
 
                     b.Property<string>("ChecklistNote")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal?>("MileageAtService")
-                        .HasColumnType("decimal(10, 2)");
 
                     b.Property<string>("Status")
                         .HasMaxLength(50)
@@ -997,7 +997,7 @@ namespace EVCenterService.Migrations
                         {
                             SubscriptionId = new Guid("33333333-3333-3333-3333-333333333333"),
                             AutoRenew = true,
-                            CreatedAt = new DateTime(2025, 11, 25, 16, 56, 9, 81, DateTimeKind.Local).AddTicks(6181),
+                            CreatedAt = new DateTime(2025, 11, 25, 15, 55, 9, 208, DateTimeKind.Local).AddTicks(8056),
                             EndDate = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             PlanId = new Guid("22222222-2222-2222-2222-222222222222"),
                             StartDate = new DateTime(2025, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1085,10 +1085,6 @@ namespace EVCenterService.Migrations
                     b.Property<DateOnly?>("LastMaintenanceDate")
                         .HasColumnType("date");
 
-                    b.Property<int>("MaintenanceCount")
-                        .HasColumnType("int")
-                        .HasColumnName("MaintenanceCount");
-
                     b.Property<decimal?>("Mileage")
                         .HasColumnType("decimal(10, 2)");
 
@@ -1096,14 +1092,6 @@ namespace EVCenterService.Migrations
                         .HasMaxLength(100)
                         .IsUnicode(false)
                         .HasColumnType("varchar(100)");
-
-                    b.Property<DateOnly?>("NextMaintenanceDate")
-                        .HasColumnType("date")
-                        .HasColumnName("NextMaintenanceDate");
-
-                    b.Property<decimal?>("NextMaintenanceMileage")
-                        .HasColumnType("decimal(10, 2)")
-                        .HasColumnName("NextMaintenanceMileage");
 
                     b.Property<Guid?>("UserId")
                         .HasColumnType("uniqueidentifier")
@@ -1132,7 +1120,6 @@ namespace EVCenterService.Migrations
                             VehicleId = 1,
                             BatteryCapacity = 82.0m,
                             LastMaintenanceDate = new DateOnly(2025, 8, 15),
-                            MaintenanceCount = 0,
                             Mileage = 15000m,
                             Model = "VinFast VF8",
                             UserId = new Guid("e5e5e5e5-eeee-eeee-eeee-eeeeeeeeeeee"),
@@ -1143,7 +1130,6 @@ namespace EVCenterService.Migrations
                             VehicleId = 2,
                             BatteryCapacity = 75.5m,
                             LastMaintenanceDate = new DateOnly(2025, 9, 20),
-                            MaintenanceCount = 0,
                             Mileage = 22000m,
                             Model = "Tesla Model Y",
                             UserId = new Guid("f6f6f6f6-ffff-ffff-ffff-ffffffffffff"),

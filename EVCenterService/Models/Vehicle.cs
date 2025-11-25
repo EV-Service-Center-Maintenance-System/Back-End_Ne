@@ -34,6 +34,15 @@ public partial class Vehicle
 
     public DateOnly? LastMaintenanceDate { get; set; }
 
+    [Column("NextMaintenanceDate")]
+    public DateOnly? NextMaintenanceDate { get; set; } // Ngày bảo dưỡng tiếp theo
+
+    [Column("NextMaintenanceMileage", TypeName = "decimal(10, 2)")]
+    public decimal? NextMaintenanceMileage { get; set; } // Số Km bảo dưỡng tiếp theo
+
+    [Column("MaintenanceCount")]
+    public int MaintenanceCount { get; set; } = 0; // Đếm số lần đã bảo dưỡng
+
     [InverseProperty("Vehicle")]
     public virtual ICollection<OrderService> OrderServices { get; set; } = new List<OrderService>();
 

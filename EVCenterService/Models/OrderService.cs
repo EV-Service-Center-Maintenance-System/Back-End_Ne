@@ -35,6 +35,9 @@ public partial class OrderService
     [Column(TypeName = "decimal(10, 2)")]
     public decimal? TotalCost { get; set; }
 
+    [Column(TypeName = "decimal(10, 2)")]
+    public decimal? MileageAtService { get; set; }
+
     [InverseProperty("Order")]
     public virtual ICollection<Feedback> Feedbacks { get; set; } = new List<Feedback>();
 

@@ -22,6 +22,7 @@ else
                 <th>VIN</th>
                 <th>Dung lượng pin (kWh)</th>
                 <th>Số km</th>
+                <th>Số lần bảo dưỡng</th>
                 <th>Ngày bảo trì gần nhất</th>
                 <th></th>
             </tr>
@@ -33,12 +34,20 @@ else
                     <td>@item.Model</td>
                     <td>@item.Vin</td>
                     <td>@item.BatteryCapacity?.ToString("0.##")</td>
-                    <td>@item.Mileage?.ToString("0.##")</td>
+                    <td>@item.Mileage?.ToString("N0")</td>
+
+                    <td class="text-center">
+                        <span class="badge bg-info text-dark">@item.MaintenanceCount lần</span>
+                    </td>
+
                     <td>@(item.LastMaintenanceDate?.ToString("dd/MM/yyyy") ?? "-")</td>
                     <td class="text-end">
                         <div class="btn-group">
-                            <a asp-page="Edit" asp-route-id="@item.VehicleId" class="btn btn-sm btn-warning">Sửa</a>
+                            <a asp-page="History" asp-route-id="@item.VehicleId" class="btn btn-sm btn-info text-white" title="Xem nhật ký">
+                                <i class="bi bi-journal-text"></i>
+                            </a>
 
+                            <a asp-page="Edit" asp-route-id="@item.VehicleId" class="btn btn-sm btn-warning">Sửa</a>
                             <a asp-page="Delete" asp-route-id="@item.VehicleId" class="btn btn-sm btn-danger">Xóa</a>
                         </div>
                     </td>

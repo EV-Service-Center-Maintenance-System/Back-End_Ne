@@ -87,6 +87,7 @@ namespace EVCenterService.Service.Services
                     .ThenInclude(od => od.Service)
                 .Include(o => o.Technician)
                 .Include(o => o.Feedbacks) // Tải Feedback
+                .Include(o => o.Invoices)
                 .OrderByDescending(o => o.AppointmentDate)
                 .Select(o => new AppointmentHistoryViewModel
                 {
@@ -98,7 +99,8 @@ namespace EVCenterService.Service.Services
                     TotalCost = o.TotalCost,
                     TechnicianName = o.Technician.FullName,
                     ChecklistNote = o.ChecklistNote,
-                    HasFeedback = o.Feedbacks.Any() // Kiểm tra Feedback
+                    HasFeedback = o.Feedbacks.Any(), // Kiểm tra Feedback
+                    InvoiceId = o.Invoices.Select(i => i.InvoiceId).FirstOrDefault()
                 })
                 .ToListAsync();
         }

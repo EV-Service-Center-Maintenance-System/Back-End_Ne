@@ -32,6 +32,9 @@ namespace EVCenterService.Pages.Technician.Jobs
         [BindProperty]
         public string? TechnicianNote { get; set; }
 
+        [BindProperty]
+        public decimal CurrentMileage { get; set; }
+
         public decimal ServiceTotalCost { get; set; }
         public List<SelectListItem> AvailableParts { get; set; } = new();
 
@@ -45,6 +48,11 @@ namespace EVCenterService.Pages.Technician.Jobs
             Job = await _jobService.GetJobDetailAsync(id);
             if (Job == null)
                 return NotFound();
+
+            if (Job.Vehicle != null)
+            {
+                CurrentMileage = Job.Vehicle.Mileage ?? 0;
+            }
 
             // Kiểm tra xem đơn hàng này có dịch vụ "General Inspection" (ID=4) không
             bool hasGeneralInspection = Job.OrderDetails.Any(od => od.ServiceId == 4);
@@ -90,6 +98,17 @@ namespace EVCenterService.Pages.Technician.Jobs
             using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
+                // Đây là bước Tech cập nhật lại dữ liệu sai của khách (nếu có)
+                if (Job.Vehicle != null)
+                {
+                    // 1. Cập nhật vào Xe (như cũ)
+                    Job.Vehicle.Mileage = CurrentMileage;
+                    _context.Vehicles.Update(Job.Vehicle);
+
+                    // 2. LƯU VÀO ĐƠN HÀNG (MỚI) -> Để giữ lịch sử
+                    Job.MileageAtService = CurrentMileage; 
+                    _context.OrderServices.Update(Job);
+                }
                 // Giả định rằng Staff đã phân công KTV và Slot đã được tạo 
                 var centerId = Job.Slot?.CenterId;
                 if (centerId == null)
@@ -175,7 +194,7 @@ namespace EVCenterService.Pages.Technician.Jobs
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
 
-                TempData["Message"] = "Đã ghi nhận phụ tùng, trừ kho và gửi báo giá thành công cho Staff duyệt.";
+                TempData["Message"] = "Đã cập nhật ODO, ghi nhận phụ tùng, trừ kho và gửi báo giá thành công cho Staff duyệt.";
                 return RedirectToPage("Index");
             }
             catch (Exception ex)
@@ -208,10 +227,14 @@ namespace EVCenterService.Pages.Technician.Jobs
                 // 3. Chỉ cập nhật NGÀY BẢO DƯỠNG
                 if (completedJob.Vehicle != null)
                 {
-                    // Tự động cập nhật ngày bảo dưỡng cuối cùng
+                    // Cập nhật ngày hôm nay là ngày bảo dưỡng cuối cùng
                     completedJob.Vehicle.LastMaintenanceDate = DateOnly.FromDateTime(DateTime.Now);
+
+                    // Lưu ý: KHÔNG cập nhật Mileage ở đây nữa, vì đã cập nhật lúc Báo giá rồi.
+                    // Trừ khi bạn muốn Tech nhập lại lần nữa (nhưng hơi thừa).
+
                     _context.Vehicles.Update(completedJob.Vehicle);
-                    await _context.SaveChangesAsync(); // Lưu ngày bảo dưỡng
+                    await _context.SaveChangesAsync();
                 }
 
                 // 4. Gửi Email (với giờ nhận xe dự kiến)

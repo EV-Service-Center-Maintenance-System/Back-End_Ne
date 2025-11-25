@@ -223,17 +223,36 @@ namespace EVCenterService.Pages.Staff.Appointments
 
                 if (vehicle != null)
                 {
+                    // A. Cập nhật số liệu hiện tại
+                    // (Giả sử KTV đã update Mileage chuẩn vào xe trước đó, hoặc lấy từ Order nếu có trường input)
                     var currentMileage = vehicle.Mileage ?? 0;
+
+                    // B. Tăng số lần bảo dưỡng
+                    vehicle.MaintenanceCount += 1;
+
+                    // C. Tính toán tương lai (Quy tắc: +5000km hoặc +6 tháng)
                     var nextMileage = currentMileage + 5000;
-                    var lastMaintenance = (vehicle.LastMaintenanceDate ?? DateOnly.FromDateTime(DateTime.Now));
+                    var lastMaintenance = DateOnly.FromDateTime(DateTime.Now);
                     var nextDate = lastMaintenance.AddMonths(6);
 
+                    // D. LƯU VÀO DATABASE (QUAN TRỌNG)
+                    vehicle.LastMaintenanceDate = lastMaintenance;
+                    vehicle.NextMaintenanceMileage = nextMileage; // Lưu mốc Km tiếp theo
+                    vehicle.NextMaintenanceDate = nextDate;       // Lưu ngày tiếp theo
+
+                    _context.Vehicles.Update(vehicle); // Cập nhật xe
+                    await _context.SaveChangesAsync(); // Lưu ngay lập tức
+
+                    // E. Nội dung Email
                     maintenanceSchedule = $@"
-                        <p>Dựa trên lần bảo dưỡng này (Số Km: {currentMileage:N0} km), chúng tôi khuyến nghị lần bảo dưỡng tiếp theo của bạn là:</p>
-                        <ul>
-                            <li><strong>Theo số Km:</strong> {nextMileage:N0} km</li>
-                            <li><strong>Theo thời gian:</strong> {nextDate:dd/MM/yyyy}</li>
-                        </ul>";
+                        <div style='background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin: 15px 0;'>
+                            <h4 style='margin-top:0;'>Lần bảo dưỡng tiếp theo (Lần thứ {vehicle.MaintenanceCount + 1}):</h4>
+                            <ul>
+                                <li><strong>Theo số Km (Odo):</strong> {nextMileage:N0} km</li>
+                                <li><strong>Theo thời gian:</strong> {nextDate:dd/MM/yyyy}</li>
+                            </ul>
+                            <p><em>Quý khách vui lòng mang xe đến khi đạt một trong hai điều kiện trên.</em></p>
+                        </div>";
                 }
 
                 var subject = "Cảm ơn bạn đã sử dụng dịch vụ tại EV Service Center!";

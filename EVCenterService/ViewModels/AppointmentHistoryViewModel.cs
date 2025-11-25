@@ -10,6 +10,7 @@
         public decimal? TotalCost { get; set; }
         public string? TechnicianName { get; set; }
         public string? ChecklistNote { get; set; }
-        public bool HasFeedback { get; set; } 
+        public bool HasFeedback { get; set; }
+        public int? InvoiceId { get; set; }
     }
 }
