@@ -39,7 +39,6 @@ namespace EVCenterService.Pages.Customer.Invoices
             if (!_memoryCache.TryGetValue(paymentAttemptId, out int invoiceId))
             {
                 TempData["ErrorMessage"] = "Không thể xác minh giao dịch hoặc phiên thanh toán đã hết hạn.";
- 
                 return RedirectToPage("./Index");
             }
 
@@ -51,9 +50,9 @@ namespace EVCenterService.Pages.Customer.Invoices
                 try
                 {
                     var invoice = await _context.Invoices
-                        .Include(i => i.Order)
-                        .Include(i => i.Subscription)
-                            .ThenInclude(s => s.Plan)
+                        // SỬA 1: Thêm ThenInclude để lấy User của Order
+                        .Include(i => i.Order).ThenInclude(o => o.User)
+                        .Include(i => i.Subscription).ThenInclude(s => s.Plan)
                         .Include(i => i.Subscription.User)
                         .FirstOrDefaultAsync(i => i.InvoiceId == invoiceId);
 
@@ -61,11 +60,31 @@ namespace EVCenterService.Pages.Customer.Invoices
                     {
                         invoice.Status = "Paid";
 
+                        // === TRƯỜNG HỢP 1: THANH TOÁN DỊCH VỤ (ORDER) ===
                         if (invoice.OrderId != null && invoice.Order != null)
                         {
                             invoice.Order.Status = "ReadyForRepair";
                             TempData["StatusMessage"] = $"Thanh toán thành công cho Hóa Đơn Dịch Vụ #{invoiceId}.";
+
+                            // THÊM MỚI: GỬI EMAIL XÁC NHẬN THANH TOÁN DỊCH VỤ
+                            if (invoice.Order.User != null)
+                            {
+                                var user = invoice.Order.User;
+                                var subject = $"Xác nhận thanh toán thành công - Hóa đơn #{invoice.InvoiceId}";
+                                var message = $@"
+                                    <p>Chào {user.FullName},</p>
+                                    <p>Chúng tôi đã nhận được thanh toán của bạn cho hóa đơn <strong>#{invoice.InvoiceId}</strong>.</p>
+                                    <ul>
+                                        <li><strong>Số tiền:</strong> {invoice.Amount:N0} đ</li>
+                                        <li><strong>Trạng thái đơn hàng:</strong> Sẵn sàng sửa chữa (ReadyForRepair)</li>
+                                    </ul>
+                                    <p>Kỹ thuật viên sẽ tiến hành dịch vụ ngay bây giờ.</p>
+                                    <p>Trân trọng,<br> EV Service Center</p>";
+
+                                await _emailSender.SendEmailAsync(user.Email, subject, message);
+                            }
                         }
+                        // === TRƯỜNG HỢP 2: THANH TOÁN GÓI (SUBSCRIPTION) ===
                         else if (invoice.SubscriptionId != null && invoice.Subscription != null)
                         {
                             invoice.Subscription.Status = "active";
@@ -76,7 +95,7 @@ namespace EVCenterService.Pages.Customer.Invoices
                             var message = $@"
                             <p>Chào {user.FullName},</p>
                             <p>Cảm ơn bạn đã đăng ký thành công gói <strong>{invoice.Subscription.Plan.Name}</strong>.</p>
-                            <p>Gói dịch vụ của bạn có hiệu lực từ {invoice.Subscription.StartDate:dd/MM/yyyy} đến {invoice.Subscription.EndDate:dd/MM/yyyy}.</V>
+                            <p>Gói dịch vụ của bạn có hiệu lực từ {invoice.Subscription.StartDate:dd/MM/yyyy} đến {invoice.Subscription.EndDate:dd/MM/yyyy}.</p>
                             <p>Trân trọng,<br> EV Service Center</p>";
 
                             await _emailSender.SendEmailAsync(user.Email, subject, message);
@@ -92,7 +111,7 @@ namespace EVCenterService.Pages.Customer.Invoices
                     else if (invoice == null)
                     {
                         TempData["ErrorMessage"] = $"Không tìm thấy hóa đơn #{invoiceId} trong hệ thống.";
-                        return RedirectToPage("./Index"); 
+                        return RedirectToPage("./Index");
                     }
 
                     return RedirectToPage("./Details", new { id = invoiceId });
