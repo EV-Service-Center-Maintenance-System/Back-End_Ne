@@ -1,6 +1,7 @@
 ﻿@page
 @model EVCenterService.Pages.Customer.Appointments.CreateModel
 @{
+    // Sử dụng layout dành cho khách hàng
     Layout = "_CustomerLayout";
     ViewData["Title"] = "Create Booking/Order";
 }
@@ -28,7 +29,7 @@
 
             @foreach (var svc in Model.ServiceList)
             {
-                // 1. LUÔN LUÔN lấy giá gốc từ DB để hiển thị
+                // LUÔN LUÔN lấy giá gốc từ DB để hiển thị
                 var originalPrice = svc.BasePrice ?? 0;
                 var priceText = $"{originalPrice.ToString("N0")} đ";
 
@@ -37,7 +38,6 @@
                 if (svc.ServiceId == 4)
                 {
                     note = " (Hệ thống sẽ tự động giảm còn 0đ nếu bạn còn lượt miễn phí)";
-                    /* Mẹo: Có thể tô màu dòng này cho dễ thấy */
                     note = $"<span class='text-success fst-italic'>{note}</span>";
                 }
 
@@ -49,8 +49,6 @@
                                value="@svc.ServiceId"
                                data-price="@originalPrice"
                                id="svc_@svc.ServiceId" />
-
-                        @* data-price phải là giá gốc để JS tính tổng tiền dự kiến là 1tr *@
 
                         <label class="form-check-label" for="svc_@svc.ServiceId">
                             @svc.Name (@priceText)
@@ -64,7 +62,7 @@
     </div>
 
     <div id="priceSection" class="form-group mb-3" style="display:none;">
-        <label class="fw-bold">Tổng chi phí:</label>
+        <label class="fw-bold">Tổng chi phí (Ước tính):</label>
         <input id="totalPrice" type="text" class="form-control" readonly value="0 đ" />
     </div>
 
@@ -108,10 +106,13 @@
     </div>
 </form>
 
+<hr>
+
 @section Scripts {
     <script>
         document.addEventListener("DOMContentLoaded", function () {
 
+            // 1. Khởi tạo TomSelect cho ô chọn xe
             new TomSelect('#select-vehicle', {
                 placeholder: '-- Chọn xe của bạn --',
                 create: false,
@@ -121,71 +122,91 @@
                 }
             });
 
-            // ====== 1. LOGIC TỔNG GIÁ (Giữ nguyên) ======
+            // ====== 2. LOGIC TỔNG GIÁ ======
             const checkboxes = document.querySelectorAll(".service-checkbox");
             const totalPriceInput = document.getElementById("totalPrice");
             const priceSection = document.getElementById("priceSection");
 
+            /**
+             * Cập nhật tổng chi phí dự kiến dựa trên các dịch vụ đã chọn.
+             * Nếu không có dịch vụ nào, ẩn phần giá tiền.
+             */
             function updateTotalPrice() {
                 let total = 0;
                 let checkedCount = 0;
                 checkboxes.forEach(cb => {
+                    // Dùng dataset.price (giá gốc) để tính tổng
                     if (cb.checked) {
                         total += parseFloat(cb.dataset.price || 0);
                         checkedCount++;
                     }
                 });
                 if (checkedCount > 0) {
+                    // Hiển thị tổng giá tiền đã định dạng
                     totalPriceInput.value = total.toLocaleString("vi-VN") + " đ";
                     priceSection.style.display = "block";
                 } else {
                     priceSection.style.display = "none";
                 }
             }
-            checkboxes.forEach(chk => chk.addEventListener("change", updateTotalPrice));
-            updateTotalPrice();
 
-            // ===== 2. LOGIC VÔ HIỆU HÓA DỊCH VỤ (Giữ nguyên) =====
+            checkboxes.forEach(chk => chk.addEventListener("change", updateTotalPrice));
+            updateTotalPrice(); // Chạy lần đầu khi tải trang
+
+            // ===== 3. LOGIC VÔ HIỆU HÓA DỊCH VỤ (Nếu chọn General Inspection ID=4) =====
             const generalInspectionId = 4;
+            // Giả sử các dịch vụ khác (Main Services) là 1, 2, 3
             const mainServiceIds = [1, 2, 3];
             const generalCheckbox = document.getElementById('svc_' + generalInspectionId);
-            const mainCheckboxes = mainServiceIds.map(id => document.getElementById('svc_' + id));
+            const mainCheckboxes = mainServiceIds.map(id => document.getElementById('svc_' + id)).filter(el => el != null);
 
+            /**
+             * Xử lý ràng buộc: Nếu General Inspection được chọn, các dịch vụ chính khác sẽ bị vô hiệu hóa.
+             */
             function handleInspectionLogic() {
-                if (generalCheckbox.checked) {
+                if (generalCheckbox && generalCheckbox.checked) {
                     mainCheckboxes.forEach(chk => {
-                        if (chk.checked) chk.checked = false;
-                        chk.disabled = true;
-                        chk.closest('.form-check').classList.add('text-muted');
+                        if (chk.checked) chk.checked = false; // Bỏ chọn nếu đang chọn
+                        chk.disabled = true; // Vô hiệu hóa
+                        chk.closest('.form-check').classList.add('text-muted'); // Làm mờ
                     });
-                } else {
+                } else if (generalCheckbox) {
                     mainCheckboxes.forEach(chk => {
-                        chk.disabled = false;
-                        chk.closest('.form-check').classList.remove('text-muted');
+                        chk.disabled = false; // Kích hoạt lại
+                        chk.closest('.form-check').classList.remove('text-muted'); // Bỏ làm mờ
                     });
                 }
-                updateTotalPrice();
-            }
-            if (generalCheckbox) {
-                generalCheckbox.addEventListener('change', handleInspectionLogic);
+                updateTotalPrice(); // Cập nhật lại tổng giá sau khi thay đổi checkbox
             }
 
-            // ===== 3. LOGIC CHỌN GIỜ (ĐÃ SỬA LỖI) =====
+            if (generalCheckbox) {
+                generalCheckbox.addEventListener('change', handleInspectionLogic);
+                handleInspectionLogic(); // Chạy lần đầu khi tải trang
+            }
+
+            // ===== 4. LOGIC CHỌN GIỜ VÀ KIỂM TRA RÀNG BUỘC (Đã sửa lỗi) =====
             const timeInput = document.getElementById("SelectedTime");
             const dateInput = document.querySelector('input[name="Booking.AppointmentDate"]');
 
-            // Giờ làm việc
+            // Giờ làm việc và thời gian đệm
             const workStartHour = 7; // 7:00
             const workEndHour = 19; // 19:00
-            const bufferHours = 2; // Thời gian đệm (chờ xe tới)
+            const bufferHours = 2; // Thời gian đệm (đặt trước 2 tiếng)
+            const minServiceTimeMinutes = 30; // Giả định thời gian dịch vụ ngắn nhất là 30 phút
 
             // Đặt giới hạn min/max cho ô input (để trình duyệt hỗ trợ)
-            timeInput.min = `${String(workStartHour).padStart(2, "0")}:00`;
-            timeInput.max = `${String(workEndHour).padStart(2, "0")}:00`;
+            if (timeInput) {
+                timeInput.min = `${String(workStartHour).padStart(2, "0")}:00`;
+                timeInput.max = `${String(workEndHour).padStart(2, "0")}:00`;
+            }
 
+            /**
+             * Thiết lập giờ mặc định (Giờ sớm nhất có thể đặt)
+             */
             function setDefaultTime() {
-                const now = new Date();
+                if (!timeInput || !dateInput) return;
 
+                const now = new Date();
                 // Giờ sớm nhất có thể đặt = Hiện tại + 2 tiếng đệm
                 let earliestBookingTime = new Date(now.getTime() + bufferHours * 60 * 60 * 1000);
 
@@ -212,49 +233,60 @@
                 timeInput.value = `${String(defaultHour).padStart(2, "0")}:${String(defaultMinute).padStart(2, "0")}`;
             }
 
-            // Hàm kiểm tra khi người dùng thay đổi
+            /**
+             * Hàm kiểm tra khi người dùng thay đổi Ngày/Giờ hẹn.
+             */
             function validateTime() {
+                if (!timeInput || !dateInput) return;
+
                 const now = new Date();
                 const selectedDateStr = dateInput.value;
                 const [selectedHour, selectedMinute] = timeInput.value.split(":").map(Number);
 
                 const selectedDateTime = new Date(selectedDateStr);
+                // Đảm bảo UTC không ảnh hưởng, chỉ lấy giờ/phút đã chọn
                 selectedDateTime.setHours(selectedHour, selectedMinute, 0, 0);
 
                 // Tính giờ sớm nhất có thể đặt (Hiện tại + 2 tiếng)
                 const earliestBookingTime = new Date(now.getTime() + bufferHours * 60 * 60 * 1000);
 
-                // --- Bắt đầu kiểm tra lỗi ---
-
                 // LỖI 1: CHỌN GIỜ NGOÀI GIỜ LÀM VIỆC (7:00 - 19:00)
-                if (selectedHour < workStartHour || (selectedHour === workEndHour && selectedMinute > 0) || selectedHour > workEndHour) {
+                if (selectedHour < workStartHour || selectedHour > workEndHour || (selectedHour === workEndHour && selectedMinute > 0)) {
                     alert("Giờ làm việc của trung tâm là từ 07:00 đến 19:00. Vui lòng chọn lại.");
                     setDefaultTime(); // Đặt lại giờ mặc định
                     return;
                 }
 
                 // LỖI 2: CHỌN GIỜ SỚM HƠN (HIỆN TẠI + 2 TIẾNG)
-                if (selectedDateTime < earliestBookingTime) {
+                // Phải so sánh khi ngày được chọn là ngày hiện tại.
+                const today = now.toISOString().split("T")[0];
+                if (selectedDateStr === today && selectedDateTime < earliestBookingTime) {
                     alert(`Vui lòng đặt lịch trước giờ hiện tại ít nhất ${bufferHours} tiếng (để di chuyển xe).`);
                     setDefaultTime(); // Đặt lại giờ mặc định
                     return;
                 }
 
-                // LỖI 3: CHỌN GIỜ QUÁ GẦN GIỜ ĐÓNG CỬA (ví dụ: đặt lúc 18:30)
-                // (Giả sử dịch vụ ngắn nhất cũng cần 30 phút làm việc)
-                if (selectedHour === (workEndHour - 1) && selectedMinute > 30) { // 18:31 -> 18:59
-                    alert("Đã quá gần giờ đóng cửa (19:00). Vui lòng chọn giờ sớm hơn hoặc đặt cho ngày hôm sau.");
-                    timeInput.value = "18:30"; // Set về giờ cuối cùng
+                // LỖI 3: CHỌN GIỜ QUÁ GẦN GIỜ ĐÓNG CỬA (ví dụ: đặt lúc 18:31)
+                const closingTime = (workEndHour * 60) + 0; // 19:00
+                const selectedTimeInMinutes = (selectedHour * 60) + selectedMinute;
+
+                // Thời gian sớm nhất có thể đặt để hoàn thành dịch vụ (đóng cửa - 30 phút)
+                const latestServiceStart = closingTime - minServiceTimeMinutes; // 18:30
+
+                if (selectedTimeInMinutes > latestServiceStart) {
+                    alert(`Đã quá gần giờ đóng cửa (19:00). Dịch vụ cần tối thiểu ${minServiceTimeMinutes} phút. Vui lòng chọn giờ trước 18:30 hoặc đặt cho ngày hôm sau.`);
+                    // Đặt lại về giờ cuối cùng cho phép trong ngày
+                    timeInput.value = "18:30";
                     return;
                 }
             }
 
-            // Chạy khi tải trang
+            // Chạy khi tải trang để đặt giờ mặc định
             setDefaultTime();
 
-            // Gắn sự kiện
-            timeInput.addEventListener("change", validateTime);
-            dateInput.addEventListener("change", validateTime);
+            // Gắn sự kiện kiểm tra khi người dùng thay đổi
+            if (timeInput) timeInput.addEventListener("change", validateTime);
+            if (dateInput) dateInput.addEventListener("change", validateTime);
         });
     </script>
 }
