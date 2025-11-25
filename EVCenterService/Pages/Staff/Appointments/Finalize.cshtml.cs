@@ -4,7 +4,6 @@ using EVCenterService.Service.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
@@ -69,37 +68,11 @@ namespace EVCenterService.Pages.Staff.Appointments
 
             if (Appointment == null) return NotFound();
 
-            var slot = await _context.Slots.FirstOrDefaultAsync(s => s.OrderId == id);
-            var centerId = slot?.CenterId;
-
-            if (centerId == null)
-            {
-                ModelState.AddModelError(string.Empty, $"Không thể xác minh trung tâm dịch vụ. Không thể trừ kho.");
-                return await ReloadPageDataOnErrorAsync(id); 
-            }
-
             using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
-                foreach (var partUsed in Appointment.PartsUseds)
-                {
-                    var storageItem = await _context.Storages
-                                            .FirstOrDefaultAsync(s => s.CenterId == centerId && s.PartId == partUsed.PartId);
-
-                    if (storageItem == null)
-                    {
-                        var part = await _context.Parts.FindAsync(partUsed.PartId);
-                        throw new Exception($"Không tìm thấy phụ tùng '{part?.Name}' trong kho.");
-                    }
-                    if (storageItem.Quantity < partUsed.Quantity)
-                    {
-                        var part = await _context.Parts.FindAsync(partUsed.PartId);
-                        throw new Exception($"Không đủ số lượng tồn kho cho '{part?.Name}'.");
-                    }
-
-                    storageItem.Quantity -= partUsed.Quantity; // Tru kho
-                }
-
+                // NOTE: Không trừ kho tại bước Staff Finalize.
+                // Chỉ tạo hóa đơn và chuyển trạng thái sang PendingPayment.
                 var newInvoice = new Invoice
                 {
                     OrderId = Appointment.OrderId,
@@ -140,7 +113,7 @@ namespace EVCenterService.Pages.Staff.Appointments
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
 
-                TempData["StatusMessage"] = $"Đã duyệt báo giá, trừ kho và tạo hóa đơn cho khách hàng.";
+                TempData["StatusMessage"] = $"Đã duyệt báo giá và tạo hóa đơn cho khách hàng.";
 
                 return RedirectToPage("./Index");
             }

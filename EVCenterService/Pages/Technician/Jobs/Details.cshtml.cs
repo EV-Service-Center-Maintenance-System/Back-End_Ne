@@ -2,7 +2,6 @@
 using EVCenterService.Models;
 using EVCenterService.Service.Interfaces;
 using EVCenterService.Pages.Staff.Appointments;
-using EVCenterService.Service.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -10,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace EVCenterService.Pages.Technician.Jobs
 {
@@ -94,7 +94,7 @@ namespace EVCenterService.Pages.Technician.Jobs
                 var centerId = Job.Slot?.CenterId;
                 if (centerId == null)
                 {
-                    throw new InvalidOperationException("Lỗi: Không thể xác định trung tâm dịch vụ cho đơn hàng này. Không thể trừ kho.");
+                    throw new InvalidOperationException("Lỗi: Không thể xác định trung tâm dịch vụ cho đơn hàng này.");
                 }
 
                 decimal totalPartsCost = 0;
@@ -113,27 +113,7 @@ namespace EVCenterService.Pages.Technician.Jobs
                     if (part == null) throw new Exception($"Không tìm thấy phụ tùng ID {inputPart.PartId}");
 
 
-                    // 1. Kiểm tra kho
-                    var storageItem = await _context.Storages
-                                            .FirstOrDefaultAsync(s => s.CenterId == centerId && s.PartId == inputPart.PartId);
-
-                    if (storageItem == null)
-                    {
-                        throw new Exception($"Phụ tùng '{part.Name}' không tồn tại trong kho của trung tâm này.");
-                    }
-
-                    if (storageItem.Quantity < inputPart.Quantity)
-                    {
-                        // 2. Báo lỗi không đủ hàng
-                        throw new Exception($"Không đủ tồn kho cho '{part.Name}'. Yêu cầu: {inputPart.Quantity}, Chỉ còn: {storageItem.Quantity}. Vui lòng báo cáo Admin.");
-                    }
-
-                    // 3. Trừ kho
-                    storageItem.Quantity -= inputPart.Quantity;
-                    _context.Storages.Update(storageItem);
-
-
-                    // Ghi nhận phụ tùng đã dùng (PartsUsed)
+                    // GHI NHẬN phụ tùng đã dùng (chỉ ghi vào PartsUsed, KHÔNG trừ kho ở bước này)
                     var partsUsedEntry = new PartsUsed
                     {
                         OrderId = id,
@@ -143,24 +123,8 @@ namespace EVCenterService.Pages.Technician.Jobs
                     };
                     _context.PartsUseds.Add(partsUsedEntry);
 
-                    // Tính toán chi phí
+                    // Tính toán chi phí ước tính
                     totalPartsCost += (part.UnitPrice ?? 0) * inputPart.Quantity;
-
-                    // 4. Kiểm tra ngưỡng và cảnh báo Admin
-                    if (storageItem.MinThreshold.HasValue && storageItem.Quantity <= storageItem.MinThreshold)
-                    {
-                        var adminUser = await _context.Accounts.FirstOrDefaultAsync(a => a.Role == "Admin");
-                        if (adminUser != null)
-                        {
-                            _context.Notifications.Add(new Notification
-                            {
-                                ReceiverId = adminUser.UserId,
-                                Content = $"Cảnh báo tồn kho: Phụ tùng '{part?.Name}' (ID: {inputPart.PartId}) tại trung tâm {centerId} chỉ còn {storageItem.Quantity} (ngưỡng: {storageItem.MinThreshold}). Vui lòng refill.",
-                                Type = "StockWarning",
-                                TriggerDate = DateTime.Now
-                            });
-                        }
-                    }
                 }
 
                 // Cập nhật OrderService
@@ -175,7 +139,7 @@ namespace EVCenterService.Pages.Technician.Jobs
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
 
-                TempData["Message"] = "Đã ghi nhận phụ tùng, trừ kho và gửi báo giá thành công cho Staff duyệt.";
+                TempData["Message"] = "Đã ghi nhận phụ tùng (chưa trừ kho), và gửi báo giá thành công cho Staff duyệt.";
                 return RedirectToPage("Index");
             }
             catch (Exception ex)
@@ -189,13 +153,75 @@ namespace EVCenterService.Pages.Technician.Jobs
 
         public async Task<IActionResult> OnPostCompleteAsync(int id)
         {
+            // Khi hoàn thành: thực hiện trừ kho dựa vào PartsUseds của Order rồi mới mark complete.
             try
             {
-                // 1. Hoàn thành công việc 
-                await _jobService.CompleteJobAsync(id, TechnicianNote);
-                TempData["Message"] = " Công việc đã được đánh dấu hoàn thành.";
+                // Load job with parts and slot info
+                var job = await _context.OrderServices
+                    .Include(o => o.PartsUseds)
+                    .Include(o => o.Slot)
+                    .FirstOrDefaultAsync(o => o.OrderId == id);
 
-                // 2. Lấy thông tin Job VÀ Xe
+                if (job == null) throw new Exception("Không tìm thấy Job.");
+
+                var centerId = job.Slot?.CenterId;
+                if (centerId == null) throw new Exception("Không thể xác định trung tâm dịch vụ để trừ kho.");
+
+                using var transaction = await _context.Database.BeginTransactionAsync();
+                try
+                {
+                    // Trừ kho cho mỗi PartsUsed
+                    foreach (var partUsed in job.PartsUseds)
+                    {
+                        if (!partUsed.PartId.HasValue) continue;
+
+                        var storageItem = await _context.Storages
+                            .FirstOrDefaultAsync(s => s.CenterId == centerId && s.PartId == partUsed.PartId);
+
+                        var part = await _context.Parts.FindAsync(partUsed.PartId);
+                        if (storageItem == null)
+                        {
+                            throw new Exception($"Không tìm thấy phụ tùng '{part?.Name}' trong kho.");
+                        }
+                        if (storageItem.Quantity < partUsed.Quantity)
+                        {
+                            throw new Exception($"Không đủ tồn kho cho '{part?.Name}'. Yêu cầu: {partUsed.Quantity}, Chỉ còn: {storageItem.Quantity}.");
+                        }
+
+                        storageItem.Quantity -= partUsed.Quantity;
+                        _context.Storages.Update(storageItem);
+
+                        // Kiểm tra ngưỡng và tạo notification nếu cần
+                        if (storageItem.MinThreshold.HasValue && storageItem.Quantity <= storageItem.MinThreshold)
+                        {
+                            var adminUser = await _context.Accounts.FirstOrDefaultAsync(a => a.Role == "Admin");
+                            if (adminUser != null)
+                            {
+                                _context.Notifications.Add(new Notification
+                                {
+                                    ReceiverId = adminUser.UserId,
+                                    Content = $"Cảnh báo tồn kho: Phụ tùng '{part?.Name}' (ID: {partUsed.PartId}) tại trung tâm {centerId} chỉ còn {storageItem.Quantity} (ngưỡng: {storageItem.MinThreshold}). Vui lòng refill.",
+                                    Type = "StockWarning",
+                                    TriggerDate = DateTime.Now
+                                });
+                            }
+                        }
+                    }
+
+                    await _context.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                }
+                catch
+                {
+                    await transaction.RollbackAsync();
+                    throw;
+                }
+
+                // Sau khi trừ kho thành công, đánh dấu complete bằng service
+                await _jobService.CompleteJobAsync(id, TechnicianNote);
+                TempData["Message"] = "Công việc đã được đánh dấu hoàn thành và kho đã được cập nhật.";
+
+                // Gửi email thông báo hoàn thành (giữ nguyên logic hiện tại)
                 var completedJob = await _context.OrderServices
                     .Include(o => o.User)
                     .Include(o => o.Vehicle) 
@@ -203,36 +229,23 @@ namespace EVCenterService.Pages.Technician.Jobs
                         .ThenInclude(od => od.Service)
                     .FirstOrDefaultAsync(o => o.OrderId == id);
 
-                if (completedJob == null) return RedirectToPage("Index");
-
-                // 3. Chỉ cập nhật NGÀY BẢO DƯỠNG
-                if (completedJob.Vehicle != null)
+                if (completedJob?.User != null)
                 {
-                    // Tự động cập nhật ngày bảo dưỡng cuối cùng
-                    completedJob.Vehicle.LastMaintenanceDate = DateOnly.FromDateTime(DateTime.Now);
-                    _context.Vehicles.Update(completedJob.Vehicle);
-                    await _context.SaveChangesAsync(); // Lưu ngày bảo dưỡng
-                }
-
-                // 4. Gửi Email (với giờ nhận xe dự kiến)
-                try
-                {
-                    if (completedJob.User != null)
+                    try
                     {
                         var userAccount = completedJob.User;
                         var serviceNames = string.Join(", ", completedJob.OrderDetails.Select(s => s.Service?.Name));
-                        var vehicle = completedJob.Vehicle; // Lấy xe từ Job
+                        var vehicle = completedJob.Vehicle;
 
                         var vietnamTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
                         var vietnamNow = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, vietnamTimeZone);
 
-                        var pickupBufferHours = 1; // 1 tiếng để chuẩn bị giấy tờ
+                        var pickupBufferHours = 1;
                         var projectedPickupTime = vietnamNow.AddHours(pickupBufferHours);
-                        var workCloseTime = new TimeSpan(19, 0, 0); // 19:00
-                        var workOpenTime = new TimeSpan(8, 0, 0); // 8:00 (hôm sau)
+                        var workCloseTime = new TimeSpan(19, 0, 0);
+                        var workOpenTime = new TimeSpan(8, 0, 0);
 
                         string pickupMessage;
-
                         if (projectedPickupTime.TimeOfDay > workCloseTime || projectedPickupTime.Date > vietnamNow.Date)
                         {
                             var nextDay = vietnamNow.Date.AddDays(1);
@@ -263,10 +276,10 @@ namespace EVCenterService.Pages.Technician.Jobs
 
                         await _emailSender.SendEmailAsync(userAccount.Email, subject, message);
                     }
-                }
-                catch (Exception ex_email)
-                {
-                    Console.WriteLine($"Lỗi gửi mail thông báo hoàn thành: {ex_email.Message}");
+                    catch (Exception ex_email)
+                    {
+                        Console.WriteLine($"Lỗi gửi mail thông báo hoàn thành: {ex_email.Message}");
+                    }
                 }
 
                 return RedirectToPage("Index");
