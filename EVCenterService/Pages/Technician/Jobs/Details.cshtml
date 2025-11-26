@@ -25,6 +25,7 @@
     </p>
     <form method="post">
         <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+        <input type="hidden" id="hasRepairItem" name="HasRepairItem" value="false" />
         <div class="row g-4">
             <div class="col-lg-8">
 
@@ -35,34 +36,25 @@
                             <h5 class="mb-0 text-white">Checklist Bảo dưỡng Tổng quát</h5>
                         </div>
                         <div class="card-body">
-                            <p>Đánh giá tình trạng các bộ phận chính. Nếu không ổn (❌), hệ thống sẽ yêu cầu bạn báo giá phụ tùng ở bước tiếp theo.</p>
+                            <p>Đánh giá tình trạng các bộ phận chính. Nếu không ổn (❌), hệ thống sẽ yêu cầu báo giá.</p>
 
-                            <div class="d-flex justify-content-between align-items-center p-3 border-bottom border-secondary">
-                                <h5 class="mb-0 text-white">1. Hệ thống Pin (Battery)</h5>
-                                <div>
-                                    <button type="button" class="btn btn-outline-success btn-lg checklist-btn" data-service-id="1" data-status="ok">✅ Tốt</button>
-                                    <button type="button" class="btn btn-outline-danger btn-lg checklist-btn" data-service-id="1" data-status="fail">❌ Cần sửa</button>
+                            @foreach (var service in Model.ChecklistServices)
+                            {
+                                <div class="d-flex justify-content-between align-items-center p-3 border-bottom border-secondary">
+                                    <h5 class="mb-0 text-white">@service.Name</h5> <div>
+                                        <button type="button" class="btn btn-outline-success btn-lg checklist-btn"
+                                                data-service-id="@service.ServiceId" data-status="ok">
+                                            ✅ Tốt
+                                        </button>
+
+                                        <button type="button" class="btn btn-outline-danger btn-lg checklist-btn"
+                                                data-service-id="@service.ServiceId" data-status="fail">
+                                            ❌ Cần sửa
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center p-3 border-bottom border-secondary">
-                                <h5 class="mb-0 text-white">2. Hệ thống Phanh (Brake)</h5>
-                                <div>
-                                    <button type="button" class="btn btn-outline-success btn-lg checklist-btn" data-service-id="2" data-status="ok">✅ Tốt</button>
-                                    <button type="button" class="btn btn-outline-danger btn-lg checklist-btn" data-service-id="2" data-status="fail">❌ Cần sửa</button>
-                                </div>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center p-3">
-                                <h5 class="mb-0 text-white">3. Hệ thống Làm mát (Cooling)</h5>
-                                <div>
-                                    <button type="button" class="btn btn-outline-success btn-lg checklist-btn" data-service-id="3" data-status="ok">✅ Tốt</button>
-                                    <button type="button" class="btn btn-outline-danger btn-lg checklist-btn" data-service-id="3" data-status="fail">❌ Cần sửa</button>
-                                </div>
-                            </div>
+                            }
                         </div>
-                    </div>
-
-                    <div id="quoteSection" style="display: none;">
-                        @await Html.PartialAsync("_QuotePartsPartial", Model)
                     </div>
                 }
                 else
@@ -203,11 +195,24 @@ else
                             this.classList.add('active', 'btn-danger');
                             this.classList.remove('btn-outline-danger');
                         }
-                        
-                        // Hiển thị phần Báo giá Phụ tùng
-                        if (quoteSection) {
-                            quoteSection.style.display = 'block';
+
+                        // Tìm tất cả các nút "Fail" đang được active
+                        const anyFail = document.querySelectorAll('.checklist-btn[data-status="fail"].active').length > 0;
+                        const hasRepairInput = document.getElementById('hasRepairItem');
+                        const quoteSection = document.getElementById('quoteSection'); // Nếu bạn có ID này bao quanh phần phụ tùng
+
+                        if (anyFail) {
+                            hasRepairInput.value = "true";
+                            // (Tùy chọn) Hiện vùng nhập phụ tùng nếu đang ẩn
+                            // if(quoteSection) quoteSection.style.display = 'block';
+                        } else {
+                            hasRepairInput.value = "false";
                         }
+
+                        // // Hiển thị phần Báo giá Phụ tùng
+                        // if (quoteSection) {
+                        //     quoteSection.style.display = 'block';
+                        // }
                     });
                 });
             }

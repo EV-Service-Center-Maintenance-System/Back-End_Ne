@@ -37,30 +37,42 @@
         <div class="mb-3">
             <label asp-for="EmployeeAccount.FullName" class="form-label">Họ và tên</label>
             <input asp-for="EmployeeAccount.FullName" class="form-control" />
+            <span asp-validation-for="EmployeeAccount.FullName" class="text-danger"></span>
         </div>
 
         <div class="mb-3">
             <label asp-for="EmployeeAccount.Email" class="form-label">Email</label>
             <input asp-for="EmployeeAccount.Email" type="email" class="form-control" />
+            <span asp-validation-for="EmployeeAccount.Email" class="text-danger"></span>
         </div>
 
         <div class="mb-3">
             <label asp-for="EmployeeAccount.Phone" class="form-label">Số điện thoại</label>
             <input asp-for="EmployeeAccount.Phone" class="form-control" />
+            <span asp-validation-for="EmployeeAccount.Phone" class="text-danger"></span>
         </div>
 
         <div class="mb-3">
             <label asp-for="EmployeeAccount.Password" class="form-label">Mật khẩu</label>
             <input asp-for="EmployeeAccount.Password" type="password" class="form-control" />
+            <span asp-validation-for="EmployeeAccount.Password" class="text-danger"></span>
         </div>
 
         <div class="mb-3">
             <label asp-for="EmployeeAccount.Role" class="form-label">Vai trò</label>
-            <select asp-for="EmployeeAccount.Role" class="form-select">
+            <select asp-for="EmployeeAccount.Role" class="form-select" id="roleSelect">
                 <option value="">-- Chọn vai trò --</option>
                 <option value="Staff">Nhân viên</option>
                 <option value="Technician">Kỹ thuật viên</option>
             </select>
+            <span asp-validation-for="EmployeeAccount.Role" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3" id="certificationGroup" style="display: none;">
+            <label asp-for="EmployeeAccount.Certification" class="form-label">Chứng chỉ chuyên môn</label>
+            <textarea asp-for="EmployeeAccount.Certification" class="form-control" rows="2" placeholder="VD: Battery System Certified; Brake System Certified"></textarea>
+            <span class="form-text text-muted">Nhập các chứng chỉ, phân cách bằng dấu chấm phẩy (;).</span>
+            <span asp-validation-for="EmployeeAccount.Certification" class="text-danger"></span>
         </div>
 
         <button type="submit" class="btn btn-primary">Tạo mới</button>

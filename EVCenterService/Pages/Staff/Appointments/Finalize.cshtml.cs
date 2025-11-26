@@ -84,20 +84,13 @@ namespace EVCenterService.Pages.Staff.Appointments
                 foreach (var partUsed in Appointment.PartsUseds)
                 {
                     var storageItem = await _context.Storages
-                                            .FirstOrDefaultAsync(s => s.CenterId == centerId && s.PartId == partUsed.PartId);
+                                        .FirstOrDefaultAsync(s => s.CenterId == centerId && s.PartId == partUsed.PartId);
 
-                    if (storageItem == null)
+                    if (storageItem == null || storageItem.Quantity < partUsed.Quantity)
                     {
-                        var part = await _context.Parts.FindAsync(partUsed.PartId);
-                        throw new Exception($"Không tìm thấy phụ tùng '{part?.Name}' trong kho.");
+                        // Báo lỗi nếu không đủ hàng
+                        throw new Exception($"Không đủ tồn kho cho phụ tùng ID {partUsed.PartId}.");
                     }
-                    if (storageItem.Quantity < partUsed.Quantity)
-                    {
-                        var part = await _context.Parts.FindAsync(partUsed.PartId);
-                        throw new Exception($"Không đủ số lượng tồn kho cho '{part?.Name}'.");
-                    }
-
-                    storageItem.Quantity -= partUsed.Quantity; // Tru kho
                 }
 
                 var newInvoice = new Invoice
@@ -140,7 +133,7 @@ namespace EVCenterService.Pages.Staff.Appointments
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
 
-                TempData["StatusMessage"] = $"Đã duyệt báo giá, trừ kho và tạo hóa đơn cho khách hàng.";
+                TempData["StatusMessage"] = $"Đã duyệt báo giá và tạo hóa đơn cho khách hàng.";
 
                 return RedirectToPage("./Index");
             }

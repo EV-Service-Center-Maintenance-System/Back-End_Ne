@@ -115,59 +115,85 @@
             new TomSelect('#select-vehicle', {
                 placeholder: '-- Chọn xe của bạn --',
                 create: false,
-                sortField: {
-                    field: "text",
-                    direction: "asc"
-                }
+                sortField: { field: "text", direction: "asc" }
             });
 
-            // ====== 1. LOGIC TỔNG GIÁ (Giữ nguyên) ======
+            // --- CÁC BIẾN CẦN THIẾT ---
             const checkboxes = document.querySelectorAll(".service-checkbox");
             const totalPriceInput = document.getElementById("totalPrice");
             const priceSection = document.getElementById("priceSection");
 
+            // ID Dịch vụ (Phải khớp với DB)
+            const idGeneral = 4;
+            // Các dịch vụ lẻ (trừ General)
+            const otherCheckboxes = Array.from(checkboxes).filter(cb => parseInt(cb.value) !== idGeneral);
+            const generalCheckbox = document.getElementById('svc_' + idGeneral);
+
+            // --- HÀM XỬ LÝ CHÍNH ---
+            function handleServiceSelection(event) {
+                const target = event.target; // Checkbox vừa được nhấn
+
+                // TRƯỜNG HỢP 1: Nhấn vào "Bảo dưỡng Tổng quát"
+                if (target === generalCheckbox) {
+                    if (generalCheckbox.checked) {
+                        // Nếu chọn General -> Bỏ chọn và vô hiệu hóa tất cả cái khác
+                        otherCheckboxes.forEach(cb => {
+                            cb.checked = false;
+                            cb.disabled = true;
+                            cb.closest('.form-check').classList.add('text-muted');
+                        });
+                    } else {
+                        // Nếu bỏ chọn General -> Mở lại tất cả
+                        otherCheckboxes.forEach(cb => {
+                            cb.disabled = false;
+                            cb.closest('.form-check').classList.remove('text-muted');
+                        });
+                    }
+                }
+
+                // TRƯỜNG HỢP 2: Nhấn vào các dịch vụ lẻ
+                else {
+                    // Đếm số lượng dịch vụ lẻ đang chọn
+                    let checkedCount = otherCheckboxes.filter(cb => cb.checked).length;
+
+                    // Nếu đã chọn 2 cái và đang cố chọn cái thứ 3
+                    if (checkedCount > 2) {
+                        alert("Bạn đã chọn nhiều dịch vụ lẻ.\n\nHệ thống khuyến nghị chọn gói 'Bảo dưỡng Tổng quát' để tiết kiệm chi phí và bao gồm đầy đủ hạng mục.");
+                        target.checked = false; // Hủy chọn cái vừa nhấn
+                        return; // Dừng lại, không tính tiền
+                    }
+                }
+
+                // Tính lại tiền sau khi xử lý logic
+                updateTotalPrice();
+            }
+
+            // --- HÀM TÍNH TIỀN ---
             function updateTotalPrice() {
                 let total = 0;
-                let checkedCount = 0;
+                let count = 0;
                 checkboxes.forEach(cb => {
                     if (cb.checked) {
                         total += parseFloat(cb.dataset.price || 0);
-                        checkedCount++;
+                        count++;
                     }
                 });
-                if (checkedCount > 0) {
+
+                if (count > 0) {
                     totalPriceInput.value = total.toLocaleString("vi-VN") + " đ";
                     priceSection.style.display = "block";
                 } else {
                     priceSection.style.display = "none";
                 }
             }
-            checkboxes.forEach(chk => chk.addEventListener("change", updateTotalPrice));
-            updateTotalPrice();
 
-            // ===== 2. LOGIC VÔ HIỆU HÓA DỊCH VỤ (Giữ nguyên) =====
-            const generalInspectionId = 4;
-            const mainServiceIds = [1, 2, 3];
-            const generalCheckbox = document.getElementById('svc_' + generalInspectionId);
-            const mainCheckboxes = mainServiceIds.map(id => document.getElementById('svc_' + id));
+            // Gắn sự kiện cho tất cả checkbox
+            checkboxes.forEach(chk => chk.addEventListener("change", handleServiceSelection));
 
-            function handleInspectionLogic() {
-                if (generalCheckbox.checked) {
-                    mainCheckboxes.forEach(chk => {
-                        if (chk.checked) chk.checked = false;
-                        chk.disabled = true;
-                        chk.closest('.form-check').classList.add('text-muted');
-                    });
-                } else {
-                    mainCheckboxes.forEach(chk => {
-                        chk.disabled = false;
-                        chk.closest('.form-check').classList.remove('text-muted');
-                    });
-                }
-                updateTotalPrice();
-            }
-            if (generalCheckbox) {
-                generalCheckbox.addEventListener('change', handleInspectionLogic);
+            // Chạy 1 lần lúc đầu (phòng trường hợp edit hoặc reload)
+            // (Giả lập sự kiện change cho General nếu nó đang được check sẵn)
+            if (generalCheckbox && generalCheckbox.checked) {
+                handleServiceSelection({ target: generalCheckbox });
             }
 
             // ===== 3. LOGIC CHỌN GIỜ (ĐÃ SỬA LỖI) =====

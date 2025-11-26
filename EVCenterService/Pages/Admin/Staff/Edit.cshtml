@@ -41,8 +41,9 @@
 
         <div class="mb-3" id="certificationGroup" style="display: none;">
             <label asp-for="EmployeeAccount.Certification" class="form-label">Chứng chỉ chuyên môn</label>
-            <input asp-for="EmployeeAccount.Certification" class="form-control" />
-            <span class="form-text text-muted">Chỉ yêu cầu đối với Kỹ thuật viên.</span>
+            <textarea asp-for="EmployeeAccount.Certification" class="form-control" rows="2" placeholder="VD: Battery System Certified; Brake System Certified"></textarea>
+            <span class="form-text text-muted">Nhập các chứng chỉ, phân cách bằng dấu chấm phẩy (;). Dùng để phân công việc.</span>
+            <span asp-validation-for="EmployeeAccount.Certification" class="text-danger"></span>
         </div>
 
         <button type="submit" class="btn btn-primary">Lưu thay đổi</button>

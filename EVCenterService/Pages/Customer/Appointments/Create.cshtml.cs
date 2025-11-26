@@ -66,6 +66,17 @@ namespace EVCenterService.Pages.Customer.Appointments
                 .AsNoTracking()
                 .ToListAsync();
 
+            // (Để đảm bảo giá gói tổng luôn bằng tổng các gói con, bất kể DB lưu gì)
+            var calculatedTotal = ServiceList
+                .Where(s => s.IncludeInChecklist == true)
+                .Sum(s => s.BasePrice ?? 0);
+
+            var generalService = ServiceList.FirstOrDefault(s => s.ServiceId == 4);
+            if (generalService != null)
+            {
+                generalService.BasePrice = calculatedTotal;
+            }
+
             // 1. Kiểm tra xem user có gói "active" không
             var activeSubscription = await _context.Subscriptions
                 .Include(s => s.Plan)
@@ -146,7 +157,10 @@ namespace EVCenterService.Pages.Customer.Appointments
             }
 
             const int generalInspectionId = 4;
-            var mainServiceIds = new List<int> { 1, 2, 3 }; // Battery, Brake, Cooling
+            var mainServiceIds = await _context.ServiceCatalogs
+                .Where(s => s.IncludeInChecklist == true) // Lấy các dịch vụ con
+                .Select(s => s.ServiceId)
+                .ToListAsync();
 
             bool hasGeneral = SelectedServiceIds.Contains(generalInspectionId);
             int mainServiceCount = SelectedServiceIds.Count(id => mainServiceIds.Contains(id));
@@ -172,6 +186,16 @@ namespace EVCenterService.Pages.Customer.Appointments
                 .Where(s => SelectedServiceIds.Contains(s.ServiceId))
                 .AsNoTracking()
                 .ToListAsync();
+
+            var generalServiceInPost = services.FirstOrDefault(s => s.ServiceId == 4);
+            if (generalServiceInPost != null)
+            {
+                // Tính lại tổng từ tất cả dịch vụ con trong DB
+                var realTotal = await _context.ServiceCatalogs
+                                   .Where(s => s.IncludeInChecklist == true)
+                                   .SumAsync(s => s.BasePrice ?? 0);
+                generalServiceInPost.BasePrice = realTotal;
+            }
 
             // ServiceId = 4 là "General Inspection" 
             var inspectionService = services.FirstOrDefault(s => s.ServiceId == 4);

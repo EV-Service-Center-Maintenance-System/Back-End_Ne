@@ -41,6 +41,13 @@
                         <span asp-validation-for="Service.DurationMinutes" class="text-danger"></span>
                     </div>
 
+                    <div class="mb-3">
+                        <label asp-for="Service.RequiredCertification" class="form-label">Chứng chỉ Yêu cầu (Cho KTV)</label>
+                        <input asp-for="Service.RequiredCertification" class="form-control" placeholder="VD: Battery System Certified" />
+                        <div class="form-text text-muted small">Nếu để trống, bất kỳ KTV nào cũng có thể làm.</div>
+                        <span asp-validation-for="Service.RequiredCertification" class="text-danger"></span>
+                    </div>
+
                     <hr class="my-4" />
                     <button type="submit" class="btn btn-primary me-2">💾 Tạo Mới</button>
                     <a asp-page="./Index" class="btn btn-secondary">← Quay lại Danh sách</a>

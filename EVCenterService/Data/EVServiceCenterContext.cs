@@ -350,10 +350,10 @@ public partial class EVServiceCenterContext : DbContext
 
         // --- BẢNG: ServiceCatalog ---
         modelBuilder.Entity<ServiceCatalog>().HasData(
-            new ServiceCatalog { ServiceId = 1, Name = "Battery Replacement", Description = "Replace entire battery pack", BasePrice = 10000000m, DurationMinutes = 240 },
-            new ServiceCatalog { ServiceId = 2, Name = "Brake Check", Description = "Inspect and replace brake pads if needed", BasePrice = 750000m, DurationMinutes = 60 },
-            new ServiceCatalog { ServiceId = 3, Name = "Cooling System Check", Description = "Check coolant and thermal management", BasePrice = 800000m, DurationMinutes = 45 },
-            new ServiceCatalog { ServiceId = 4, Name = "General Inspection", Description = "Full vehicle health check", BasePrice = 1000000m, DurationMinutes = 180 }
+            new ServiceCatalog { ServiceId = 1, Name = "Thay thế Pin", Description = "Thay thế toàn bộ gói pin", BasePrice = 10000000m, DurationMinutes = 240, IncludeInChecklist = true, RequiredCertification = "Battery System Certified" },
+            new ServiceCatalog { ServiceId = 2, Name = "Kiểm tra Phanh", Description = "Kiểm tra và thay má phanh", BasePrice = 750000m, DurationMinutes = 60, IncludeInChecklist = true, RequiredCertification = "Brake System Certified" },
+            new ServiceCatalog { ServiceId = 3, Name = "Kiểm tra Hệ thống Làm mát", Description = "Kiểm tra dung dịch và tản nhiệt", BasePrice = 800000m, DurationMinutes = 45, IncludeInChecklist = true, RequiredCertification = "Thermal & Cooling System Certified" },
+            new ServiceCatalog { ServiceId = 4, Name = "Bảo dưỡng Tổng quát", Description = "Gói kiểm tra toàn diện xe", BasePrice = 1000000m, DurationMinutes = 180, IncludeInChecklist = false, RequiredCertification = "General Inspection Certified" }
         );
 
         // --- BẢNG: Vehicle ---

@@ -42,6 +42,11 @@ namespace EVCenterService.Pages.Technician.Jobs
         public List<PartUsageInput> PartsUsedInput { get; set; } = new();
         public bool IsGeneralInspection { get; set; } = false;
 
+        public List<ServiceCatalog> ChecklistServices { get; set; } = new();
+
+        [BindProperty]
+        public bool HasRepairItem { get; set; }
+
 
         public async Task<IActionResult> OnGetAsync(int id)
         {
@@ -77,6 +82,13 @@ namespace EVCenterService.Pages.Technician.Jobs
                         Note = pu.Note
                     }).ToList();
             }
+
+            if (IsGeneralInspection)
+            {
+                ChecklistServices = await _context.ServiceCatalogs
+                    .Where(s => s.IncludeInChecklist == true)
+                    .ToListAsync();
+            }
             return Page();
         }
 
@@ -92,8 +104,35 @@ namespace EVCenterService.Pages.Technician.Jobs
             var reloadDataOnError = async () =>
             {
                 ServiceTotalCost = Job.OrderDetails.Sum(od => (od.UnitPrice ?? 0) * (od.Quantity ?? 1));
+                // Xác định lại IsGeneralInspection để hiển thị checklist
+                bool hasGeneralInspection = Job.OrderDetails.Any(od => od.ServiceId == 4);
+                if (Job.Status == "InProgress" && hasGeneralInspection) IsGeneralInspection = true;
+                if (IsGeneralInspection)
+                {
+                    ChecklistServices = await _context.ServiceCatalogs.Where(s => s.IncludeInChecklist == true).ToListAsync();
+                }
                 await LoadAvailableParts();
             };
+
+            // 1. Kiểm tra xem có phải là Bảo dưỡng tổng quát không
+            bool isGeneral = Job.OrderDetails.Any(od => od.ServiceId == 4); // ID 4 = Tổng quát
+
+            if (isGeneral)
+            {
+                // 2. Nếu có mục cần sửa (HasRepairItem = true)
+                if (HasRepairItem)
+                {
+                    // Bắt buộc phải có phụ tùng được chọn
+                    bool hasParts = PartsUsedInput.Any(p => p.PartId > 0 && p.Quantity > 0);
+
+                    if (!hasParts)
+                    {
+                        ModelState.AddModelError(string.Empty, "⚠️ Bạn đã đánh dấu có mục CẦN SỬA (❌). Vui lòng chọn ít nhất một phụ tùng thay thế.");
+                        await reloadDataOnError();
+                        return Page();
+                    }
+                }
+            }
 
             using var transaction = await _context.Database.BeginTransactionAsync();
             try
@@ -147,10 +186,6 @@ namespace EVCenterService.Pages.Technician.Jobs
                         throw new Exception($"Không đủ tồn kho cho '{part.Name}'. Yêu cầu: {inputPart.Quantity}, Chỉ còn: {storageItem.Quantity}. Vui lòng báo cáo Admin.");
                     }
 
-                    // 3. Trừ kho
-                    storageItem.Quantity -= inputPart.Quantity;
-                    _context.Storages.Update(storageItem);
-
 
                     // Ghi nhận phụ tùng đã dùng (PartsUsed)
                     var partsUsedEntry = new PartsUsed
@@ -194,7 +229,7 @@ namespace EVCenterService.Pages.Technician.Jobs
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
 
-                TempData["Message"] = "Đã cập nhật ODO, ghi nhận phụ tùng, trừ kho và gửi báo giá thành công cho Staff duyệt.";
+                TempData["Message"] = "Đã cập nhật ODO, ghi nhận phụ tùng và gửi báo giá thành công cho Staff duyệt.";
                 return RedirectToPage("Index");
             }
             catch (Exception ex)
@@ -210,94 +245,133 @@ namespace EVCenterService.Pages.Technician.Jobs
         {
             try
             {
-                // 1. Hoàn thành công việc 
-                await _jobService.CompleteJobAsync(id, TechnicianNote);
-                TempData["Message"] = " Công việc đã được đánh dấu hoàn thành.";
-
-                // 2. Lấy thông tin Job VÀ Xe
+                // 1. Lấy thông tin đầy đủ của đơn hàng
                 var completedJob = await _context.OrderServices
                     .Include(o => o.User)
-                    .Include(o => o.Vehicle) 
-                    .Include(o => o.OrderDetails)
-                        .ThenInclude(od => od.Service)
+                    .Include(o => o.Vehicle)
+                    .Include(o => o.OrderDetails).ThenInclude(od => od.Service)
+                    .Include(o => o.PartsUseds).ThenInclude(pu => pu.Part) // Cần PartsUseds để trừ kho
                     .FirstOrDefaultAsync(o => o.OrderId == id);
 
                 if (completedJob == null) return RedirectToPage("Index");
 
-                // 3. Chỉ cập nhật NGÀY BẢO DƯỠNG
-                if (completedJob.Vehicle != null)
-                {
-                    // Cập nhật ngày hôm nay là ngày bảo dưỡng cuối cùng
-                    completedJob.Vehicle.LastMaintenanceDate = DateOnly.FromDateTime(DateTime.Now);
-
-                    // Lưu ý: KHÔNG cập nhật Mileage ở đây nữa, vì đã cập nhật lúc Báo giá rồi.
-                    // Trừ khi bạn muốn Tech nhập lại lần nữa (nhưng hơi thừa).
-
-                    _context.Vehicles.Update(completedJob.Vehicle);
-                    await _context.SaveChangesAsync();
-                }
-
-                // 4. Gửi Email (với giờ nhận xe dự kiến)
+                using var transaction = await _context.Database.BeginTransactionAsync();
                 try
                 {
-                    if (completedJob.User != null)
+                    // 2. CẬP NHẬT NGÀY BẢO DƯỠNG CHO XE
+                    if (completedJob.Vehicle != null)
                     {
-                        var userAccount = completedJob.User;
-                        var serviceNames = string.Join(", ", completedJob.OrderDetails.Select(s => s.Service?.Name));
-                        var vehicle = completedJob.Vehicle; // Lấy xe từ Job
+                        // Cập nhật ngày hôm nay là ngày bảo dưỡng cuối cùng
+                        completedJob.Vehicle.LastMaintenanceDate = DateOnly.FromDateTime(DateTime.Now);
 
-                        var vietnamTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
-                        var vietnamNow = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, vietnamTimeZone);
-
-                        var pickupBufferHours = 1; // 1 tiếng để chuẩn bị giấy tờ
-                        var projectedPickupTime = vietnamNow.AddHours(pickupBufferHours);
-                        var workCloseTime = new TimeSpan(19, 0, 0); // 19:00
-                        var workOpenTime = new TimeSpan(8, 0, 0); // 8:00 (hôm sau)
-
-                        string pickupMessage;
-
-                        if (projectedPickupTime.TimeOfDay > workCloseTime || projectedPickupTime.Date > vietnamNow.Date)
-                        {
-                            var nextDay = vietnamNow.Date.AddDays(1);
-                            var pickupDate = new DateTime(nextDay.Year, nextDay.Month, nextDay.Day,
-                                                          workOpenTime.Hours, workOpenTime.Minutes, 0);
-
-                            pickupMessage = $"Bạn có thể đến nhận xe vào <strong>sáng ngày hôm sau (từ {pickupDate:HH:mm} ngày {pickupDate:dd/MM/yyyy})</strong>.";
-                        }
-                        else
-                        {
-                            pickupMessage = $"Bạn có thể đến nhận xe <strong>từ {projectedPickupTime:HH:mm} ngày {projectedPickupTime:dd/MM/yyyy}</strong>.";
-                        }
-
-                        var subject = "Thông báo: Dịch vụ xe của bạn đã hoàn tất";
-                        var message = $@"
-                            <p>Chào {userAccount.FullName},</p>
-                            <p>Chúng tôi vui mừng thông báo rằng công việc bảo dưỡng/sửa chữa cho xe của bạn đã <strong>hoàn tất</strong>.</p>
-                            <ul>
-                                <li><strong>Mã lịch hẹn:</strong> {completedJob.OrderId}</li>
-                                <li><strong>Dịch vụ:</strong> {serviceNames}</li>
-                                <li><strong>Số Km (ghi nhận khi đặt):</strong> {vehicle?.Mileage:N0} km</li>
-                                <li><strong>Tổng chi phí:</strong> {completedJob.TotalCost:N0} đ</li>
-                                <li><strong>Trạng thái:</strong> Đã hoàn thành</li>
-                            </ul>
-                            <p><strong>Dự kiến nhận xe:</strong> {pickupMessage}</p>
-                            <p>Cảm ơn bạn đã sử dụng dịch vụ của EV Auto Center.</p>
-                            <p>Trân trọng,</p>";
-
-                        await _emailSender.SendEmailAsync(userAccount.Email, subject, message);
+                        // Lưu ý: KHÔNG cập nhật Mileage ở đây (đã làm ở bước Báo giá).
+                        _context.Vehicles.Update(completedJob.Vehicle);
                     }
-                }
-                catch (Exception ex_email)
-                {
-                    Console.WriteLine($"Lỗi gửi mail thông báo hoàn thành: {ex_email.Message}");
-                }
 
-                return RedirectToPage("Index");
+                    // 3. TRỪ KHO 
+                    // Lấy CenterId từ Slot làm việc
+                    var slot = await _context.Slots.FirstOrDefaultAsync(s => s.OrderId == id);
+                    var centerId = slot?.CenterId;
+
+                    if (centerId != null)
+                    {
+                        foreach (var partUsed in completedJob.PartsUseds)
+                        {
+                            var storageItem = await _context.Storages
+                                .FirstOrDefaultAsync(s => s.CenterId == centerId && s.PartId == partUsed.PartId);
+
+                            if (storageItem != null)
+                            {
+                                // Trừ số lượng thực tế
+                                storageItem.Quantity -= partUsed.Quantity;
+
+                                // Đảm bảo không bị âm (dù logic báo giá đã check, nhưng an toàn vẫn hơn)
+                                if (storageItem.Quantity < 0) storageItem.Quantity = 0;
+
+                                _context.Storages.Update(storageItem);
+                            }
+                        }
+                    }
+
+                    // 4. Đổi trạng thái công việc thành "TechnicianCompleted"
+                    await _jobService.CompleteJobAsync(id, TechnicianNote);
+
+                    // 5. Lưu tất cả thay đổi vào CSDL
+                    await _context.SaveChangesAsync();
+                    await transaction.CommitAsync();
+
+                    // 6. GỬI EMAIL THÔNG BÁO (Với giờ nhận xe dự kiến)
+                    try
+                    {
+                        if (completedJob.User != null)
+                        {
+                            var userAccount = completedJob.User;
+                            var serviceNames = string.Join(", ", completedJob.OrderDetails.Select(s => s.Service?.Name));
+                            var vehicle = completedJob.Vehicle;
+
+                            // --- Tính toán giờ nhận xe ---
+                            var vietnamTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+                            var vietnamNow = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, vietnamTimeZone);
+
+                            var pickupBufferHours = 1; // 1 tiếng để Staff chuẩn bị giấy tờ/rửa xe
+                            var projectedPickupTime = vietnamNow.AddHours(pickupBufferHours);
+                            var workCloseTime = new TimeSpan(19, 0, 0); // 19:00 đóng cửa
+                            var workOpenTime = new TimeSpan(8, 0, 0);   // 08:00 mở cửa hôm sau
+
+                            string pickupMessage;
+
+                            // Nếu giờ dự kiến vượt quá 19:00 HOẶC đã sang ngày hôm sau
+                            if (projectedPickupTime.TimeOfDay > workCloseTime || projectedPickupTime.Date > vietnamNow.Date)
+                            {
+                                var nextDay = vietnamNow.Date.AddDays(1);
+                                var pickupDate = new DateTime(nextDay.Year, nextDay.Month, nextDay.Day,
+                                                              workOpenTime.Hours, workOpenTime.Minutes, 0);
+
+                                pickupMessage = $"Bạn có thể đến nhận xe vào <strong>sáng ngày hôm sau (từ {pickupDate:HH:mm} ngày {pickupDate:dd/MM/yyyy})</strong>.";
+                            }
+                            else
+                            {
+                                pickupMessage = $"Bạn có thể đến nhận xe <strong>từ {projectedPickupTime:HH:mm} ngày {projectedPickupTime:dd/MM/yyyy}</strong>.";
+                            }
+
+                            var subject = "Thông báo: Dịch vụ xe của bạn đã hoàn tất";
+                            var message = $@"
+                                <p>Chào {userAccount.FullName},</p>
+                                <p>Kỹ thuật viên đã hoàn tất công việc bảo dưỡng/sửa chữa cho xe <strong>{vehicle?.Model}</strong>.</p>
+                                <ul>
+                                    <li><strong>Mã lịch hẹn:</strong> {completedJob.OrderId}</li>
+                                    <li><strong>Dịch vụ thực hiện:</strong> {serviceNames}</li>
+                                    <li><strong>Số Km ghi nhận:</strong> {vehicle?.Mileage:N0} km</li>
+                                    <li><strong>Tổng chi phí:</strong> {completedJob.TotalCost:N0} đ</li>
+                                    <li><strong>Trạng thái:</strong> Đã hoàn thành kỹ thuật</li>
+                                </ul>
+                                <p><strong>Dự kiến nhận xe:</strong> {pickupMessage}</p>
+                                <p>Vui lòng đến quầy dịch vụ để hoàn tất thủ tục nhận xe.</p>
+                                <p>Trân trọng,<br>EV Auto Center</p>";
+
+                            await _emailSender.SendEmailAsync(userAccount.Email, subject, message);
+                        }
+                    }
+                    catch (Exception ex_email)
+                    {
+                        Console.WriteLine($"Lỗi gửi mail thông báo hoàn thành: {ex_email.Message}");
+                        // Không throw lỗi ở đây để đảm bảo transaction đã commit thành công
+                    }
+
+                    TempData["Message"] = "Công việc hoàn thành. Đã cập nhật hồ sơ xe, trừ kho và thông báo cho khách.";
+                    return RedirectToPage("Index");
+                }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    ModelState.AddModelError(string.Empty, $"Lỗi khi lưu dữ liệu: {ex.Message}");
+                    Job = await _jobService.GetJobDetailAsync(id);
+                    return Page();
+                }
             }
             catch (Exception ex)
             {
                 ModelState.AddModelError(string.Empty, ex.Message);
-                Job = await _jobService.GetJobDetailAsync(id);
                 return Page();
             }
         }

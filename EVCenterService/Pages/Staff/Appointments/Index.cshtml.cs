@@ -67,10 +67,10 @@ namespace EVCenterService.Pages.Staff.Appointments
 
             var serviceCertMap = new Dictionary<string, string>
             {
-                { "Battery Replacement", "Battery System Certified" }, 
-                { "Brake Check", "Brake System Certified" }, 
-                { "Cooling System Check", "Thermal & Cooling System Certified" }, 
-                { "General Inspection", "General Inspection Certified" } 
+                { "Thay thế Pin", "Battery System Certified" }, 
+                { "Kiểm tra Phanh", "Brake System Certified" }, 
+                { "Kiểm tra Hệ thống Làm mát", "Thermal & Cooling System Certified" }, 
+                { "Bảo dưỡng Tổng quát", "General Inspection Certified" } 
             };
 
 
@@ -84,10 +84,10 @@ namespace EVCenterService.Pages.Staff.Appointments
             // 3. Lọc KTV cho TỪNG đơn hàng trong tab "Cần phân công"
             foreach (var order in PendingAssignmentAppointments)
             {
-                // 3.1. Tìm tất cả chứng chỉ CẦN CÓ cho đơn hàng này
+                // Lấy danh sách chứng chỉ yêu cầu TỪ DATABASE
                 var requiredCerts = order.OrderDetails
-                    .Select(od => serviceCertMap.GetValueOrDefault(od.Service.Name))
-                    .Where(cert => cert != null) // Lọc ra các dịch vụ không cần cert
+                    .Select(od => od.Service.RequiredCertification) 
+                    .Where(c => !string.IsNullOrEmpty(c))
                     .Distinct()
                     .ToList();
 

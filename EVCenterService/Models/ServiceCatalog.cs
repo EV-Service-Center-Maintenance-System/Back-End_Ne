@@ -14,10 +14,8 @@ public partial class ServiceCatalog
     public int ServiceId { get; set; }
 
     [StringLength(255)]
-    [Unicode(false)]
     public string Name { get; set; } = null!;
 
-    [Column(TypeName = "text")]
     public string? Description { get; set; }
 
     [Column(TypeName = "decimal(10, 2)")]
@@ -27,4 +25,7 @@ public partial class ServiceCatalog
 
     [InverseProperty("Service")]
     public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
+    public bool IncludeInChecklist { get; set; } = false;
+
+    public string? RequiredCertification { get; set; }
 }

@@ -29,7 +29,16 @@
 
                     <div class="mb-3">
                         <label asp-for="Service.BasePrice" class="form-label">Giá Cơ Bản (VNĐ)</label>
-                        <input asp-for="Service.BasePrice" type="number" class="form-control" />
+
+                        @if (Model.Service.ServiceId == 4)
+                        {
+                            <input asp-for="Service.BasePrice" type="number" class="form-control bg-secondary text-white" readonly />
+                            <small class="text-muted">Giá gói này được tự động tính tổng từ các dịch vụ thành phần.</small>
+                        }
+                        else
+                        {
+                            <input asp-for="Service.BasePrice" type="number" class="form-control" />
+                        }
                         <span asp-validation-for="Service.BasePrice" class="text-danger"></span>
                     </div>
 
@@ -37,6 +46,12 @@
                         <label asp-for="Service.DurationMinutes" class="form-label">Thời Gian Thực Hiện (phút)</label>
                         <input asp-for="Service.DurationMinutes" type="number" class="form-control" />
                         <span asp-validation-for="Service.DurationMinutes" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Service.RequiredCertification" class="form-label">Chứng chỉ Yêu cầu</label>
+                        <input asp-for="Service.RequiredCertification" class="form-control" placeholder="VD: Battery System Certified" />
+                        <span asp-validation-for="Service.RequiredCertification" class="text-danger"></span>
                     </div>
 
                     <hr class="my-4" />
