@@ -7,13 +7,13 @@
 
 <div class="page-header">
     <h1>@ViewData["Title"]</h1>
-    <p class="lead mb-0 text-muted">Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi.</p>
+    <p class="lead mb-0 ">Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi.</p>
 </div>
 
 <div class="card data-card border-0 mb-4">
     <div class="card-body">
         <h5>Bạn đang đánh giá cho đơn hàng #@Model.OrderToReview.OrderId</h5>
-        <ul class="list-unstyled text-muted">
+        <ul class="list-unstyled ">
             <li><strong>Xe:</strong> @Model.OrderToReview.Vehicle.Model</li>
             <li><strong>Dịch vụ:</strong> @string.Join(", ", Model.OrderToReview.OrderDetails.Select(od => od.Service.Name))</li>
             <li><strong>Ngày hoàn thành:</strong> @Model.OrderToReview.AppointmentDate.ToString("dd/MM/yyyy")</li>

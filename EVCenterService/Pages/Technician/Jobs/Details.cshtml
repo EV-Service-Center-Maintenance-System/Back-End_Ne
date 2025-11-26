@@ -41,13 +41,14 @@
                             @foreach (var service in Model.ChecklistServices)
                             {
                                 <div class="d-flex justify-content-between align-items-center p-3 border-bottom border-secondary">
-                                    <h5 class="mb-0 text-white">@service.Name</h5> <div>
-                                        <button type="button" class="btn btn-outline-success btn-lg checklist-btn"
+                                    <h5 class="mb-0 text-white">@service.Name</h5> 
+                                    <div>
+                                        <button type="button" class="btn btn-outline-success btn-lg checklist-btn" 
                                                 data-service-id="@service.ServiceId" data-status="ok">
                                             ✅ Tốt
                                         </button>
-
-                                        <button type="button" class="btn btn-outline-danger btn-lg checklist-btn"
+                                        
+                                        <button type="button" class="btn btn-outline-danger btn-lg checklist-btn" 
                                                 data-service-id="@service.ServiceId" data-status="fail">
                                             ❌ Cần sửa
                                         </button>
@@ -57,10 +58,10 @@
                         </div>
                     </div>
                 }
-                else
-                {
+
+
                     @await Html.PartialAsync("_QuotePartsPartial", Model)
-                }
+
                 </div>
             <div class="col-lg-4">
                 <div class="card data-card border-0 sticky-top" style="top: 2rem;">
